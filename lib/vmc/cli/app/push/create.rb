@@ -11,24 +11,14 @@ module VMC::App
       inputs[:total_instances] = input[:instances]
       inputs[:space] = client.current_space if client.current_space
 
-      if v2?
-        inputs[:production] = !!(input[:plan] =~ /^p/i)
-        inputs[:command] = input[:command] if input.has?(:command) || !has_procfile?
-      else
-        framework = inputs[:framework] = determine_framework
-        inputs[:runtime] = determine_runtime(framework)
-        inputs[:command] = input[:command] if can_have_custom_start_command?(framework)
-      end
+      inputs[:production] = !!(input[:plan] =~ /^p/i)
 
-      inputs[:buildpack] = input[:buildpack] if v2?
+      inputs[:buildpack] = input[:buildpack]
+      inputs[:command] = input[:command] if input.has?(:command) || !has_procfile?
 
-      if v2?
-        detected = detector.detected
-        human_mb = human_mb((detected && detected.memory_suggestion) || 64)
-      else
-        human_mb = human_mb(detector.suggested_memory(framework) || 64)
-      end
-
+      framework = detector.detect_framework
+      detected = detector.detected
+      human_mb = human_mb((detected && detected.memory_suggestion) || 64)
       inputs[:memory] = megabytes(input[:memory, human_mb])
 
       inputs[:stack] = input[:stack] if v2?
@@ -88,7 +78,7 @@ module VMC::App
     def map_route(app)
       line unless quiet?
 
-      host = input[:host, app.name] if v2?
+      host = input[:host, app.name]
       domain = input[:domain, app]
 
       mapped_url = false
@@ -103,14 +93,11 @@ module VMC::App
           line c(e.description, :bad)
           line
 
-          input.forget(:host) if v2?
+          input.forget(:host)
           input.forget(:domain)
 
-          host = input[:host, app.name] if v2?
+          host = input[:host, app.name]
           domain = input[:domain, app]
-
-          # version bumps on v1 even though mapping fails
-          app.invalidate! unless v2?
         end
       end
     end

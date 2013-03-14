@@ -15,7 +15,7 @@ module VMC::App
     input :host,      :desc => "Subdomain for the app's URL"
     input :domain,    :desc => "Domain for the app",
                       :from_given => proc { |given, app|
-                        if !v2? || given == "none"
+                        if given == "none"
                           given
                         else
                           app.space.domain_by_name(given) ||
@@ -73,13 +73,9 @@ module VMC::App
     private
 
     def url_choices(name)
-      if v2?
-        client.current_space.domains.sort_by(&:name).collect do |d|
-          # TODO: check availability
-          "#{name}.#{d.name}"
-        end
-      else
-        %W(#{name}.#{target_base})
+      client.current_space.domains.sort_by(&:name).collect do |d|
+        # TODO: check availability
+        "#{name}.#{d.name}"
       end
     end
 

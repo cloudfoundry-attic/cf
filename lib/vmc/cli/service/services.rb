@@ -45,24 +45,19 @@ module VMC::Service
         end
       else
         table(
-          ["name", "service", "version", v2? && "plan", v2? && "bound apps"],
+          ["name", "service", "version", "plan", "bound apps"],
           services.collect { |i|
-            if v2?
-              plan = i.service_plan
-              service = plan.service
+            plan = i.service_plan
+            service = plan.service
 
-              label = service.label
-              version = service.version
-              apps = name_list(i.service_bindings.collect(&:app))
-            else
-              label = i.vendor
-              version = i.version
-            end
+            label = service.label
+            version = service.version
+            apps = name_list(i.service_bindings.collect(&:app))
 
             [ c(i.name, :name),
               label,
               version,
-              v2? && plan.name,
+              plan.name,
               apps
             ]
           })
@@ -80,32 +75,22 @@ module VMC::Service
         return false unless File.fnmatch(name, i.name)
       end
 
-      plan = i.service_plan if v2?
+      plan = i.service_plan
 
       if service = options[:service]
-        if v2?
-          return false unless File.fnmatch(service, plan.service.label)
-        else
-          return false unless File.fnmatch(service, i.vendor)
-        end
+        return false unless File.fnmatch(service, plan.service.label)
       end
 
       if plan = options[:plan]
-        fail "--plan is not supported on this target" unless v2?
         return false unless File.fnmatch(plan.upcase, plan.name.upcase)
       end
 
       if provider = options[:provider]
-        fail "--provider is not supported on this target" unless v2?
         return false unless File.fnmatch(provider, plan.service.provider)
       end
 
       if version = options[:version]
-        if v2?
-          return false unless File.fnmatch(version, plan.service.version)
-        else
-          return false unless File.fnmatch(version, i.version)
-        end
+        return false unless File.fnmatch(version, plan.service.version)
       end
 
       true

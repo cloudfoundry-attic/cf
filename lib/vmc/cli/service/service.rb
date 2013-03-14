@@ -15,7 +15,7 @@ module VMC::Service
     def display_service(i)
       if quiet?
         line i.name
-      elsif v2?
+      else
         plan = i.service_plan
         service = plan.service
 
@@ -34,8 +34,6 @@ module VMC::Service
             line "description: #{plan.description}"
           end
         end
-      else
-        line "#{c(i.name, :name)}: #{i.vendor} #{i.version}"
       end
     end
   end

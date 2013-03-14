@@ -13,8 +13,6 @@ module VMC::Route
     input :really, :type => :boolean, :forget => true, :hidden => true,
           :default => proc { force? || interact }
     def unmap
-      return invoke :v1_unmap, input.inputs, input.given unless v2?
-
       if input[:all]
         if input.has?(:app)
           app = target = input[:app]

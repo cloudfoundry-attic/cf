@@ -13,29 +13,19 @@ module VMC::Route
     input :domain, :desc => "Domain to add the route to",
           :argument => true,
           :from_given => proc { |name, space|
-            if v2?
-              space.domain_by_name(name) ||
-                fail_unknown("domain", name)
-            else
-              name
-            end
+            space.domain_by_name(name) ||
+              fail_unknown("domain", name)
           }
     def map
       app = input[:app]
-      space = app.space if v2?
+      space = app.space
 
       host = input[:host]
       domain = input[:domain, space]
 
-      if v2?
-        route = find_or_create_route(domain, host, space)
-        bind_route(route, app) if app
-      else
-        with_progress("Updating #{c(app.name, :name)}") do
-          app.urls << domain
-          app.update!
-        end
-      end
+      route = find_or_create_route(domain, host, space)
+
+      bind_route(route, app) if app
     end
 
     private

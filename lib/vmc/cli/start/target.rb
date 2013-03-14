@@ -34,7 +34,7 @@ module VMC::Start
         end
       end
 
-      return unless v2? && client.logged_in?
+      return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
         info = target_info
@@ -56,8 +56,6 @@ module VMC::Start
     private
 
     def display_org_and_space
-      return unless v2?
-
       if org = client.current_organization
         line "organization: #{c(org.name, :name)}"
       end
