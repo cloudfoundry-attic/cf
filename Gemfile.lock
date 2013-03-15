@@ -1,42 +1,4 @@
 GIT
-  remote: git://github.com/cloudfoundry/admin-vmc-plugin.git
-  revision: 0fe8725f931149e88899825070816c99c43b963d
-  specs:
-    admin-vmc-plugin (0.1.0)
-      cfoundry (~> 0.5.0)
-
-GIT
-  remote: git://github.com/cloudfoundry/console-vmc-plugin.git
-  revision: 1b281d0a74dc50de34c736b4945fd7bdc3d53331
-  specs:
-    console-vmc-plugin (0.1.1)
-      tunnel-vmc-plugin (~> 0.2.0)
-
-GIT
-  remote: git://github.com/cloudfoundry/manifests-vmc-plugin.git
-  revision: 6b42ac86411cda0632cab8a1afb363814b61a319
-  specs:
-    manifests-vmc-plugin (0.6.3.rc2)
-      cfoundry (>= 0.5.3.rc5, < 0.6)
-
-GIT
-  remote: git://github.com/cloudfoundry/mcf-vmc-plugin.git
-  revision: 596c5ec987eaaf2ca2993db1e6ad8b5816b10d06
-  specs:
-    mcf-vmc-plugin (0.0.1)
-
-GIT
-  remote: git://github.com/cloudfoundry/tunnel-vmc-plugin.git
-  revision: 1a15425fbf38ea82728883ca45cc72b308e92b82
-  specs:
-    tunnel-vmc-plugin (0.2.2)
-      addressable (~> 2.2)
-      caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.5.3.rc5, < 0.6)
-      rest-client (~> 1.6)
-      uuidtools (~> 2.1)
-
-GIT
   remote: git://github.com/cloudfoundry/vmc-lib.git
   revision: 319718343b3092a1802f950ab5efbccd7f65d410
   submodules: true
@@ -70,8 +32,6 @@ GEM
   remote: http://rubygems.org/
   specs:
     addressable (2.3.3)
-    caldecott-client (0.0.2)
-      multi_json (~> 1.3)
     cf-uaa-lib (1.3.9)
       multi_json
     crack (0.3.2)
@@ -80,15 +40,12 @@ GEM
     ffaker (1.15.0)
     gem-release (0.4.1)
     json_pure (1.7.7)
-    mime-types (1.21)
     multi_json (1.6.1)
     multipart-post (1.2.0)
     parallel (0.6.2)
     parallel_tests (0.10.0)
       parallel
     rake (10.0.3)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
     rr (1.0.4)
     rspec (2.12.0)
       rspec-core (~> 2.12.0)
@@ -99,7 +56,6 @@ GEM
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.12.2)
     rubyzip (0.9.9)
-    uuidtools (2.1.3)
     webmock (1.9.3)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
@@ -108,22 +64,17 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  admin-vmc-plugin!
   cfoundry!
   clouseau!
-  console-vmc-plugin!
   fakefs
   ffaker
   gem-release
   interact!
   json_pure (~> 1.6)
-  manifests-vmc-plugin!
-  mcf-vmc-plugin!
   mothership!
   multi_json (~> 1.3)
   parallel_tests
   rake
   rr (~> 1.0)
   rspec (~> 2.11)
-  tunnel-vmc-plugin!
   webmock (~> 1.9)
