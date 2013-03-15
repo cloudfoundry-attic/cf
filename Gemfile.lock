@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/cloudfoundry/admin-vmc-plugin.git
-  revision: b44ee523a71259d11a5a95ec0461f94855d06b7e
+  revision: 0fe8725f931149e88899825070816c99c43b963d
   specs:
     admin-vmc-plugin (0.1.0)
       cfoundry (~> 0.5.0)
@@ -14,10 +14,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/manifests-vmc-plugin.git
-  revision: ff33242537057f8d1e41073fb3a187db2c68af8b
+  revision: 6b42ac86411cda0632cab8a1afb363814b61a319
   specs:
-    manifests-vmc-plugin (0.6.2)
-      cfoundry (>= 0.5.3.rc2, < 0.6)
+    manifests-vmc-plugin (0.6.3.rc2)
+      cfoundry (>= 0.5.3.rc5, < 0.6)
 
 GIT
   remote: git://github.com/cloudfoundry/mcf-vmc-plugin.git
@@ -27,12 +27,12 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-vmc-plugin.git
-  revision: 55fbed47313871640cc9e1b481d3019c4a5ee5ba
+  revision: 1a15425fbf38ea82728883ca45cc72b308e92b82
   specs:
-    tunnel-vmc-plugin (0.2.0)
+    tunnel-vmc-plugin (0.2.2)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (~> 0.5.0)
+      cfoundry (>= 0.5.3.rc5, < 0.6)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
 

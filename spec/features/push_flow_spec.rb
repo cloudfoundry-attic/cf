@@ -2,9 +2,9 @@ require "spec_helper"
 require "webmock/rspec"
 
 if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET']
-  describe 'A new user tries to use VMC against v2', :ruby19 => true do
+  describe 'A new user tries to use CF against v2', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
-    include VMC::Interactive
+    include CF::Interactive
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
@@ -16,13 +16,13 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
 
     before do
-      FileUtils.rm_rf File.expand_path(VMC::CONFIG_DIR)
+      FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
       WebMock.allow_net_connect!
       Interact::Progress::Dots.start!
     end
 
     after do
-      vmc %W(delete #{app} -f --no-script)
+      cf %W(delete #{app} -f --no-script)
       Interact::Progress::Dots.stop!
     end
 

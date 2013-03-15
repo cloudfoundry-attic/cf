@@ -11,9 +11,9 @@ shared_examples_for "an error that's obvious to the user" do |options|
     subject
   end
 
-  it "does not mention ~/.vmc/crash" do
+  it "does not mention ~/.cf/crash" do
     subject
-    expect(stderr.string).to_not include VMC::CRASH_FILE
+    expect(stderr.string).to_not include CF::CRASH_FILE
   end
 end
 

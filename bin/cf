@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# vim: ft=ruby
+
+require "rubygems"
+
+require "cf"
+require "cf/plugin"
+
+CF::Plugin.load_all
+
+CF::CLI.start(ARGV)

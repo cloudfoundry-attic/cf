@@ -3,8 +3,8 @@ SPEC_ROOT = File.dirname(__FILE__).freeze
 require "rspec"
 require "cfoundry"
 require "cfoundry/test_support"
-require "vmc"
-require "vmc/test_support"
+require "cf"
+require "cf/test_support"
 require "webmock"
 require "ostruct"
 require "fakefs/safe"
@@ -21,7 +21,7 @@ class FakeFS::File
 end
 
 def cf_bin
-  cf = File.expand_path("#{SPEC_ROOT}/../bin/vmc.dev")
+  cf = File.expand_path("#{SPEC_ROOT}/../bin/cf.dev")
   if INTEGRATE_WITH != 'default'
     "rvm #{INTEGRATE_WITH}@cf do #{cf}"
   else
@@ -53,7 +53,7 @@ RSpec.configure do |c|
   end
 
   c.before do
-    VMC::CLI.send(:class_variable_set, :@@client, nil)
+    CF::CLI.send(:class_variable_set, :@@client, nil)
   end
 end
 

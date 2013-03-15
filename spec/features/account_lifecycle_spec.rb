@@ -3,7 +3,7 @@ require "webmock/rspec"
 require "ffaker"
 
 if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET']
-  describe 'A new user tries to use VMC against v2 production', :ruby19 => true do
+  describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     before(:all) do
       WebMock.allow_net_connect!
     end

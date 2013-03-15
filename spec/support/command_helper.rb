@@ -13,7 +13,7 @@ def command(klass, &specs)
       klass.class_eval do
         def wrap_errors
           yield
-        rescue VMC::UserError => e
+        rescue CF::UserError => e
           err e.message
         end
       end
@@ -30,10 +30,10 @@ def command(klass, &specs)
 end
 
 module CommandHelper
-  def vmc(argv)
+  def cf(argv)
     Mothership.new.exit_status 0
-    stub(VMC::CLI).exit { |code| code }
-    capture_output { VMC::CLI.start(argv + ["--debug", "--no-script"]) }
+    stub(CF::CLI).exit { |code| code }
+    capture_output { CF::CLI.start(argv + ["--debug", "--no-script"]) }
   end
 
   def bool_flag(flag)

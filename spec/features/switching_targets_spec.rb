@@ -1,7 +1,7 @@
 require "spec_helper"
 
 if ENV['CF_V2_TEST_TARGET']
-  describe 'A new user tries to use VMC against v2 production', :ruby19 => true do
+  describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }

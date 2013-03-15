@@ -1,2 +1,2 @@
-rvm use ruby-1.8.7@vmc --create
-alias vmc=./bin/vmc.dev
+rvm use ruby-1.8.7@cf --create
+alias cf=./bin/cf.dev

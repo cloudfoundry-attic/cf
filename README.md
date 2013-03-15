@@ -11,16 +11,16 @@ Some features, notably the ones using the v2 api, require cloud_controller_ng.
 ## Installation
 
 ```
-$ gem install vmc
-$ vmc -v
-vmc 0.4.2
+$ gem install cf
+$ cf -v
+cf 0.4.2
 ```
 
 ## Development
 
 ```
-$ git clone git@github.com:cloudfoundry/vmc.git
-$ cd vmc
+$ git clone git@github.com:cloudfoundry/cf.git
+$ cd cf
 $ bundle install
 $ rake gem:install
 ```
@@ -28,7 +28,7 @@ $ rake gem:install
 ## Usage
 
 ```
-$ vmc help --all
+$ cf help --all
 Getting Started
   info            	Display information on the current target, user, etc.
   target [URL]    	Set or display the target cloud, organization, and space
@@ -77,7 +77,7 @@ Services
     create-service [SERVICE] [NAME]	Create a service
     delete-service [INSTANCE]      	Delete a service
     rename-service [SERVICE] [NAME]	Rename a service
-    tunnel [INSTANCE] [CLIENT]     	Tells you to install tunnel-vmc-plugin
+    tunnel [INSTANCE] [CLIENT]     	Tells you to install tunnel-cf-plugin
 
 Organizations
   create-org [NAME]               	Create an organization

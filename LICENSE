@@ -2,7 +2,7 @@
            Version 2.0, January 2004
         http://www.apache.org/licenses/
 
-		
+
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
    1. Definitions.
@@ -202,11 +202,11 @@
    limitations under the License.
 
 ===========================================================================
-VMC 09012012
+CF 09012012
 
-VMC 09012012 : includes a number of subcomponents with
-separate copyright notices and license terms.  The product that 
-includes this file does not necessarily use all the open source 
+CF 09012012 : includes a number of subcomponents with
+separate copyright notices and license terms.  The product that
+includes this file does not necessarily use all the open source
 subcomponents referred to below. Your use of the source
 code for the these subcomponents is subject to the terms and
 conditions of the following licenses.
@@ -336,7 +336,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-This license does not apply to daemonize.rb, which is was written by 
+This license does not apply to daemonize.rb, which is was written by
 Travis Whitton und published under the following license:
 
 The Daemonize extension module is copywrited free software by Travis Whitton
@@ -390,7 +390,7 @@ all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -431,14 +431,14 @@ deal in the Software without restriction, including without limitation the
 rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-  
+
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-   
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -460,7 +460,7 @@ all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -588,9 +588,9 @@ version 2 (see the file GPL), or the conditions below ("Ruby License"):
      For the list of those files and their copying conditions, see the
      file LEGAL.
 
-  5. The scripts and library files supplied as input to or produced as 
+  5. The scripts and library files supplied as input to or produced as
      output from the software do not automatically fall under the
-     copyright of the software, but belong to whoever generated them, 
+     copyright of the software, but belong to whoever generated them,
      and may be sold commercially, and may be aggregated with this
      software.
 
@@ -676,7 +676,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 PURPOSE.
 
 
-=============== APPENDIX. Standard License Files ============== 
+=============== APPENDIX. Standard License Files ==============
 
 
 
@@ -690,7 +690,7 @@ You can redistribute it and/or modify it under either the terms of the GPL
      software without restriction, provided that you duplicate all of the
      original copyright notices and associated disclaimers.
 
- 
+
   2. You may modify your copy of the software in any way, provided that
      you do at least ONE of the following:
 
@@ -707,7 +707,7 @@ You can redistribute it and/or modify it under either the terms of the GPL
 
        d) make other distribution arrangements with the author.
 
- 
+
   3. You may distribute the software in object code or executable
      form, provided that you do at least ONE of the following:
 
@@ -723,7 +723,7 @@ You can redistribute it and/or modify it under either the terms of the GPL
 
        d) make other distribution arrangements with the author.
 
- 
+
   4. You may modify and include the part of the software into any other
      software (possibly commercial).  But some files in the distribution
      are not written by the author, so that they are not under this terms.
@@ -732,7 +732,7 @@ You can redistribute it and/or modify it under either the terms of the GPL
      files under the ./missing directory.  See each file for the copying
      condition.
 
- 
+
   5. The scripts and library files supplied as input to or produced as
      output from the software do not automatically fall under the
      copyright of the software, but belong to whomever generated them,
@@ -745,9 +745,9 @@ You can redistribute it and/or modify it under either the terms of the GPL
      WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
      PURPOSE.
 
- 
 
- 
+
+
 
 --------------- SECTION 2: GNU Lesser General Public License, V2.1-----------
 
@@ -1274,4 +1274,4 @@ years from the date you acquired this Software product. Alternatively,
 the Source Files may accompany the VMware product.
 
 
-[CFVMC09012012NV121912]
+[CFCF09012012NV121912]
