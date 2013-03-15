@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cloudfoundry/vmc.png)](https://travis-ci.org/cloudfoundry/vmc)
+[![Build Status](https://travis-ci.org/cloudfoundry/cf.png)](https://travis-ci.org/cloudfoundry/cf)
 
 # CLI for Cloud Foundry (compatible with next generation also known as v2)
 
