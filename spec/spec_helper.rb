@@ -20,12 +20,12 @@ class FakeFS::File
   end
 end
 
-def vmc_bin
-  vmc = File.expand_path("#{SPEC_ROOT}/../bin/vmc.dev")
+def cf_bin
+  cf = File.expand_path("#{SPEC_ROOT}/../bin/vmc.dev")
   if INTEGRATE_WITH != 'default'
-    "rvm #{INTEGRATE_WITH}@vmc do #{vmc}"
+    "rvm #{INTEGRATE_WITH}@cf do #{cf}"
   else
-    vmc
+    cf
   end
 end
 

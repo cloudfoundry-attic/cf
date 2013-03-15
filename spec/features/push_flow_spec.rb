@@ -1,14 +1,14 @@
 require "spec_helper"
 require "webmock/rspec"
 
-if ENV['VMC_V2_TEST_USER'] && ENV['VMC_V2_TEST_PASSWORD'] && ENV['VMC_V2_TEST_TARGET']
+if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET']
   describe 'A new user tries to use VMC against v2', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
     include VMC::Interactive
 
-    let(:target) { ENV['VMC_V2_TEST_TARGET'] }
-    let(:username) { ENV['VMC_V2_TEST_USER'] }
-    let(:password) { ENV['VMC_V2_TEST_PASSWORD'] }
+    let(:target) { ENV['CF_V2_TEST_TARGET'] }
+    let(:username) { ENV['CF_V2_TEST_USER'] }
+    let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
 
     let(:app) do
       fuzz = TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_")
@@ -27,11 +27,11 @@ if ENV['VMC_V2_TEST_USER'] && ENV['VMC_V2_TEST_PASSWORD'] && ENV['VMC_V2_TEST_TA
     end
 
     it 'pushes a simple sinatra app using defaults as much as possible' do
-      run("#{vmc_bin} target http://#{target}") do |runner|
+      run("#{cf_bin} target http://#{target}") do |runner|
         expect(runner).to say %r{Setting target to http://#{target}... OK}
       end
 
-      run("#{vmc_bin} login") do |runner|
+      run("#{cf_bin} login") do |runner|
         expect(runner).to say %r{target: https?://#{target}}
 
         expect(runner).to say "Email>"
@@ -59,12 +59,12 @@ if ENV['VMC_V2_TEST_USER'] && ENV['VMC_V2_TEST_PASSWORD'] && ENV['VMC_V2_TEST_TA
         )
       end
 
-      run("#{vmc_bin} app #{app}") do |runner|
+      run("#{cf_bin} app #{app}") do |runner|
         expect(runner).to say "Unknown app '#{app}'."
       end
 
       Dir.chdir("#{SPEC_ROOT}/assets/hello-sinatra") do
-        run("#{vmc_bin} push") do |runner|
+        run("#{cf_bin} push") do |runner|
           expect(runner).to say "Name>"
           runner.send_keys app
 
@@ -112,7 +112,7 @@ if ENV['VMC_V2_TEST_USER'] && ENV['VMC_V2_TEST_PASSWORD'] && ENV['VMC_V2_TEST_TA
         end
       end
 
-      run("#{vmc_bin} delete #{app}") do |runner|
+      run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"
 
@@ -121,5 +121,5 @@ if ENV['VMC_V2_TEST_USER'] && ENV['VMC_V2_TEST_PASSWORD'] && ENV['VMC_V2_TEST_TA
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $VMC_V2_TEST_TARGET, $VMC_V2_TEST_USER, and $VMC_V2_TEST_PASSWORD'
+  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, and $CF_V2_TEST_PASSWORD'
 end
