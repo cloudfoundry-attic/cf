@@ -85,8 +85,6 @@ module VMC
       check_target
       check_logged_in
 
-      return unless v2?
-
       unless client.current_organization
         fail "Please select an organization with 'vmc target --ask-org'."
       end
@@ -375,14 +373,6 @@ module VMC
       save_targets(ts)
     end
 
-    def no_v2
-      fail "Not implemented for v2." if v2?
-    end
-
-    def v2?
-      client.version == 2
-    end
-
     def invalidate_client
       @@client = nil
       client
@@ -398,13 +388,18 @@ module VMC
       @@client =
         case info[:version]
         when 2
-          fail "User switching not implemented for v2." if input[:proxy]
+          fail "User switching not implemented." if input[:proxy]
           CFoundry::V2::Client.new(target, token)
         when 1
           CFoundry::V1::Client.new(target, token)
         else
           CFoundry::Client.new(target, token)
         end
+
+      unless @@client.is_a?(CFoundry::V2::Client)
+        # TODO
+        fail "V1 targets are no longer supported."
+      end
 
       @@client.proxy = input[:proxy]
       @@client.trace = input[:trace]

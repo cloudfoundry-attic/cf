@@ -27,7 +27,6 @@ command VMC::App::Scale do
       expect { subject }.to change(app, :memory).from(before_value).to(1024)
     end
 
-    # TODO: determine if the command should do this on v2
     context "if --restart is true" do
       it "restarts the application" do
         stub(app).update!

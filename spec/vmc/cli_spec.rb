@@ -410,19 +410,13 @@ describe VMC::CLI do
 
     context "with a v1 cloud controller" do
       before do
-        stub(context).target_info { { :version => 1} }
+        stub(context).target_info { { :version => 1 } }
       end
 
-      it "connects using the v1 api" do
-        expect(context.client).to be_a(CFoundry::V1::Client)
-      end
-
-      context "with a proxy user" do
-        before { stub(context).input { {:proxy => 'foo@example.com'} } }
-
-        it "uses the provided client proxy user" do
-          expect(context.client.proxy).to eq('foo@example.com')
-        end
+      it "fails" do
+        expect {
+          context.client
+        }.to raise_error(VMC::UserError, /no longer supported/)
       end
     end
 
@@ -436,10 +430,10 @@ describe VMC::CLI do
       end
 
       context "with a proxy user" do
-        before { stub(context).input { {:proxy => 'foo@example.com'} } }
+        before { stub(context).input { { :proxy => 'foo@example.com' } } }
 
-        it "foo" do
-          expect {context.client}.to raise_error(VMC::UserError, "User switching not implemented for v2.")
+        it "fails with the right error message" do
+          expect {context.client}.to raise_error(VMC::UserError, "User switching not implemented.")
         end
       end
     end

@@ -13,8 +13,6 @@ module VMC::Route
     input :really, :type => :boolean, :forget => true, :hidden => true,
           :default => proc { force? || interact }
     def unmap
-      return invoke :v1_unmap, input.inputs, input.given unless v2?
-
       if input[:all]
         if input.has?(:app)
           app = target = input[:app]
@@ -51,40 +49,10 @@ module VMC::Route
       end
     end
 
-
-    desc "V1 ONLY UNMAP YOU SHOULD NOT SEE THIS"
-    input :url, :desc => "URL to unmap", :argument => :optional,
-          :interact => :v1_ask_url
-    input :app, :desc => "Application to remove the URL from",
-          :argument => :optional, :from_given => by_name(:app)
-    input :all, :desc => "Act on all routes", :type => :boolean
-    def v1_unmap
-      app = input[:app]
-      url = input[:url, app.urls] unless input[:all]
-
-      with_progress("Updating #{c(app.name, :name)}") do |s|
-        if input[:all]
-          app.urls = []
-        else
-          simple = url.sub(/^https?:\/\/(.*)\/?/i, '\1')
-
-          unless app.urls.delete(simple)
-            fail "URL #{url} is not mapped to this application."
-          end
-        end
-
-        app.update!
-      end
-    end
-
     private
 
     def ask_url(choices)
       ask("Which URL?", :choices => choices.sort_by(&:name), :display => proc(&:name))
-    end
-
-    def v1_ask_url(choices)
-      ask("Which URL?", :choices => choices.sort)
     end
 
     def ask_really(name, color)

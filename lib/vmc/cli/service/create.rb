@@ -30,14 +30,14 @@ module VMC::Service
 
       if input[:version]
         offerings.reject! { |s| s.version != input[:version] }
-      elsif !v2?
+      else
         offerings.reject!(&:deprecated?)
       end
 
       # filter the offerings based on a given plan value, which will be a
       # string if the user provided it with a flag, or a ServicePlan if
       # something invoked this command with a particular plan
-      if v2? && plan = input.direct(:plan)
+      if plan = input.direct(:plan)
         offerings.reject! do |s|
           if plan.is_a?(String)
             s.service_plans.none? { |p| p.name == plan.upcase }
@@ -62,15 +62,8 @@ module VMC::Service
       service = client.service_instance
       service.name = input[:name, offering]
 
-      if v2?
-        service.service_plan = input[:plan, offering.service_plans]
-        service.space = client.current_space
-      else
-        service.type = offering.type
-        service.vendor = offering.label
-        service.version = offering.version
-        service.tier = v1_service_tier(offering)
-      end
+      service.service_plan = input[:plan, offering.service_plans]
+      service.space = client.current_space
 
       with_progress("Creating service #{c(service.name, :name)}") do
         service.create!
@@ -110,17 +103,5 @@ module VMC::Service
         :default => default_plan,
         :complete => proc(&:name)
     end
-
-    def v1_service_tier(service)
-      plans = service.service_plans
-      fail "No service plans" if plans.empty?
-      if plans.length == 1
-        plan = plans[0]
-      else
-        plan = ask_plan(plans, service.default_service_plan)
-      end
-      plan.name
-    end
-
   end
 end

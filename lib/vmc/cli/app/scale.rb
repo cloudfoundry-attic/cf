@@ -28,8 +28,6 @@ module VMC::App
       end
 
       if input.has?(:plan)
-        fail "Plans not supported on target cloud." unless v2?
-
         plan_name = input[:plan]
         production = !!(plan_name =~ /^p/i)
       end

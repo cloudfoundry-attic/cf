@@ -6,8 +6,6 @@ module VMC
       def precondition
         check_target
         check_logged_in
-
-        fail "This command is v2-only." unless v2?
       end
     end
   end

@@ -35,7 +35,6 @@ end
 
 RSpec.configure do |c|
   c.include Fake::FakeMethods
-  c.include V1Fake::FakeMethods
   c.include ConsoleAppSpeckerMatchers
 
   c.mock_with :rr

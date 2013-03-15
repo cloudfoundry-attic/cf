@@ -26,18 +26,14 @@ module VMC::Service
 
       return unless input[:really, service.name, :name]
 
-      bindings = []
+      bindings = service.service_bindings
 
-      if v2?
-        bindings = service.service_bindings
-
-        unless bindings.empty? || !input[:unbind, bindings.collect(&:app)]
-          bindings.each do |b|
-            invoke :unbind_service, :service => service, :app => b.app
-          end
-
-          bindings = []
+      unless bindings.empty? || !input[:unbind, bindings.collect(&:app)]
+        bindings.each do |b|
+          invoke :unbind_service, :service => service, :app => b.app
         end
+
+        bindings = []
       end
 
       with_progress("Deleting #{c(service.name, :name)}") do |s|

@@ -64,10 +64,8 @@ module VMC::Start
       save_target_info(info)
       invalidate_client
 
-      if v2?
-        line if input.interactive?(:organization) || input.interactive?(:space)
-        select_org_and_space(input, info)
-      end
+      line if input.interactive?(:organization) || input.interactive?(:space)
+      select_org_and_space(input, info)
 
       save_target_info(info)
     ensure

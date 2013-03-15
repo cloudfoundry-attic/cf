@@ -7,10 +7,8 @@ module VMC::User
     input :user, :desc => "User to update", :argument => :optional,
           :default => proc { client.current_user },
           :from_given => proc { |email|
-            if v2? && client.current_user.email != email
-              fail "You can only change your own password on V2."
-            else
-              client.user(email)
+            if client.current_user.email != email
+              fail "You can only change your own password."
             end
           }
     input :password, :desc => "Current password"
@@ -18,18 +16,13 @@ module VMC::User
     input :verify, :desc => "Repeat new password"
     def passwd
       user = input[:user]
-      password = input[:password] if v2?
+      password = input[:password]
       new_password = input[:new_password]
 
       validate_password! new_password
 
       with_progress("Changing password") do
-        if v2?
-          user.change_password!(new_password, password)
-        else
-          user.password = new_password
-          user.update!
-        end
+        user.change_password!(new_password, password)
       end
     end
 

@@ -11,7 +11,7 @@ module VMC::App
     end
 
     def ask_domain(app)
-      choices = v2? ? app.space.domains : ["#{app.name}.#{target_base}"]
+      choices = app.space.domains
 
       options = {
         :choices => choices + ["none"],
