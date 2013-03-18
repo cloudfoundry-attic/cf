@@ -36,6 +36,13 @@ describe CF::CLI do
       end
     end
 
+    context "with a UserFriendlyError" do
+      let(:action) { proc { raise CF::UserFriendlyError.new("user friendly") } }
+
+      it_behaves_like "an error that's obvious to the user",
+        :with_message => "user friendly"
+    end
+
     context "with a SystemExit" do
       let(:action) { proc { exit 1 } }
 
