@@ -6,6 +6,17 @@ GIT
       cfoundry (~> 0.5.0)
 
 GIT
+  remote: git://github.com/cloudfoundry/cfoundry.git
+  revision: 319718343b3092a1802f950ab5efbccd7f65d410
+  submodules: true
+  specs:
+    cfoundry (0.5.3.rc5)
+      cf-uaa-lib (~> 1.3.9)
+      multi_json (~> 1.3)
+      multipart-post (~> 1.1)
+      rubyzip (~> 0.9)
+
+GIT
   remote: git://github.com/cloudfoundry/console-cf-plugin.git
   revision: 5e1d1520df39c482b2f2c8d2d3c8aca0a463cbc3
   specs:
@@ -35,17 +46,6 @@ GIT
       cfoundry (>= 0.5.3.rc5, < 0.6)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
-
-GIT
-  remote: git://github.com/cloudfoundry/vmc-lib.git
-  revision: 319718343b3092a1802f950ab5efbccd7f65d410
-  submodules: true
-  specs:
-    cfoundry (0.5.3.rc5)
-      cf-uaa-lib (~> 1.3.9)
-      multi_json (~> 1.3)
-      multipart-post (~> 1.1)
-      rubyzip (~> 0.9)
 
 GIT
   remote: git://github.com/vito/clouseau.git
