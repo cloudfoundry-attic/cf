@@ -1,49 +1,49 @@
 GIT
   remote: git://github.com/cloudfoundry/admin-cf-plugin.git
-  revision: ebfe2826500520768d8e8b7945342aed1782a88b
+  revision: ca5a4ae481def9b550b89733cb23e441f4917ee4
   specs:
-    admin-cf-plugin (0.1.0)
-      cfoundry (~> 0.5.0)
+    admin-cf-plugin (0.2.0.rc1)
+      cfoundry (>= 0.6.0.rc1, < 0.7)
 
 GIT
   remote: git://github.com/cloudfoundry/cfoundry.git
-  revision: 319718343b3092a1802f950ab5efbccd7f65d410
+  revision: 03deaa28208b05b84fc31897ff08239e539639cd
   submodules: true
   specs:
-    cfoundry (0.5.3.rc5)
-      cf-uaa-lib (~> 1.3.9)
+    cfoundry (0.6.0.rc1)
+      cf-uaa-lib (~> 1.3.10)
       multi_json (~> 1.3)
       multipart-post (~> 1.1)
       rubyzip (~> 0.9)
 
 GIT
   remote: git://github.com/cloudfoundry/console-cf-plugin.git
-  revision: 5e1d1520df39c482b2f2c8d2d3c8aca0a463cbc3
+  revision: af02d02fb272d758037121be207ce71bb989fd44
   specs:
-    console-cf-plugin (0.1.1)
-      tunnel-cf-plugin (~> 0.2.0)
+    console-cf-plugin (0.2.0.rc1)
+      tunnel-cf-plugin (>= 0.3.0.rc1, < 0.4)
 
 GIT
   remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
-  revision: 3ccd0f3f93bdf633a37bf7a408281e3e2b53eb19
+  revision: a405fe289d71290dbd13d05093806af359f7d43c
   specs:
-    manifests-cf-plugin (0.6.3.rc2)
-      cfoundry (>= 0.5.3.rc5, < 0.6)
+    manifests-cf-plugin (0.7.0.rc1)
+      cfoundry (>= 0.6.0.rc1, < 0.7)
 
 GIT
   remote: git://github.com/cloudfoundry/micro-cf-plugin.git
-  revision: 829e16f3c37dd91b9152d99ac57c6cf86595051e
+  revision: 758f9572a0a253457ae7e3c13ffa2282a4bf08bb
   specs:
-    micro-cf-plugin (0.0.1)
+    micro-cf-plugin (0.1.0.rc1)
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: 75464ad406d80b46d19430dc01ffd96aa727a091
+  revision: 519dce6415bb7bde0cf33482fa4db8020a13dfd2
   specs:
-    tunnel-cf-plugin (0.2.2)
+    tunnel-cf-plugin (0.3.0.rc1)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.5.3.rc5, < 0.6)
+      cfoundry (>= 0.6.0.rc1, < 0.7)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
 
@@ -72,7 +72,7 @@ GEM
     addressable (2.3.3)
     caldecott-client (0.0.2)
       multi_json (~> 1.3)
-    cf-uaa-lib (1.3.9)
+    cf-uaa-lib (1.3.10)
       multi_json
     crack (0.3.2)
     diff-lcs (1.1.3)
@@ -81,7 +81,7 @@ GEM
     gem-release (0.4.1)
     json_pure (1.7.7)
     mime-types (1.21)
-    multi_json (1.6.1)
+    multi_json (1.7.1)
     multipart-post (1.2.0)
     parallel (0.6.2)
     parallel_tests (0.10.0)
