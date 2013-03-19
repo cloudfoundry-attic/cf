@@ -30,8 +30,6 @@ module CF::Service
 
       if input[:version]
         offerings.reject! { |s| s.version != input[:version] }
-      else
-        offerings.reject!(&:deprecated?)
       end
 
       # filter the offerings based on a given plan value, which will be a
