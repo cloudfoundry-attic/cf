@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/cfoundry.git
-  revision: 03deaa28208b05b84fc31897ff08239e539639cd
+  revision: 049f9f70842ffee4c6d60c2d8d000f6dd7647e7e
   submodules: true
   specs:
-    cfoundry (0.6.0.rc1)
+    cfoundry (0.6.0.rc2)
       cf-uaa-lib (~> 1.3.10)
       multi_json (~> 1.3)
       multipart-post (~> 1.1)
@@ -38,12 +38,12 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: 519dce6415bb7bde0cf33482fa4db8020a13dfd2
+  revision: f6d2690acef1ceb11949de30b4b9d9068e9569d6
   specs:
-    tunnel-cf-plugin (0.3.0.rc1)
+    tunnel-cf-plugin (0.3.0.rc2)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.6.0.rc1, < 0.7)
+      cfoundry (>= 0.6.0.rc2, < 0.7)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
 
