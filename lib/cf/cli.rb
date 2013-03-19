@@ -287,14 +287,6 @@ module CF
       url.gsub(/\/$/, "")
     end
 
-    def target_file
-      CF::TARGET_FILE
-    end
-
-    def tokens_file
-      CF::TOKENS_FILE
-    end
-
     def one_of(*paths)
       paths.each do |p|
         exp = File.expand_path(p)
@@ -462,6 +454,16 @@ module CF
             fail_unknown(display, name)
         }
       end
+    end
+
+    private
+
+    def target_file
+      File.expand_path(CF::TARGET_FILE)
+    end
+
+    def tokens_file
+      File.expand_path(CF::TOKENS_FILE)
     end
   end
 end
