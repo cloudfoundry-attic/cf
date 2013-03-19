@@ -260,14 +260,6 @@ describe CF::CLI do
       end
     end
 
-    context "when a ~/.cf_target exists" do
-      let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
-
-      it "returns the target in that file" do
-        expect(subject).to eq "https://api.some-domain.com"
-      end
-    end
-
     context "when no target file exists" do
       let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/no_config" }
 
@@ -293,18 +285,6 @@ describe CF::CLI do
       end
     end
 
-    context "when a ~/.cf_token file exists" do
-      let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
-
-      it "returns the target in that file" do
-        expect(subject).to eq({
-          "https://api.some-domain.com" => {
-            :token => "bearer some-token"
-          }
-        })
-      end
-    end
-
     context "when no token file exists" do
       let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/no_config" }
 
@@ -324,16 +304,6 @@ describe CF::CLI do
         expect(subject).to eq({
           :token => "bearer some-token",
           :version => 2
-        })
-      end
-    end
-
-    context "when a ~/.cf_token file exists" do
-      let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
-
-      it "returns the info for the given url" do
-        expect(subject).to eq({
-          :token => "bearer some-token"
         })
       end
     end

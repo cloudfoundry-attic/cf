@@ -1,7 +1,4 @@
 module CF
-  OLD_TARGET_FILE = "~/.cf_target".freeze
-  OLD_TOKENS_FILE = "~/.cf_token".freeze
-
   CONFIG_DIR = "~/.cf".freeze
 
   LOGS_DIR = "#{CONFIG_DIR}/logs".freeze

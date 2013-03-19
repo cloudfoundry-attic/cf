@@ -288,11 +288,11 @@ module CF
     end
 
     def target_file
-      one_of(CF::TARGET_FILE, CF::OLD_TARGET_FILE)
+      CF::TARGET_FILE
     end
 
     def tokens_file
-      one_of(CF::TOKENS_FILE, CF::OLD_TOKENS_FILE)
+      CF::TOKENS_FILE
     end
 
     def one_of(*paths)
@@ -327,13 +327,10 @@ module CF
 
     def targets_info
       new_toks = File.expand_path(CF::TOKENS_FILE)
-      old_toks = File.expand_path(CF::OLD_TOKENS_FILE)
 
       info =
         if File.exist? new_toks
           YAML.load_file(new_toks)
-        elsif File.exist? old_toks
-          MultiJson.load(File.read(old_toks))
         end
 
       info ||= {}
