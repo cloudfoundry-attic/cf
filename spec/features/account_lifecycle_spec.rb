@@ -41,7 +41,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
       run("#{cf_bin} login #{username} --password #{password}") do |runner|
         expect(runner).to say(
           "Organization>" => proc {
-            runner.send_keys "1"
+            runner.send_keys "pivotal-integration"
             expect(runner).to say /Switching to organization .*\.\.\. OK/
           },
           "Switching to organization" => proc {}
@@ -56,7 +56,6 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
         )
       end
 
-      puts "registering #{email}"
       run("#{cf_bin} register #{email} --password p") do |runner|
         expect(runner).to say "Confirm Password>"
         runner.send_keys 'p'
@@ -82,7 +81,6 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
         # expect(runner).to say "Deleting #{email}... OK"
       # end
 
-      puts "deleting #{email}"
       client.login(email, "p")
       user = client.current_user
       guid = user.guid
