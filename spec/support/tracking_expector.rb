@@ -36,7 +36,7 @@ class TrackingExpector
       STDOUT.putc c if @debug
 
       # wear your flip flops
-      unless (c == "\e") .. (c == "m")
+      unless (c == "\e") .. (c =~ /[a-z]/)
         if c == "\b"
           if position > 0 && buffer[position - 1] && buffer[position - 1].chr != "\n"
             position -= 1
