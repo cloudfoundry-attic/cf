@@ -31,24 +31,4 @@ describe CF::Detector do
       end
     end
   end
-
-  describe '#detect_runtime' do
-
-  end
-
-  describe '#runtimes' do
-
-  end
-
-  describe '#suggested_memory' do
-
-  end
-
-  describe '#all_runtimes' do
-
-  end
-
-  describe '#all_frameworks' do
-
-  end
 end

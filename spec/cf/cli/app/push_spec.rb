@@ -81,11 +81,9 @@ describe CF::App::Push do
         subject
       end
 
-      [:memory=, :framework=].each do |property|
-        it "should not set #{property} on the app" do
-          dont_allow(app).__send__(property)
-          subject
-        end
+      it "should not set memory on the app" do
+        dont_allow(app).__send__(:memory=)
+        subject
       end
     end
 
@@ -131,50 +129,6 @@ describe CF::App::Push do
       end
 
       include_examples 'common tests for inputs', :total_instances, :instances
-    end
-
-    context 'when framework is given' do
-      let(:old) { fake(:framework, :name => "Old Framework") }
-      let(:new) { fake(:framework, :name => "New Framework") }
-      let(:app) { fake(:app, :framework => old) }
-      let(:inputs) { { :framework => new } }
-
-      it 'updates the app framework' do
-        stub(push).line(anything)
-        mock(app).update!
-        expect { subject }.to change { app.framework }.from(old).to(new)
-      end
-
-      it 'outputs the changed framework using the name' do
-        mock(push).line("Changes:")
-        mock(push).line("framework: Old Framework -> New Framework")
-        stub(app).update!
-        subject
-      end
-
-      include_examples 'common tests for inputs', :framework
-    end
-
-    context 'when runtime is given' do
-      let(:old) { fake(:runtime, :name => "Old Runtime") }
-      let(:new) { fake(:runtime, :name => "New Runtime") }
-      let(:app) { fake(:app, :runtime => old) }
-      let(:inputs) { { :runtime => new } }
-
-      it 'updates the app runtime' do
-        stub(push).line(anything)
-        mock(app).update!
-        expect { subject }.to change { app.runtime }.from(old).to(new)
-      end
-
-      it 'outputs the changed runtime using the name' do
-        mock(push).line("Changes:")
-        mock(push).line("runtime: Old Runtime -> New Runtime")
-        stub(app).update!
-        subject
-      end
-
-      include_examples 'common tests for inputs', :runtime
     end
 
     context 'when command is given' do
@@ -331,15 +285,11 @@ describe CF::App::Push do
 
   describe '#setup_new_app (integration spec!!)' do
     let(:app) { fake(:app, :guid => nil) }
-    let(:framework) { fake(:framework) }
-    let(:runtime) { fake(:runtime) }
     let(:host) { "" }
     let(:domain) { fake(:domain, :name => "example.com") }
     let(:inputs) do
       { :name => "some-app",
         :instances => 2,
-        :framework => framework,
-        :runtime => runtime,
         :memory => 1024,
         :host => host,
         :domain => domain

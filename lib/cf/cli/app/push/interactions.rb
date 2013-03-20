@@ -35,14 +35,6 @@ module CF::App
       ask("Instances", :default => 1)
     end
 
-    def ask_framework(choices, default, other)
-      ask_with_other("Framework", client.frameworks, choices, default, other)
-    end
-
-    def ask_runtime(choices, default, other)
-      ask_with_other("Runtime", client.runtimes, choices, default, other)
-    end
-
     def ask_command
       command = ask("Custom startup command", :default => "none")
 

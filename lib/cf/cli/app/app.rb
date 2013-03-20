@@ -24,8 +24,6 @@ module CF::App
       line "#{c(a.name, :name)}: #{status}"
 
       indented do
-        line "platform: #{b(a.framework.name)} on #{b(a.runtime.name)}"
-
         start_line "usage: #{b(human_mb(a.memory))}"
         print " #{d(IS_UTF8 ? "\xc3\x97" : "x")} #{b(a.total_instances)}"
         print " instance#{a.total_instances == 1 ? "" : "s"}"

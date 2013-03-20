@@ -5,8 +5,6 @@ module CF::App
       app.total_instances = input[:instances] if input.has?(:instances)
       app.command = input[:command] if input.has?(:command)
       app.production = input[:plan].upcase.start_with?("P") if input.has?(:plan)
-      app.framework = input[:framework] if input.has?(:framework)
-      app.runtime = input[:runtime] if input.has?(:runtime)
       app.buildpack = input[:buildpack] if input.has?(:buildpack)
     end
 
@@ -42,8 +40,6 @@ module CF::App
       case attr
       when :memory
         human_mb(val)
-      when :framework, :runtime
-        val.name
       when :command, :buildpack
         "'#{val}'"
       when :production

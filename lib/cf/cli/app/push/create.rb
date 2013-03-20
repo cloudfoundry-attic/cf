@@ -25,35 +25,6 @@ module CF::App
       inputs
     end
 
-    def determine_framework
-      return input[:framework] if input.has?(:framework)
-
-      if (detected_framework = detector.detect_framework)
-        input[:framework, [detected_framework], detected_framework, :other]
-      else
-        input[:framework, detector.all_frameworks, nil, nil]
-      end
-    end
-
-    def determine_runtime(framework)
-      return input[:runtime] if input.has?(:runtime)
-
-      detected_runtimes =
-        if framework.name == "standalone"
-          detector.detect_runtimes
-        else
-          detector.runtimes(framework)
-        end
-
-      default_runtime = detected_runtimes.size == 1 ? detected_runtimes.first : nil
-
-      if detected_runtimes.empty?
-        input[:runtime, detector.all_runtimes, nil, nil]
-      else
-        input[:runtime, detected_runtimes, default_runtime, :other]
-      end
-    end
-
     def create_app(inputs)
       app = client.app
 
@@ -128,10 +99,6 @@ module CF::App
 
     def has_procfile?
       File.exists?("#@path/Procfile")
-    end
-
-    def can_have_custom_start_command?(framework)
-      framework.name == "standalone"
     end
 
     def all_instances

@@ -8,8 +8,6 @@ module CF::App
           :default => proc { client.current_space },
           :from_given => by_name(:space)
     input :name, :desc => "Filter by name regexp"
-    input :runtime, :desc => "Filter by runtime regexp"
-    input :framework, :desc => "Filter by framework regexp"
     input :url, :desc => "Filter by url regexp"
     input :full, :desc => "Verbose output format", :default => false
     def apps
@@ -58,13 +56,12 @@ module CF::App
 
     def display_apps_table(apps)
       table(
-        ["name", "status", "usage", "plan", "runtime", "url"],
+        ["name", "status", "usage", "plan", "url"],
         apps.collect { |a|
           [ c(a.name, :name),
             app_status(a),
             "#{a.total_instances} x #{human_mb(a.memory)}",
             a.production ? "prod" : "dev",
-            a.runtime.name,
             if a.urls.empty?
               d("none")
             elsif a.urls.size == 1
@@ -79,14 +76,6 @@ module CF::App
     def app_matches?(a, options)
       if name = options[:name]
         return false if a.name !~ /#{name}/
-      end
-
-      if runtime = options[:runtime]
-        return false if a.runtime.name !~ /#{runtime}/
-      end
-
-      if framework = options[:framework]
-        return false if a.framework.name !~ /#{framework}/
       end
 
       if url = options[:url]

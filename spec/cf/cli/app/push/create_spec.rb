@@ -6,24 +6,11 @@ describe CF::App::Create do
   let(:given) { {} }
   let(:global) { { :color => false, :quiet => true } }
 
-  let(:frameworks) { fake_list(:framework, 3) }
-  let(:framework) { buildpack }
-  let(:buildpack) { fake(:framework, :name => "buildpack") }
-  let(:standalone) { fake(:framework, :name => "standalone") }
-
-  let(:runtimes) { fake_list(:runtime, 3) }
-  let(:runtime) { runtimes.first }
-
   let(:service_instances) { fake_list(:service_instance, 5) }
-
   let(:lucid64) { fake :stack, :name => "lucid64" }
 
   let(:client) do
-    fake_client(
-      :frameworks => frameworks,
-      :runtimes => runtimes,
-      :service_instances => service_instances,
-      :stacks => [lucid64])
+    fake_client(:service_instances => service_instances, :stacks => [lucid64])
   end
 
   before do
@@ -62,11 +49,8 @@ describe CF::App::Create do
       its([:total_instances]) { should eq 1 }
       its([:space]) { should eq client.current_space }
       its([:production]) { should eq true }
-      its([:framework]) { should eq nil }
-      its([:runtime]) { should eq nil }
       its([:command]) { should eq "ruby main.rb" }
       its([:memory]) { should eq 1024 }
-      its([:buildpack]) { should eq "git://example.com" }
       its([:stack]) { should eq lucid64 }
     end
 
@@ -103,14 +87,6 @@ describe CF::App::Create do
         subject
       end
 
-      it 'does not ask for the framework' do
-        dont_allow_ask('Framework', anything) do |_, options|
-          expect(options[:choices]).to eq frameworks.sort_by(&:name)
-          framework
-        end
-        subject
-      end
-
       context 'when the command is not given' do
         before { given.delete(:command) }
 
@@ -134,17 +110,7 @@ describe CF::App::Create do
           end
         end
 
-        context 'when the framework is "buildpack"' do
-          let(:framework) { buildpack }
-
-          include_examples 'an app that can have a custom start command'
-        end
-
-        context 'when the framework is "standalone"' do
-          let(:framework) { standalone }
-
-          include_examples 'an app that can have a custom start command'
-        end
+        include_examples 'an app that can have a custom start command'
 
         describe "getting the start command" do
           before do
@@ -179,14 +145,6 @@ describe CF::App::Create do
         end
       end
 
-      it 'does not ask for the runtime' do
-        dont_allow_ask('Runtime', anything) do |_, options|
-          expect(options[:choices]).to eq runtimes.sort_by(&:name)
-          runtime
-        end
-        subject
-      end
-
       it 'asks for the memory' do
         given.delete(:memory)
 
@@ -209,116 +167,6 @@ describe CF::App::Create do
     end
   end
 
-  describe '#determine_framework' do
-    subject { create.determine_framework }
-
-    context 'when framework is given' do
-      let(:inputs) { { :framework => framework } }
-
-      it 'does not try to get the frameworks' do
-        any_instance_of(CF::Detector) do |detector|
-          dont_allow(detector).detect_framework
-          dont_allow(detector).all_frameworks
-        end
-
-        dont_allow_ask
-        dont_allow(client).frameworks
-
-        subject
-      end
-
-      it { should eq framework }
-    end
-
-    context 'when framework is not given' do
-      context 'and a framework is detected' do
-        it "lists the detected framework and an 'other' option" do
-          any_instance_of(CF::Detector) do |detector|
-            mock(detector).detect_framework { framework }
-          end
-
-          mock_ask('Framework', anything) do |_, options|
-            expect(options[:choices]).to eq [framework, :other] #frameworks.sort_by(&:name)
-            framework
-          end
-
-          subject
-        end
-      end
-
-      context 'and a framework is not detected' do
-        it "lists all available frameworks" do
-          any_instance_of(CF::Detector) do |detector|
-            stub(detector).detect_framework
-          end
-
-          mock_ask('Framework', anything) do |_, options|
-            expect(options[:choices]).to eq frameworks.sort_by(&:name)
-            framework
-          end
-
-          subject
-        end
-      end
-    end
-  end
-
-  describe '#detect_runtimes' do
-    subject { create.determine_runtime(framework) }
-
-    context 'when runtime is given' do
-      let(:inputs) { { :runtime => runtime } }
-
-      it 'does not try to get the runtime' do
-        any_instance_of(CF::Detector) do |detector|
-          dont_allow(detector).detect_runtime
-          dont_allow(detector).all_runtimes
-        end
-
-        dont_allow_ask
-        dont_allow(client).runtimes
-
-        subject
-      end
-
-      it { should eq runtime }
-    end
-
-    context 'when runtime is not given' do
-      context 'and the framework is standalone' do
-        let(:framework) { standalone }
-
-        it "detects the runtime" do
-          any_instance_of(CF::Detector) do |detector|
-            mock(detector).detect_runtimes { runtimes }
-          end
-
-          mock_ask('Runtime', anything) do |_, options|
-            expect(options[:choices]).to eq(runtimes.sort_by(&:name) + [:other])
-            runtime
-          end
-
-          subject
-        end
-      end
-
-      context 'and the framework is not standalone' do
-        it "gets the runtimes based on the framework" do
-          any_instance_of(CF::Detector) do |detector|
-            mock(detector).runtimes(framework) { runtimes }
-          end
-
-          mock_ask('Runtime', anything) do |_, options|
-            expect(options[:choices]).to eq(runtimes.sort_by(&:name) + [:other])
-            runtime
-          end
-
-          subject
-        end
-      end
-    end
-  end
-
   describe '#create_app' do
     before { dont_allow_ask }
 
@@ -328,8 +176,6 @@ describe CF::App::Create do
     let(:attributes) do
       { :name => "some-app",
         :total_instances => 2,
-        :framework => framework,
-        :runtime => runtime,
         :production => false,
         :memory => 1024,
         :buildpack => "git://example.com"

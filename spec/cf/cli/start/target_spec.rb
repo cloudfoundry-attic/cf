@@ -49,9 +49,7 @@ command CF::Start::Target do
       let(:user) { stub! }
       let(:organization) { organizations.first }
       let(:client) do
-        fake_client :frameworks => fake_list(:framework, 3),
-          :organizations => organizations,
-          :token => CFoundry::AuthToken.new("bearer some-access-token")
+        fake_client :organizations => organizations, :token => CFoundry::AuthToken.new("bearer some-access-token")
       end
 
       before do

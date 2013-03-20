@@ -24,10 +24,6 @@ module CF::App
                       }
     input :memory,    :desc => "Memory limit"
     input :instances, :desc => "Number of instances to run", :type => :integer
-    input :framework, :desc => "Framework to use",
-                      :from_given => by_name(:framework)
-    input :runtime,   :desc => "Runtime to use",
-                      :from_given => by_name(:runtime)
     input :command,   :desc => "Startup command"
     input :plan,      :desc => "Application plan", :default => "D100"
     input :start,     :desc => "Start app after pushing?", :default => true
