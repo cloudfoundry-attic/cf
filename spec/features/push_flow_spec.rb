@@ -97,11 +97,11 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
             runner.send_keys ""
           end
 
-          expect(runner).to say "Save configuration?> n"
+          expect(runner).to say "Save configuration?> n", 10
           runner.send_keys ""
 
-          expect(runner).to say "Uploading #{app}... OK"
-          expect(runner).to say "Starting #{app}... OK"
+          expect(runner).to say "Uploading #{app}... OK", 10
+          expect(runner).to say "Starting #{app}... OK", 10
 
           expect(runner).to say /(Using|Installing) Ruby/i, 10
           expect(runner).to say "Your bundle is complete!", 30
