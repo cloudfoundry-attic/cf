@@ -22,7 +22,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
 
     after do
-      cf %W(delete #{app} -f --no-script)
+      `#{cf_bin} delete #{app} -f --no-script`
       Interact::Progress::Dots.stop!
     end
 
