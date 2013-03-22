@@ -151,11 +151,6 @@ describe CF::App::Create do
         memory_choices = %w(64M 128M 256M 512M 1G)
         stub(create).memory_choices { memory_choices }
 
-        detector = mock
-        stub(create).detector { detector }
-
-        stub(detector).detected { Clouseau::Rails }
-
         mock_ask('Memory Limit', anything) do |_, options|
           expect(options[:choices]).to eq memory_choices
           expect(options[:default]).to eq "256M"

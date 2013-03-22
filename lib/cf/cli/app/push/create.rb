@@ -1,5 +1,3 @@
-require "cf/detect"
-
 module CF::App
   module Create
     attr_accessor :input
@@ -16,10 +14,7 @@ module CF::App
       inputs[:buildpack] = input[:buildpack]
       inputs[:command] = input[:command] if input.has?(:command) || !has_procfile?
 
-      detected = detector.detected
-      human_mb = human_mb((detected && detected.memory_suggestion) || 64)
-      inputs[:memory] = megabytes(input[:memory, human_mb])
-
+      inputs[:memory] = megabytes(input[:memory, human_mb(256)])
       inputs[:stack] = input[:stack]
 
       inputs
@@ -103,10 +98,6 @@ module CF::App
 
     def all_instances
       @all_instances ||= client.service_instances
-    end
-
-    def detector
-      @detector ||= CF::Detector.new(client, @path)
     end
 
     def target_base

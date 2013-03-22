@@ -31,7 +31,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
 
     it "registers a new account and deletes it" do
-      pending "until we get some v2 admin credentials somewhere to actually run this with" if TRAVIS_BUILD_ID
+      pending "until we get some v2 admin credentials somewhere to actually run this with"
 
       email = Faker::Internet.email
       run("#{cf_bin} target #{target}") do |runner|

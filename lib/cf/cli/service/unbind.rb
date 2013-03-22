@@ -1,5 +1,3 @@
-require "cf/detect"
-
 require "cf/cli/service/base"
 
 module CF::Service
