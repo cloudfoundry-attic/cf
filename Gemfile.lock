@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
-  revision: 05f2ef1db7f1a148c721e0717b2205644e17afad
+  revision: 30a58c53dd7a2dc627fae492295fdf7892340d81
   specs:
-    manifests-cf-plugin (0.7.0.rc2)
-      cfoundry (>= 0.5.3.rc6, < 0.6)
+    manifests-cf-plugin (0.7.0.rc3)
+      cfoundry (>= 0.5.3.rc5, < 0.6)
 
 GIT
   remote: git://github.com/cloudfoundry/micro-cf-plugin.git
