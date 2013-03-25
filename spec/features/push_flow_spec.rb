@@ -100,8 +100,8 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
           expect(runner).to say "Save configuration?> n", 10
           runner.send_keys ""
 
-          expect(runner).to say "Uploading #{app}... OK"
-          expect(runner).to say "Starting #{app}... OK"
+          expect(runner).to say "Uploading #{app}... OK", 180
+          expect(runner).to say "Starting #{app}... OK", 180
           expect(runner).to say "Checking #{app}...", 180
           expect(runner).to say "1/1 instances"
           expect(runner).to say "OK", 30
