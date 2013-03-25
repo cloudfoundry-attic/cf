@@ -36,7 +36,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
         run("#{cf_bin} login #{username} --password #{password}") do |runner|
           expect(runner).to say "Authenticating... OK"
           expect(runner).to say "Organization>"
-          runner.send_keys("pivotal")
+          runner.send_keys("1")
 
           expect(runner).to say "Switching to organization"
           expect(runner).to say "OK"
