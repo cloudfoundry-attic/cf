@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/cloudfoundry/cf.png)](https://travis-ci.org/cloudfoundry/cf)
 [![Gem Version](https://badge.fury.io/rb/cf.png)](http://badge.fury.io/rb/cf)
+[![Code Climate](https://codeclimate.com/github/cloudfoundry/cf.png)](https://codeclimate.com/github/cloudfoundry/cf)
 
 # CLI for Cloud Foundry (compatible with next generation also known as v2)
 
