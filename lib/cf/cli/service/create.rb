@@ -13,8 +13,7 @@ module CF::Service
     input :name, :desc => "Name for your service", :argument => :optional
     input :plan, :desc => "Service plan",
           :from_given => find_by_name_insensitive("plan"),
-          :default => proc { |plans|
-            plans.find { |p| p.name == "D100" } ||
+          :default => proc {
               interact
           }
     input :provider, :desc => "Service provider"

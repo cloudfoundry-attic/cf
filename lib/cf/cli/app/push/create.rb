@@ -9,8 +9,6 @@ module CF::App
       inputs[:total_instances] = input[:instances]
       inputs[:space] = client.current_space if client.current_space
 
-      inputs[:production] = !!(input[:plan] =~ /^p/i)
-
       inputs[:buildpack] = input[:buildpack]
       inputs[:command] = input[:command] if input.has?(:command) || !has_procfile?
 

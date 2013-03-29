@@ -1,7 +1,7 @@
 require "spec_helper"
 require "webmock/rspec"
 
-if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET']
+if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_OTHER_TEST_ORGANIZATION']
   describe 'A new user tries to use CF against v2', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
     include CF::Interactive
@@ -9,6 +9,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:organization) { ENV['CF_V2_OTHER_TEST_ORGANIZATION'] }
 
     let(:app) do
       fuzz = TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_")
@@ -44,7 +45,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
 
         expect(runner).to say(
           "Organization>" => proc {
-            runner.send_keys "1"
+            runner.send_keys organization
             expect(runner).to say /Switching to organization .*\.\.\. OK/
           },
           "Switching to organization" => proc {}
@@ -90,6 +91,22 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
           expect(runner).to say(/Binding #{app}\..* to #{app}\.\.\. OK/)
 
           expect(runner).to say "Create services for application?> n"
+          runner.send_keys "y"
+
+          # create a service here
+          expect(runner).to say "What kind?>"
+          runner.send_keys "redis"
+
+          expect(runner).to say "Name?>"
+          runner.send_keys ""
+
+          expect(runner).to say "Which plan?>"
+          runner.send_keys "1"
+
+          expect(runner).to say /Creating service redis-.* OK/
+          expect(runner).to say /Binding redis-.* to .+ OK/
+
+          expect(runner).to say "Create another service?> n"
           runner.send_keys ""
 
           # skip this
@@ -111,11 +128,14 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
       run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"
-
         expect(runner).to say "Deleting #{app}... OK"
+
+        expect(runner).to say "Delete orphaned service"
+        runner.send_keys "y"
+        expect(runner).to say /Deleting redis.* OK/
       end
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, and $CF_V2_TEST_PASSWORD'
+  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, $CF_V2_TEST_PASSWORD, and $CF_V2_OTHER_TEST_ORGANIZATION'
 end

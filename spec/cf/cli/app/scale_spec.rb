@@ -48,28 +48,4 @@ command CF::App::Scale do
       expect { subject }.to change(app, :total_instances).from(before_value).to(5)
     end
   end
-
-  context "when the --plan flag is given" do
-    context "when the plan name begins with a 'p'" do
-      let(:app) { fake :app, :production => false }
-
-      subject { cf %W[scale #{app.name} --plan P100] }
-
-      it "changes the application's 'production' flag to true" do
-        mock(app).update!
-        expect { subject }.to change(app, :production).from(false).to(true)
-      end
-    end
-
-    context "when the plan name does not begin with a 'p'" do
-      let(:app) { fake :app, :production => true }
-
-      subject { cf %W[scale #{app.name} --plan D100] }
-
-      it "changes the application's 'production' flag to false" do
-        mock(app).update!
-        expect { subject }.to change(app, :production).from(true).to(false)
-      end
-    end
-  end
 end

@@ -56,12 +56,11 @@ module CF::App
 
     def display_apps_table(apps)
       table(
-        ["name", "status", "usage", "plan", "url"],
+        ["name", "status", "usage", "url"],
         apps.collect { |a|
           [ c(a.name, :name),
             app_status(a),
             "#{a.total_instances} x #{human_mb(a.memory)}",
-            a.production ? "prod" : "dev",
             if a.urls.empty?
               d("none")
             elsif a.urls.size == 1

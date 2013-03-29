@@ -31,8 +31,6 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
 
     it "registers a new account and deletes it" do
-      pending "until we get some v2 admin credentials somewhere to actually run this with"
-
       email = Faker::Internet.email
       run("#{cf_bin} target #{target}") do |runner|
         runner.wait_for_exit
@@ -75,18 +73,24 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
         runner.send_keys "1"
       end
 
-      # run("#{cf_bin} delete-user #{email}") do |runner|
-        # expect(runner).to say "Really delete user #{email}?>"
-        # runner.send_keys "y"
-        # expect(runner).to say "Deleting #{email}... OK"
-      # end
+      # TODO: do this when cf delete-user is implemented
+      #run("#{cf_bin} delete-user #{email}") do |runner|
+      #  expect(runner).to say "Really delete user #{email}?>"
+      #  runner.send_keys "y"
+      #  expect(runner).to say "Deleting #{email}... OK"
+      #end
 
+      # TODO: not this.
       client.login(email, "p")
       user = client.current_user
       guid = user.guid
       client.login(username, password)
       user.delete!
       client.base.uaa.delete_user(guid)
+
+      run("#{cf_bin} login #{email} --password p") do |runner|
+        expect(runner).to say "Authenticating... FAILED"
+      end
     end
   end
 else

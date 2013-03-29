@@ -25,7 +25,7 @@ module CF::App
     input :memory,    :desc => "Memory limit"
     input :instances, :desc => "Number of instances to run", :type => :integer
     input :command,   :desc => "Startup command"
-    input :plan,      :desc => "Application plan", :default => "D100"
+    input :plan,      :desc => "Application plan"
     input :start,     :desc => "Start app after pushing?", :default => true
     input :restart,   :desc => "Restart app after updating?", :default => true
     input :buildpack, :desc => "Custom buildpack URL", :default => nil

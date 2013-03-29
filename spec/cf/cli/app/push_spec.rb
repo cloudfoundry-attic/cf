@@ -153,54 +153,6 @@ describe CF::App::Push do
       include_examples 'common tests for inputs', :command
     end
 
-    context 'when plan is given' do
-      let(:old) { "d100" }
-      let(:new) { "p100" }
-      let(:inputs) { { :plan => new } }
-
-      include_examples 'common tests for inputs', :production, :plan
-
-      %w{p100 P100 P200}.each do |plan|
-        context "when the given plan is #{plan}" do
-          let(:inputs) { { :plan => plan } }
-
-          it 'sets production to true' do
-            stub(push).line(anything)
-            mock(app).update!
-            expect { subject }.to change { app.production }.from(false).to(true)
-          end
-
-          it 'outputs the changed plan in single quotes' do
-            mock(push).line("Changes:")
-            mock(push).line("production: false -> true")
-            stub(app).update!
-            subject
-          end
-        end
-      end
-
-      %w{d100 D100 D200 fizzbuzz}.each do |plan|
-        context "when the given plan is #{plan}" do
-          let(:app) { fake(:app, :production => true) }
-
-          let(:inputs) { { :plan => plan } }
-
-          it 'sets production to false' do
-            stub(push).line(anything)
-            mock(app).update!
-            expect { subject }.to change { app.production }.from(true).to(false)
-          end
-
-          it 'outputs the changed plan in single quotes' do
-            mock(push).line("Changes:")
-            mock(push).line("production: true -> false")
-            stub(app).update!
-            subject
-          end
-        end
-      end
-    end
-
     context 'when restart is given' do
       let(:inputs) { { :restart => true, :memory => 4096 } }
 

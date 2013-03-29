@@ -36,7 +36,7 @@ describe CF::App::Create do
     let(:given) do
       { :name => "some-name",
         :instances => "1",
-        :plan => "p100",
+        :plan => "100",
         :memory => "1G",
         :command => "ruby main.rb",
         :buildpack => "git://example.com",
@@ -48,7 +48,6 @@ describe CF::App::Create do
       its([:name]) { should eq "some-name" }
       its([:total_instances]) { should eq 1 }
       its([:space]) { should eq client.current_space }
-      its([:production]) { should eq true }
       its([:command]) { should eq "ruby main.rb" }
       its([:memory]) { should eq 1024 }
       its([:stack]) { should eq lucid64 }
@@ -171,7 +170,6 @@ describe CF::App::Create do
     let(:attributes) do
       { :name => "some-app",
         :total_instances => 2,
-        :production => false,
         :memory => 1024,
         :buildpack => "git://example.com"
       }

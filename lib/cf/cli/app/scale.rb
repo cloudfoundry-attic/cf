@@ -10,7 +10,7 @@ module CF::App
           :type => :numeric
     input :memory, :desc => "Memory limit"
     input :disk, :desc => "Disk quota"
-    input :plan, :desc => "Application plan", :default => "D100"
+    input :plan, :desc => "Application plan"
     input :restart, :desc => "Restart app after updating?", :default => true
     def scale
       app = input[:app]
@@ -29,7 +29,6 @@ module CF::App
 
       if input.has?(:plan)
         plan_name = input[:plan]
-        production = !!(plan_name =~ /^p/i)
       end
 
       unless instances || memory || disk || plan_name
@@ -40,7 +39,6 @@ module CF::App
       app.total_instances = instances if input.has?(:instances)
       app.memory = megabytes(memory) if input.has?(:memory)
       app.disk_quota = megabytes(disk) if input.has?(:disk)
-      app.production = production if input.has?(:plan)
 
       fail "No changes!" unless app.changed?
 
