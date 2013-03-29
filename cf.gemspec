@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "multi_json", "~> 1.3"
 
   s.add_runtime_dependency "interact", "~> 0.5"
-  s.add_runtime_dependency "cfoundry", "~> 0.6.0"
+  s.add_runtime_dependency "cfoundry", ">= 0.6.1.rc2", "< 0.7"
   s.add_runtime_dependency "mothership", ">= 0.5.1", "< 1.0"
   s.add_runtime_dependency "manifests-cf-plugin", "~> 0.7.0"
   s.add_runtime_dependency "tunnel-cf-plugin", "~> 0.3.0"
