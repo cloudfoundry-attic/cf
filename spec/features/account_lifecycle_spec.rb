@@ -90,6 +90,14 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
 
       run("#{cf_bin} login #{email} --password p") do |runner|
         expect(runner).to say "Authenticating... FAILED"
+
+        expect(runner).to say "Password>"
+        runner.send_keys "another_password"
+        expect(runner).to say "Password>"
+        runner.send_keys "passwords_for_everyone"
+        expect(runner).to say "FAILED"
+        runner.output.should_not =~ /CFoundry::/
+        runner.output.should_not =~ %r{~/\.cf/crash}
       end
     end
   end

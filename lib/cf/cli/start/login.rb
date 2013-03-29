@@ -60,6 +60,8 @@ module CF::Start
         end
       end
 
+      return if failed
+
       info.merge!(auth_token.to_hash)
       save_target_info(info)
       invalidate_client

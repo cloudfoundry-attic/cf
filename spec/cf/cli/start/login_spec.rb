@@ -61,6 +61,20 @@ command CF::Start::Login do
       expect(tokens_yaml["https://api.some-domain.com"][:refresh_token]).to eq("some-new-refresh-token")
     end
 
+    context "when the user logs in with invalid credentials" do
+      before do
+        stub_ask("Username", {}) { "my-username" }
+        stub_ask("8-digit PIN", {:echo => "*", :forget => true}) { "my-password" }
+
+        stub(client).login("my-username", "my-password") { raise CFoundry::Denied }
+      end
+
+      it "informs the user gracefully" do
+        subject
+        expect(output).to say("Authenticating... FAILED")
+      end
+    end
+
     context "with space and org in the token file" do
       before do
         write_token_file(:space => "space-id-1", :organization => "organization-id-1")
@@ -99,7 +113,7 @@ command CF::Start::Login do
 
         context "with one organization" do
           let(:organizations) {
-            [ organization ]
+            [organization]
           }
 
           it "does not prompt for an organization" do
@@ -112,7 +126,7 @@ command CF::Start::Login do
 
         context "with multiple organizations" do
           let(:organizations) {
-            [ organization, OpenStruct.new(:name => 'My Org 2', :guid => 'organization-id-2') ]
+            [organization, OpenStruct.new(:name => 'My Org 2', :guid => 'organization-id-2')]
           }
 
           before do
