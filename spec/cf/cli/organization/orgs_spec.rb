@@ -50,7 +50,7 @@ describe CF::Organization::Orgs do
     expect(stdout.readline).to eq "\n"
   end
 
-  context 'when there are no orgnaizations' do
+  context 'when there are no organizations' do
     let(:organizations) { [] }
 
     context 'and the full flag is given' do

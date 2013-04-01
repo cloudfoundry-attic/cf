@@ -2,7 +2,7 @@ require "cf/cli/service/base"
 
 module CF::Service
   class Services < Base
-    desc "List your service"
+    desc "List your services"
     group :services
     input :space, :desc => "Show services in given space",
           :from_given => by_name(:space),
@@ -15,6 +15,7 @@ module CF::Service
     input :app, :desc => "Limit to application's service bindings",
           :from_given => by_name(:app)
     input :full, :desc => "Verbose output format", :default => false
+
     def services
       msg =
         if space = input[:space]
@@ -45,7 +46,7 @@ module CF::Service
         end
       else
         table(
-          ["name", "service", "version", "plan", "bound apps"],
+          ["name", "service", "provider", "version", "plan", "bound apps"],
           services.collect { |i|
             plan = i.service_plan
             service = plan.service
@@ -53,9 +54,11 @@ module CF::Service
             label = service.label
             version = service.version
             apps = name_list(i.service_bindings.collect(&:app))
+            provider = service.provider
 
             [ c(i.name, :name),
               label,
+              provider,
               version,
               plan.name,
               apps

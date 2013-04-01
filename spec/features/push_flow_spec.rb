@@ -125,6 +125,17 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
         end
       end
 
+      run("#{cf_bin} services") do |runner|
+        expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
+        expect(runner).to say /redis-.+?\s+   # name
+            redis\s+                          # service
+            core\s+                           # provider
+            [\d.]+\s+                         # version
+            100\s+                            # plan
+            #{app}                            # bound apps
+          /x
+      end
+
       run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"
