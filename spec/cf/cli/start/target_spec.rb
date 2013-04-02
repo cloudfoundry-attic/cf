@@ -117,5 +117,15 @@ command CF::Start::Target do
         end
       end
     end
+
+    context "when client is nil" do
+      let(:client) { nil }
+      subject { cf ["target"] }
+
+      it 'prints an error' do
+        subject
+        expect(error_output).to say("No target has been specified.")
+      end
+    end
   end
 end
