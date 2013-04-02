@@ -12,7 +12,8 @@ module CF
 
 
       # These commands don't require authentication.
-      def precondition; end
+      def precondition;
+      end
 
       private
 
@@ -39,57 +40,61 @@ module CF
         end
       end
 
-      def select_org(input, info)
-        if input.has?(:organization) || !org_valid?(info[:organization])
-          org = input[:organization]
-          if org
-            with_progress("Switching to organization #{c(org.name, :name)}") {}
-            client.current_organization = org
-          end
-          info[:organization] = org ? org.guid : nil
-          !!org
-        else
-          info[:organization] = nil
-          client.current_organization = nil
-          false
-        end
+      def set_organization(organization, info)
+        client.current_organization = organization
+        info[:organization] = organization.guid
       end
 
-      def select_space(input, info, changed_org)
-        if input.has?(:space) || !space_valid?(info[:space])
-          line if changed_org && !quiet?
-          space = input[:space, client.current_organization]
-          if space
-            with_progress("Switching to space #{c(space.name, :name)}") {}
-            client.current_space = space
-          end
-          info[:space] = space ? space.guid : nil
-        else
-          info[:space] = nil
-          client.current_space = nil
+      def get_organization(input, info)
+        if input.has?(:organization)
+          organization = input[:organization]
+          with_progress("Switching to organization #{c(organization.name, :name)}") {}
+        elsif info[:organization]
+          previous_organization = client.organization(info[:organization])
+          organization = previous_organization if organization_valid?(previous_organization)
         end
+
+        organization || input[:organization] #prompt
+      end
+
+      def set_space(space, info)
+        client.current_space = space
+        info[:space] = space.guid
+      end
+
+      def get_space(input, info, organization)
+        if input.has?(:space)
+          space = input[:space]
+          with_progress("Switching to space #{c(space.name, :name)}") {}
+        elsif info[:space]
+          previous_space = client.space(info[:space])
+          space = previous_space if space_valid?(previous_space)
+        end
+
+        space || input[:space, organization] #prompt
       end
 
       def select_org_and_space(input, info)
-        changed_org = select_org(input, info)
-        if client.current_organization
-          select_space(input, info, changed_org)
-        else
-          info[:space] = nil
-          client.current_space = nil
+        organization = get_organization(input, info)
+
+        if organization
+          set_organization(organization, info)
+          if space = get_space(input, info, organization)
+            set_space(space, info)
+          end
         end
       end
 
-      def org_valid?(guid, user = client.current_user)
-        return false unless guid
-        client.organization(guid).users.include? user
+      def organization_valid?(organization, user = client.current_user)
+        return false unless organization.guid
+        organization.users.include? user
       rescue CFoundry::APIError
         false
       end
 
-      def space_valid?(guid, user = client.current_user)
-        return false unless guid
-        client.space(guid).developers.include? user
+      def space_valid?(space, user = client.current_user)
+        return false unless space.guid
+        space.developers.include? user
       rescue CFoundry::APIError
         false
       end

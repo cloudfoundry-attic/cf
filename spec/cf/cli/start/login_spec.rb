@@ -86,8 +86,8 @@ command CF::Start::Login do
         it "clears the org and space param from the token file" do
           subject
 
-          expect(tokens_yaml["https://api.some-domain.com"][:space]).to be_nil
-          expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be_nil
+          expect(output).to say("There are no organizations.")
+          expect(output).to say("create one with")
         end
       end
 
@@ -99,18 +99,6 @@ command CF::Start::Login do
         let(:organization) { fake :organization, :users => [user] }
         let(:user) { fake :user }
 
-        shared_examples_for :method_clearing_the_token_file do
-          it "sets the new organization in the token file" do
-            subject
-            expect(tokens_yaml["https://api.some-domain.com"][:organization]).to eq(organizations.first.guid)
-          end
-
-          it "clears the space param from the token file" do
-            subject
-            expect(tokens_yaml["https://api.some-domain.com"][:space]).to be_nil
-          end
-        end
-
         context "with one organization" do
           let(:organizations) {
             [organization]
@@ -120,8 +108,6 @@ command CF::Start::Login do
             dont_allow_ask("Organization", anything)
             subject
           end
-
-          it_behaves_like :method_clearing_the_token_file
         end
 
         context "with multiple organizations" do
@@ -137,8 +123,6 @@ command CF::Start::Login do
             mock_ask("Organization", anything) { organizations.first }
             subject
           end
-
-          it_behaves_like :method_clearing_the_token_file
         end
       end
     end

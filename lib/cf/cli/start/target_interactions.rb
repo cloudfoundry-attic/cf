@@ -1,36 +1,36 @@
 module CF::Start
   module TargetInteractions
     def ask_organization
-      orgs = client.organizations(:depth => 0)
+      organization_choices = client.organizations(:depth => 0)
 
-      if orgs.empty?
+      if organization_choices.empty?
         unless quiet?
           line
           line c("There are no organizations.", :warning)
           line "You may want to create one with #{c("create-org", :good)}."
         end
-      elsif orgs.size == 1 && !input.interactive?(:organization)
-        orgs.first
+      elsif organization_choices.size == 1 && !input.interactive?(:organization)
+        organization_choices.first
       else
         ask("Organization",
-            :choices => orgs.sort_by(&:name),
-            :display => proc(&:name))
+          :choices => organization_choices.sort_by(&:name),
+          :display => proc(&:name))
       end
     end
 
     def ask_space(org)
-      spaces = org.spaces(:depth => 0)
+      space_choices = org.spaces(:depth => 0)
 
-      if spaces.empty?
+      if space_choices.empty?
         unless quiet?
           line
           line c("There are no spaces in #{b(org.name)}.", :warning)
           line "You may want to create one with #{c("create-space", :good)}."
         end
-      elsif spaces.size == 1 && !input.interactive?(:spaces)
-        spaces.first
+      elsif space_choices.size == 1 && !input.interactive?(:spaces)
+        space_choices.first
       else
-        ask("Space", :choices => spaces, :display => proc(&:name))
+        ask("Space", :choices => space_choices, :display => proc(&:name))
       end
     end
   end

@@ -40,7 +40,6 @@ module CF::Start
         info = target_info
 
         select_org_and_space(input, info)
-
         save_target_info(info)
       end
 
