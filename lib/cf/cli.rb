@@ -109,7 +109,10 @@ module CF
       raise
     rescue UserFriendlyError => e
       err e.message
-    rescue CFoundry::Forbidden, CFoundry::InvalidAuthToken => e
+    rescue CFoundry::InvalidAuthToken => e
+      line
+      line c("Invalid authentication token. Try logging in again with 'cf login'", :warning)
+    rescue CFoundry::Forbidden => e
       if !$cf_asked_auth
         $cf_asked_auth = true
 

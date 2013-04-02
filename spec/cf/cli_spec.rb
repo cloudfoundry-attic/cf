@@ -66,8 +66,27 @@ describe CF::CLI do
       end
     end
 
-    context "with a CFoundry authentication error" do
+    context "when CC can't decode the auth token" do
       let(:action) { proc { raise CFoundry::InvalidAuthToken.new("foo bar") } }
+      let(:asked) { false }
+
+      before do
+        $cf_asked_auth = asked
+      end
+
+      it "tells the user they are not authenticated" do
+        subject
+        expect(stdout.string).to include "Invalid authentication token. Try logging in again with 'cf login'"
+      end
+
+      it "exits without attempting to login again" do
+        dont_allow(context).invoke(:login)
+        subject
+      end
+    end
+
+    context "with a CFoundry authentication error" do
+      let(:action) { proc { raise CFoundry::Forbidden.new("foo bar") } }
       let(:asked) { false }
 
       before do
@@ -78,6 +97,7 @@ describe CF::CLI do
         stub(context).invoke(:login)
         subject
         expect(stdout.string).to include "Not authenticated! Try logging in:"
+        expect($cf_asked_auth).to be_true
       end
 
       it "asks the user to log in" do
