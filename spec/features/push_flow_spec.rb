@@ -17,6 +17,11 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
 
     before do
+
+      puts "-----------------------------------------------------------------------------"
+      puts ENV['CF_V2_OTHER_TEST_ORGANIZATION']
+      puts "-----------------------------------------------------------------------------"
+      
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
       WebMock.allow_net_connect!
       Interact::Progress::Dots.start!
