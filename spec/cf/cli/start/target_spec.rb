@@ -34,28 +34,14 @@ command CF::Start::Target do
 
   describe "running the command" do
     stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
-    let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
 
     context "when the user is authenticated and has an organization" do
-      let(:tokens_file_path) { "~/.cf/tokens.yml" }
-      let(:organizations) {
-        [fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => spaces),
-          fake(:organization, :name => "My Org 2", :guid => "organization-id-2")]
-      }
-      let(:spaces) {
-        [fake(:space, :name => "Development", :guid => "space-id-1"),
-          fake(:space, :name => "Staging", :guid => "space-id-2", :developers => [user])]
-      }
-
       let(:user) { stub! }
-      let(:organization) { organizations.first }
-      let(:space) { spaces.last }
-      let(:client) do
-        fake_client :organizations => organizations, :token => CFoundry::AuthToken.new("bearer some-access-token")
-      end
+      let(:organization) { fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space]) }
+      let(:space) { fake(:space, :name => "Staging", :guid => "space-id-2", :developers => [user]) }
+      let(:client) { fake_client :organizations => [organization], :token => CFoundry::AuthToken.new("bearer some-access-token") }
 
       before do
-        write_token_file({:space => "space-id-1", :organization => "organization-id-1"})
         stub(client).current_user { user }
         stub(client).organization { organization }
         stub(client).current_organization { organization }
@@ -104,98 +90,19 @@ command CF::Start::Target do
           cf %W[target -s #{space.name}]
         end
 
-        context "without an organization in the config file" do
-          before { write_token_file({:space => "space-id-1"}) }
-
-          context "with an organization in the input" do
-            it "does not ask for the organization" do
-              dont_allow_ask("Organization", anything)
-              cf %W[target -s #{space.name} -o some-org]
-            end
-          end
-
-          context "without an organization in the input" do
-            it "asks for the organization" do
-              mock_ask("Organization", anything) { organization }
-              run_command
-            end
-
-            it "sets the organization in the token file" do
-              stub_ask("Organization", anything) { organization }
-              run_command
-              expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
-            end
-
-            it "sets the space param in the token file" do
-              stub_ask("Organization", anything) { organization }
-              run_command
-              expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-2"
-            end
-
-            context "when the user has no organizations" do
-              let(:client) { fake_client :organizations => [], :token => CFoundry::AuthToken.new("bearer some-access-token") }
-
-              it "tells the user to create one" do
-                run_command
-                expect(output).to say("There are no organizations.")
-                expect(output).to say("create one with")
-              end
-            end
-          end
+        it "calls use a PopulateTarget to ensure that an organization and space is set" do
+          mock(CF::Start::PopulateTarget).new(is_a(Mothership::Inputs), is_a(CFoundry::V2::Client)) { mock!.populate_and_save! }
+          run_command
         end
 
-        context "with an organization in the config file" do
-          it "should not reprompt for organization" do
-            dont_allow_ask("Organization", anything)
-            run_command
+        it "prints out the space from the updated client" do
+          any_instance_of(CF::Start::PopulateTarget, :populate_and_save! => true)
+          any_instance_of(described_class) do |instance|
+            mock(instance).invalidate_client { stub(client).current_space { space } }
           end
 
-          it "sets the organization in the token file" do
-            run_command
-            expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
-          end
-
-          it "sets the space param in the token file" do
-            run_command
-            expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-2"
-          end
-
-          context "but that organization doesn't exist anymore (not valid)" do
-            before { stub(organization).users { raise CFoundry::APIError } }
-
-            it "asks us for an organization" do
-              mock_ask("Organization", anything) { organization }
-              run_command
-            end
-          end
-        end
-      end
-
-      describe "switching the organization" do
-        let(:organization_with_spaces) { organizations.first }
-        let(:organization_without_spaces) { organizations.last }
-
-        before { write_token_file({}) }
-
-        subject { cf %W[target -o #{organization.name}] }
-
-        context "without a space or organization in the token file" do
-          let(:organization) { organization_with_spaces }
-          context "with an organization in the input" do
-            it "prompts for the space" do
-              mock_ask("Space", anything) { space }
-              subject
-            end
-          end
-        end
-
-        context "when the user has no spaces in that organization" do
-          let(:organization) { organization_without_spaces }
-
-          it "should tell the user to create one" do
-            subject
-            expect(output).to say("There are no spaces")
-          end
+          run_command
+          expect(output).to say("space: #{space.name}")
         end
       end
     end

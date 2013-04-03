@@ -16,14 +16,10 @@ module CF::Start
           :from_given => by_name(:organization)
     input :space, :desc => "Space", :alias => "-s",
           :from_given => by_name(:space)
-    interactions TargetInteractions
     def login
       show_context
 
-      credentials =
-        { :username => input[:username],
-          :password => input[:password]
-        }
+      credentials = { :username => input[:username], :password => input[:password] }
 
       prompts = client.login_prompts
 
@@ -67,9 +63,8 @@ module CF::Start
       invalidate_client
 
       line if input.interactive?(:organization) || input.interactive?(:space)
-      select_org_and_space(input, info)
 
-      save_target_info(info)
+      PopulateTarget.new(input, client).populate_and_save!
     ensure
       exit_status 1 if not authenticated
     end

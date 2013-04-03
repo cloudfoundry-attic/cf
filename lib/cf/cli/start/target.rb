@@ -10,7 +10,7 @@ module CF::Start
           :from_given => by_name(:organization)
     input :space, :desc => "Space", :alias => "-s",
           :from_given => by_name(:space)
-    interactions TargetInteractions
+
     def target
       unless input.has?(:url) || input.has?(:organization) || \
               input.has?(:space)
@@ -37,10 +37,7 @@ module CF::Start
       return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
-        info = target_info
-
-        select_org_and_space(input, info)
-        save_target_info(info)
+        PopulateTarget.new(input, client).populate_and_save!
       end
 
       return if quiet?
@@ -55,11 +52,11 @@ module CF::Start
     private
 
     def display_org_and_space
-      if org = client.current_organization
+      if (org = client.current_organization)
         line "organization: #{c(org.name, :name)}"
       end
 
-      if space = client.current_space
+      if (space = client.current_space)
         line "space: #{c(space.name, :name)}"
       end
     rescue CFoundry::APIError
