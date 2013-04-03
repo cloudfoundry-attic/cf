@@ -1,10 +1,13 @@
 require "spec_helper"
 
-if ENV['CF_V2_TEST_TARGET']
+if ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
+    let(:username) { ENV['CF_V2_TEST_USER'] }
+    let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:organization) { 'pivotal-integration' }
 
     before do
       Interact::Progress::Dots.start!
@@ -23,6 +26,32 @@ if ENV['CF_V2_TEST_TARGET']
       run("#{cf_bin} target #{target}") do |runner|
         expect(runner).to say "Setting target"
         expect(runner).to say target
+        runner.wait_for_exit
+      end
+    end
+
+    it "can switch organizations and spaces" do
+      run("#{cf_bin} login") do |runner|
+        expect(runner).to say "Email>"
+        runner.send_keys username
+
+        expect(runner).to say "Password>"
+        runner.send_keys password
+
+        expect(runner).to say "Authenticating... OK"
+      end
+
+      run("#{cf_bin} target -o #{organization}") do |runner|
+        expect(runner).to say("Switching to organization #{organization}")
+        runner.wait_for_exit
+      end
+
+      run("#{cf_bin} target -s staging") do |runner|
+        expect(runner).to say("Switching to space staging")
+        runner.wait_for_exit
+      end
+      run("#{cf_bin} target -s production") do |runner|
+        expect(runner).to say("Switching to space production")
         runner.wait_for_exit
       end
     end
