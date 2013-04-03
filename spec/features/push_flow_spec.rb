@@ -95,16 +95,16 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "redis 2.6"
+          runner.send_keys "mysql"
 
           expect(runner).to say "Name?>"
           runner.send_keys ""
 
           expect(runner).to say "Which plan?>"
-          runner.send_keys "1"
+          runner.send_keys "200"
 
-          expect(runner).to say /Creating service redis-.* OK/
-          expect(runner).to say /Binding redis-.* to .+ OK/
+          expect(runner).to say /Creating service \w-.* OK/
+          expect(runner).to say /Binding \w-.* to .+ OK/
 
           expect(runner).to say "Create another service?> n"
           runner.send_keys ""
