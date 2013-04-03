@@ -95,7 +95,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "redis"
+          runner.send_keys "redis 2.6"
 
           expect(runner).to say "Name?>"
           runner.send_keys ""
