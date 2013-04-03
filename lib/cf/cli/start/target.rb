@@ -37,7 +37,7 @@ module CF::Start
       return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
-        PopulateTarget.new(input, client).populate_and_save!
+        PopulateTarget.new(input).populate_and_save!
       end
 
       return if quiet?

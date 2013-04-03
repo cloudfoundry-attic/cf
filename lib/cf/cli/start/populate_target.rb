@@ -5,35 +5,31 @@ module CF::Start
   class PopulateTarget < CF::CLI
     include TargetInteractions
 
-    attr_reader :input, :info, :client
+    attr_reader :input, :info
 
-    def initialize(input, client)
+    def initialize(input)
       @input = input
       @info = target_info
-      @client = client
     end
 
     def populate_and_save!
-      organization = get_organization(input, info)
+      organization = get_organization
 
       if organization
-        set_organization(organization, info)
-        if space = get_space(input, info, organization)
-          set_space(space, info)
+        info[:organization] = organization.guid
+
+        if (space = get_space(organization))
+          info[:space] = space.guid
         end
       end
 
       save_target_info(info)
+      invalidate_client
     end
 
     private
 
-    def set_organization(organization, info)
-      client.current_organization = organization
-      info[:organization] = organization.guid
-    end
-
-    def get_organization(input, info)
+    def get_organization
       if input.has?(:organization)
         organization = input[:organization]
         with_progress("Switching to organization #{c(organization.name, :name)}") {}
@@ -45,12 +41,7 @@ module CF::Start
       organization || ask_organization
     end
 
-    def set_space(space, info)
-      client.current_space = space
-      info[:space] = space.guid
-    end
-
-    def get_space(input, info, organization)
+    def get_space(organization)
       if input.has?(:space)
         space = input[:space]
         with_progress("Switching to space #{c(space.name, :name)}") {}
@@ -62,16 +53,16 @@ module CF::Start
       space || ask_space(organization)
     end
 
-    def organization_valid?(organization, user = client.current_user)
+    def organization_valid?(organization)
       return false unless organization.guid
-      organization.users.include? user
+      organization.users.include? client.current_user
     rescue CFoundry::APIError
       false
     end
 
-    def space_valid?(space, user = client.current_user)
+    def space_valid?(space)
       return false unless space.guid
-      space.developers.include? user
+      space.developers.include? client.current_user
     rescue CFoundry::APIError
       false
     end

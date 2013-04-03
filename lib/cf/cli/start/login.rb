@@ -64,7 +64,7 @@ module CF::Start
 
       line if input.interactive?(:organization) || input.interactive?(:space)
 
-      PopulateTarget.new(input, client).populate_and_save!
+      PopulateTarget.new(input).populate_and_save!
     ensure
       exit_status 1 if not authenticated
     end

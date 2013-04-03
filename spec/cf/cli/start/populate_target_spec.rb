@@ -39,7 +39,17 @@ describe CF::Start::PopulateTarget do
 
       subject do
         mother_input = Mothership::Inputs.new(nil, nil, input)
-        capture_output { CF::Start::PopulateTarget.new(mother_input, client).populate_and_save! }
+        CF::Start::PopulateTarget.new(mother_input).tap { |pt| capture_output { pt.populate_and_save! } }
+      end
+
+      it "updates the client with the new organization" do
+        write_token_file({:organization => "organization-id-2"})
+
+        any_instance_of(described_class) do |instance|
+          stub.proxy(instance).client
+        end
+
+        subject.client.current_organization.should == organization
       end
 
       context "with an organization and space in the config file" do
