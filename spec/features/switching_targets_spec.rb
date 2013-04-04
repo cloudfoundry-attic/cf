@@ -1,6 +1,6 @@
 require "spec_helper"
 
-if ENV['CF_V2_TEST_TARGET']
+if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
 
