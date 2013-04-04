@@ -35,17 +35,22 @@ if ENV['CF_V2_RUN_INTEGRATION']
       before do
         run("#{cf_bin} login #{username} --password #{password}") do |runner|
           expect(runner).to say "Authenticating... OK"
-          expect(runner).to say "Organization>"
-          runner.send_keys("1")
 
-          expect(runner).to say "Switching to organization"
-          expect(runner).to say "OK"
+          expect(runner).to say(
+            "Organization>" => proc {
+              runner.send_keys "1"
+              expect(runner).to say /Switching to organization .*\.\.\. OK/
+            },
+            "Switching to organization" => proc {}
+          )
 
-          expect(runner).to say "Space"
-          runner.send_keys("1")
-
-          expect(runner).to say "Switching to space"
-          expect(runner).to say "OK"
+          expect(runner).to say(
+            "Space>" => proc {
+              runner.send_keys "1"
+              expect(runner).to say /Switching to space .*\.\.\. OK/
+            },
+            "Switching to space" => proc {}
+          )
 
           runner.wait_for_exit
         end

@@ -103,8 +103,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "Which plan?>"
           runner.send_keys "200"
 
-          expect(runner).to say /Creating service \w-.* OK/
-          expect(runner).to say /Binding \w-.* to .+ OK/
+          expect(runner).to say /Creating service .+ OK/
+          expect(runner).to say /Binding .+ to .+ OK/
 
           expect(runner).to say "Create another service?> n"
           runner.send_keys ""
