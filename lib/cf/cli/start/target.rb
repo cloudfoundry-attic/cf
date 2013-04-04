@@ -1,5 +1,5 @@
 require "cf/cli/start/base"
-require "cf/cli/start/target_interactions"
+require "cf/cli/populators/target"
 
 module CF::Start
   class Target < Base
@@ -37,7 +37,7 @@ module CF::Start
       return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
-        PopulateTarget.new(input).populate_and_save!
+        CF::Populators::Target.new(input).populate_and_save!
       end
 
       return if quiet?

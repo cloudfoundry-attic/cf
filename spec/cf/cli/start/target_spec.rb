@@ -91,12 +91,12 @@ command CF::Start::Target do
         end
 
         it "calls use a PopulateTarget to ensure that an organization and space is set" do
-          mock(CF::Start::PopulateTarget).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
+          mock(CF::Populators::Target).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
           run_command
         end
 
         it "prints out the space from the updated client" do
-          any_instance_of(CF::Start::PopulateTarget, :populate_and_save! => true)
+          any_instance_of(CF::Populators::Target, :populate_and_save! => true)
           stub(client).current_space { space }
 
           run_command

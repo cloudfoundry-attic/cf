@@ -1,5 +1,5 @@
 require "cf/cli/start/base"
-require "cf/cli/start/target_interactions"
+require "cf/cli/populators/target"
 
 module CF::Start
   class Login < Base
@@ -64,7 +64,7 @@ module CF::Start
 
       line if input.interactive?(:organization) || input.interactive?(:space)
 
-      PopulateTarget.new(input).populate_and_save!
+      CF::Populators::Target.new(input).populate_and_save!
     ensure
       exit_status 1 if not authenticated
     end

@@ -38,7 +38,7 @@ describe CF::Space::Spaces do
 
   subject { cf %W[spaces --#{bool_flag(:full)} --no-quiet] }
 
-  it 'should have the correct first two lines' do
+  it 'outputs that it is getting spaces' do
     subject
 
     stdout.rewind

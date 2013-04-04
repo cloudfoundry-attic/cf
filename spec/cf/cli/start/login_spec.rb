@@ -49,7 +49,7 @@ command CF::Start::Login do
 
       stub_ask("Username", {}) { "my-username" }
       stub_ask("8-digit PIN", {:echo => "*", :forget => true}) { "my-password" }
-      any_instance_of(CF::Start::PopulateTarget, :populate_and_save! => true)
+      any_instance_of(CF::Populators::Target, :populate_and_save! => true)
     end
 
     subject { cf ["login"] }
@@ -62,7 +62,7 @@ command CF::Start::Login do
     end
 
     it "calls use a PopulateTarget to ensure that an organization and space is set" do
-      mock(CF::Start::PopulateTarget).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
+      mock(CF::Populators::Target).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
       subject
     end
 

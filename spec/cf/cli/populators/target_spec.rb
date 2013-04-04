@@ -1,7 +1,7 @@
 require "spec_helper"
 require "webmock/rspec"
 
-describe CF::Start::PopulateTarget do
+describe CF::Populators::Target do
   stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
   describe "#populate_and_save!" do
@@ -39,7 +39,7 @@ describe CF::Start::PopulateTarget do
 
       subject do
         mother_input = Mothership::Inputs.new(nil, nil, input)
-        CF::Start::PopulateTarget.new(mother_input).tap { |pt| capture_output { pt.populate_and_save! } }
+        CF::Populators::Target.new(mother_input).tap { |pt| capture_output { pt.populate_and_save! } }
       end
 
       it "updates the client with the new organization" do
