@@ -69,6 +69,11 @@ describe CF::Populators::Organization do
         subject
         expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
       end
+
+      it "prints out that it is switching to that organization" do
+        subject
+        expect(output).to say("Switching to organization #{organization.name}")
+      end
     end
 
     context "without an organization in the input" do
@@ -101,6 +106,8 @@ describe CF::Populators::Organization do
         it "prompts for the organization" do
           mock_ask("Organization", anything) { organization }
           subject
+
+          expect(output).to say("Switching to organization #{organization.name}")
         end
 
         it "sets the organization in the token file" do

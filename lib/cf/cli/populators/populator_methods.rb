@@ -42,7 +42,9 @@ module CF
         elsif object_choices.size == 1 && !input.interactive?(type)
           object_choices.first
         else
-          ask(type.to_s.capitalize, :choices => object_choices.sort_by(&:name), :display => proc(&:name))
+          ask(type.to_s.capitalize, :choices => object_choices.sort_by(&:name), :display => proc(&:name)).tap do |object|
+            with_progress("Switching to #{type} #{c(object.name, :name)}") {}
+          end
         end
       end
     end

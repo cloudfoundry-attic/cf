@@ -70,6 +70,11 @@ describe CF::Populators::Space do
         subject
         expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
       end
+
+      it "prints out that it is switching to that space" do
+        subject
+        expect(output).to say("Switching to space #{space.name}")
+      end
     end
 
     context "without a space in the input" do
@@ -102,6 +107,8 @@ describe CF::Populators::Space do
         it "prompts for the space" do
           mock_ask("Space", anything) { space }
           subject
+
+          expect(output).to say("Switching to space #{space.name}")
         end
 
         it "sets the space in the token file" do
