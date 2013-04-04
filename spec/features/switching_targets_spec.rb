@@ -1,13 +1,13 @@
 require "spec_helper"
 
-if ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD']
+if ENV['CF_V2_TEST_TARGET']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
-    let(:organization) { 'pivotal-integration' }
+    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
 
     before do
       Interact::Progress::Dots.start!
@@ -57,5 +57,5 @@ if ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWOR
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET'
+  $stderr.puts 'Skipping v2 integration specs; please provide necessary environment variables'
 end

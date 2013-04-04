@@ -1,6 +1,6 @@
 require "spec_helper"
 
-if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_OTHER_TEST_USER']
+if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A user logs in and switches spaces, after a different user has logged in', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
 
@@ -62,5 +62,5 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, $CF_V2_TEST_PASSWORD, and $CF_V2_OTHER_TEST_USER'
+  $stderr.puts 'Skipping v2 integration specs; please provide necessary environment variables'
 end

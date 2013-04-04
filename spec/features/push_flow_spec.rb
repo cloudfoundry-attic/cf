@@ -1,7 +1,7 @@
 require "spec_helper"
 require "webmock/rspec"
 
-if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET'] && ENV['CF_V2_OTHER_TEST_ORGANIZATION']
+if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2', :ruby19 => true do
     include ConsoleAppSpeckerMatchers
     include CF::Interactive
@@ -148,5 +148,5 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, $CF_V2_TEST_PASSWORD, and $CF_V2_OTHER_TEST_ORGANIZATION'
+  $stderr.puts 'Skipping v2 integration specs; please provide necessary environment variables'
 end

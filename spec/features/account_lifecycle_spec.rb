@@ -2,7 +2,7 @@ require "spec_helper"
 require "webmock/rspec"
 require "ffaker"
 
-if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGET']
+if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
     before(:all) do
       WebMock.allow_net_connect!
@@ -15,6 +15,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
 
     let(:client) do
       client = CFoundry::V2::Client.new("https://#{target}")
@@ -39,7 +40,7 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
       run("#{cf_bin} login #{username} --password #{password}") do |runner|
         expect(runner).to say(
           "Organization>" => proc {
-            runner.send_keys "pivotal-integration"
+            runner.send_keys organization
             expect(runner).to say /Switching to organization .*\.\.\. OK/
           },
           "Switching to organization" => proc {}
@@ -102,5 +103,5 @@ if ENV['CF_V2_TEST_USER'] && ENV['CF_V2_TEST_PASSWORD'] && ENV['CF_V2_TEST_TARGE
     end
   end
 else
-  $stderr.puts 'Skipping v2 integration specs; please provide $CF_V2_TEST_TARGET, $CF_V2_TEST_USER, and $CF_V2_TEST_PASSWORD'
+  $stderr.puts 'Skipping v2 integration specs; please provide environment variables'
 end
