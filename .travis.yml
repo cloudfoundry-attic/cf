@@ -9,20 +9,41 @@ env:
     - INTEGRATE_WITH=default
     - INTEGRATE_WITH=1.8.7
   global:
-    # target
-    - secure: "UOmqPDQanhxDJkCZVyKqgLKoFqaemOnvosOIKb3pWAqk/EhsO0wjlOK29/8j\nPeqeahN4bt4Lswg0nkJRIOAbwg/Y6KOBXzc7KuSP2bS1Ycd/+XymI3aMsR07\nuQDmnE7rQvhbUigVzKdWnP4oHQVoSlA43EAPP9nMbAj2i1shbd4="
-    # user
-    - secure: "YKcGlwigznlGHU8MRsojuCM/iMIGcLud11T/PJh8mcn3kgdIcyNr1B4o+TJD\nkB4Q38ASexV3C+p0YurmHFj0CIU4mz/GwfRiMRWmLyA7cAEvTAnctlUWXgE1\nZEpaH80Zs5Gl8Gt5JBp2/b4UAnKKtTK+7J6DdtyZdKbGG0+y6l4="
-    # pw
-    - secure: "MWF34/n4MBld6hSuPZIebnM3hcgdb2Azt3JWD4aDr0NcP/6yr5zE7xwi2Grs\nYl5Y/QWephuGh2bw145cuaEWVNAD6rXpBQkEIa3F15WntmJCe9ceqHtEEKhh\n+6JqV/Lm67qY2kLXTEyTYTwYIKxnJa/3swjPg/qU5q5ylVleOsY="
-    # other user
-    - secure: "ChZvqNLUfUVNOkwjunrmJklb4ZLR8K1/jAUCZOUNWNLlIgsJg3F8xjHBnIPm\n5vSSAyulE7LWxkKlqkLjJIq1suK7U3tEeV9S0Icurg4YxtU/3Et6Xq1XsOR7\nd+U3WhloFb1wYw+0JuIHpsNTQR3JS3VUjNY95QBxrUWvO7nFE94="
-    # other pw
-    - secure: "lDoPah3A+YqrmyTO7BLXNMkJPuS1MPCi/x4Vmm3syzqixGhO2dy4KftZ2Sq8\nsBWjWtbR3XAbjKHkflesZphbEk2wKMu8xvaRZQm4y1+9VCi6RYotFyAIBkby\nNXOV8SS2M+vwYRdXmJlNJaL5j7ze31susKa1Vq5wWNtUEcqyL0o="
-    # other space
-    - secure: "mBJbKHn5ZYCbvKKq5i05VfON7tzFydfYpJSaBMvWWIxl0Gl+QnDXGUChGAco\nKq6Dkf/R0rIuH36bhOaeYsqGDia9U5J48Z6q1MBdVnuqmg1bW7bzbh/IxQax\n4S7R0YKQxzokU2bnDZf4Q/BOLRgg7LUbNokB2DoN0Ns/cekl6/c="
-    # other org
-    - secure: "i8oKt13uSBB/N8J8RY0cUOYHZ6pRSgla7ErM4/mGhHA0YohCkSVHjnKse1ep\ndfAQaPE/V0jXyBf+wIIqdYWG0ynbeyZXAvgjXii84yM0VqbpZkE2yVrWhxok\nrA0b7ahP6ILa9AN/iaSubC6Uy/WANcL2HjvB8hxv3sOdsFAgEfA="
+    #CF_V2_TEST_TARGET
+    - secure: "FusaIjXVsjmoJIy5yVIYsfkOOomRXUtLDECU12ak6aWpeNtw5x/wpB6bI3ToPLc3xOoEsnIk5w4HMO3Q74ZOYx4xlzucJtdD8rhf4UlZG1OtILvV+LPswOzC8icd9ovxtJoh44lpC1MIIyyaBfREezfhg5n2eQdoIRcwXg9FYRI="
+
+    #CF_V2_TEST_USER
+    - secure: "KVzf8ensVHOU9rJX6jjdGNjhzoJCbzu0ej6B8ZveF7uSPjVL6b4s3931ZA5C/iZ0CTk/tn5pRl891bp48QtESKnvjDs/ewE/FFxaIjiiRYpLHKAHVNr7VU2r4BexondBka9O8433NLfDls0gYe6Drgqh5Y+5ClNc6QV1ychiWsA="
+
+    #CF_V2_TEST_ORGANIZATION
+    - secure: "LNRiKO1zQe5w1pQ0HQy/tXI0rIpvilq/QZM1l71YRCEEaa/QdVRRyny+calME/tdePZTxW/k83EwPv0HC+rEhpC/4X8ib8nsNtjRc9SV4YsJObcJpwQJHI1iZLXoPtPJclFkfQBI6EuamOSPwf/aAlQi7EgPaK7Lvojq5024AzE="
+
+    #CF_V2_TEST_ORGANIZATION_TWO
+    - secure: "UA0c3R6TEBcHrgcGM0X1SQMbI08BmloYMcwFhxhTTas48tI4XzV8a1rVvDcgB2CojLg4WG74Vov+DJwCUb3PvEdXAzQuB6c0azLKjPThvf+em0MArZ8k4tmnsDAo0PyvaakvNnIuUMO7TrDZg+88yOWigm7GzajIrZVdfTZAbrI="
+
+    #CF_V2_TEST_SPACE
+    - secure: "GKxBKpH1c6zZqZSsimzCzKZbFUm+/EDDAcpa18SeYwUe2F44Uc3UJp+AQYpL8q9fY5YMjgL4a3VK3YyjGvU3F5M2uYsT6met0D9Hka3JpgT/eRMg2Cukb8tL03XO4lb6uT1eyivq0uDhQ8ir4LewIELoEebxWZdNBlwqo4u+s+0="
+
+    #CF_V2_TEST_PASSWORD
+    - secure: "i0DiEQhYJqmA9jaahkNm1aGqFGdTUPRqcItGUTN13TaVwF7zZTcm70pDgurHRrqy/T2TBlEL9AndJbSMQGt9gdQmxojJmoOlhf+92+J282ctcG4BRKueavG0ZoFxQ6qw6+ejTat+aoSLxm5Ppy9Yo1e5DIvv5arwVccCC4tttnU="
+
+    #CF_V2_OTHER_TEST_USER
+    - secure: "TniGdAM5VwwElbsIwR91uc5V4CZlQeS5jyncdvNj3GDiwNFgM4cDASShHWKnVSXu2Xs03bfgL4Z5Yw9e8OJAPTxqDxyVqXEHWLtEERJgP31ii/2/ir0a9xb3tAAw54TG9g9WcJSzyrb+zNtQ0LHpDvAVWCq0ysu/oryDZQRNqDM="
+
+    #CF_V2_OTHER_TEST_PASSWORD
+    - secure: "P0YuwXBT1by9IUQLBvw8HwR9R03yPX/T/hoYeauXgsodT5AocmJcdGhYp2XLIxAZhY0EgF4nWOlZMvawdrXuNqIHzbHz5JpInhKyKsSqQdgkILFlW0Huk+zMdeB+NdFQcQohHnF7BtS78uvUfxkIYddpOzM/4pKMAODs0CGtRUQ="
+
+    #CF_V2_OTHER_TEST_SPACE
+    - secure: "XnHsr07EWVaDEuxMiwVnlvUUUV/Zz/7RWKepDM0DzcfwLUnBGCad2IxC6AOlUq+/R68nDUPIX65KLNOzqhYTEje/xPtyCY9H43T6OwXMeEHwnOcgm8RC9Zhn5M4DqZasqapm3T3a5rtaa5+LTlfEN3JKCUpgy+k1dlGJp/bPkRE="
+
+    #CF_V2_OTHER_TEST_ORGANIZATION
+    - secure: "ISAdmkx4aIXYix2UjY7hP4Z4IeG6Qr7XwCyC2UQpQw2gnNw7NdilKnF1qqmaPxDR6n+GHZy1R3qyvftWUpIKaMuUv9RmQcp286WhNWoH/SOwxGWGNmJ+yTEhP2iukD0QfjJdTrgo8N4gBMQQPngDYnbz6IhxO72PYrvcc0uubR0="
+
+    #CF_V2_OTHER_TEST_ORGANIZATION_TWO
+    - secure: "Icq2KEm/6qFVsV5/TvZlC+6zE3sr5njd4Irp1dtRYJ54VNfep8KbnyLdEYxMqrpDwCx8HeySXVrOoyA6dghbHzzOQwWwQM3AKDaqjkB1+pyyg8H5XaD/LqSpXVdHpi9BTRmId8TYcFGaJsTKKNBv1uVJndvRjy3uVZmKhthrcAg="
+
+    #CF_V2_RUN_INTEGRATION
+    - secure: "BZ5Srvlfu2N2MsAH1uz32iicp8OFeSjA0zCR426ZXe0H2sMZbCkm77vlN109hikCxpYI+hH+Vh+YRJPtsGZskURi5ieZ8eIlL9ByXJYLQnK44tAi9ekTBfp4bthLOxvuqs+H1r4NxhL/XIZR/qNoCc38nX8tlZLBUv/Z8FuuQio="
 
 before_script: ./script/setup_187
 
