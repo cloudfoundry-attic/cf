@@ -33,6 +33,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     it "registers a new account and deletes it" do
       email = Faker::Internet.email
+      run("#{cf_bin} logout") do |runner|
+        runner.wait_for_exit
+      end
+
       run("#{cf_bin} target #{target}") do |runner|
         runner.wait_for_exit
       end
