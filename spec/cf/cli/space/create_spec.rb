@@ -1,7 +1,7 @@
 require 'spec_helper'
 require "cf/cli/space/create"
 
-command CF::Space::Create do
+describe CF::Space::Create do
   describe 'metadata' do
     let(:command) { Mothership.commands[:create_space] }
 
@@ -25,14 +25,15 @@ command CF::Space::Create do
   end
 
   describe "running the command" do
-    let(:client) do
-      fake_client(:current_organization => organization)
-    end
-
-    let(:organization) { fake(:organization) }
-
     let(:new_space) { fake :space, :name => new_name }
     let(:new_name) { "some-new-name" }
+
+    let(:spaces) { [new_space] }
+    let(:organization) { fake(:organization, :spaces => spaces) }
+
+    let(:client) { fake_client(:current_organization => organization, :spaces => spaces) }
+
+
 
     before do
       stub(client).space { new_space }
@@ -40,6 +41,13 @@ command CF::Space::Create do
       stub(new_space).add_manager
       stub(new_space).add_developer
       stub(new_space).add_auditor
+      any_instance_of described_class do |cli|
+        stub(cli).client { client }
+
+        stub(cli).check_logged_in
+        stub(cli).check_target
+        stub(cli).check_organization
+      end
     end
 
     context "when --target is given" do
@@ -59,6 +67,15 @@ command CF::Space::Create do
         subject
         expect(output).to say("Space created! Use switch-space #{new_space.name} to target it.")
       end
+
+      it_should_behave_like "a_command_that_populates_organization" do
+        before do
+          any_instance_of described_class do |cli|
+            stub.proxy(cli).check_organization
+          end
+        end
+      end
+
     end
 
     context "when we don't specify an organization" do

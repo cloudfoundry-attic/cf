@@ -13,7 +13,9 @@ describe CF::Space::Spaces do
   before do
     any_instance_of described_class do |cli|
       stub(cli).client { client }
-      stub(cli).precondition { nil }
+      stub(cli).check_logged_in
+      stub(cli).check_target
+      stub(cli).check_organization
     end
   end
 
@@ -72,6 +74,14 @@ describe CF::Space::Spaces do
   end
 
   context 'when there are spaces' do
+    it_should_behave_like "a_command_that_populates_organization" do
+      before do
+        any_instance_of described_class do |cli|
+          stub.proxy(cli).check_organization
+        end
+      end
+    end
+
     context 'and the full flag is given' do
       let(:full) { true }
 

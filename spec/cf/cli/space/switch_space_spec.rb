@@ -10,8 +10,12 @@ describe CF::Space::Switch do
   before do
     any_instance_of described_class do |cli|
       stub(cli).client { client }
-      stub(cli).precondition { nil }
+
+      stub(cli).check_logged_in
+      stub(cli).check_target
+      stub(cli).check_organization
     end
+
   end
 
   describe 'metadata' do
@@ -28,20 +32,31 @@ describe CF::Space::Switch do
     describe 'arguments' do
       subject { command.arguments }
       it 'has the correct argument order' do
-        should eq([{ :type => :normal, :value => nil, :name => :name }])
+        should eq([{:type => :normal, :value => nil, :name => :name}])
       end
     end
   end
 
   subject { cf %W[--no-quiet switch-space #{space_to_switch_to.name} --no-color] }
 
+
   context "when the space exists" do
-    it "switches to that space" do
+    before do
       any_instance_of(Mothership) do |m|
         mock(m).invoke(:target, {:space => space_to_switch_to})
       end
+    end
 
+    it "switches to that space" do
       subject
+    end
+
+    it_should_behave_like "a_command_that_populates_organization" do
+      before do
+        any_instance_of described_class do |cli|
+          stub.proxy(cli).check_organization
+        end
+      end
     end
   end
 

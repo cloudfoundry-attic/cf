@@ -10,7 +10,10 @@ describe CF::Space::Rename do
   before do
     any_instance_of described_class do |cli|
       stub(cli).client { client }
-      stub(cli).precondition { nil }
+
+      stub(cli).check_logged_in
+      stub(cli).check_target
+      stub(cli).check_organization
     end
   end
 
@@ -29,8 +32,8 @@ describe CF::Space::Rename do
       subject { command.arguments }
       it 'has the correct argument order' do
         should eq([
-          { :type => :optional, :value => nil, :name => :space },
-          { :type => :optional, :value => nil, :name => :name }
+          {:type => :optional, :value => nil, :name => :space},
+          {:type => :optional, :value => nil, :name => :name}
         ])
       end
     end
@@ -58,10 +61,9 @@ describe CF::Space::Rename do
 
   context 'when there are spaces' do
     let(:renamed_space) { spaces.first }
+    subject { cf %W[rename-space --no-force --no-quiet] }
 
     context 'when the defaults are used' do
-      subject { cf %W[rename-space --no-force --no-quiet] }
-
       it 'asks for the space and new name and renames' do
         mock_ask("Rename which space?", anything) { renamed_space }
         mock_ask("New name") { new_name }
@@ -73,6 +75,15 @@ describe CF::Space::Rename do
 
     context 'when no name is provided, but a space is' do
       subject { cf %W[rename-space --space #{renamed_space.name} --no-force] }
+
+      it_should_behave_like "a_command_that_populates_organization" do
+        subject { cf %W[rename-space --no-force --no-quiet #{renamed_space}] }
+        before do
+          any_instance_of described_class do |cli|
+            stub.proxy(cli).check_organization
+          end
+        end
+      end
 
       it 'asks for the new name and renames' do
         dont_allow_ask("Rename which space?", anything)

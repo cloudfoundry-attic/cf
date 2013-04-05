@@ -1,4 +1,5 @@
 require "cf/cli"
+require "cf/cli/populators/organization"
 
 module CF
   module Space
@@ -6,6 +7,11 @@ module CF
       def precondition
         check_target
         check_logged_in
+        check_organization
+      end
+
+      def check_organization
+        CF::Populators::Organization.new(input).populate_and_save!
       end
 
       def self.space_by_name
