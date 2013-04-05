@@ -9,7 +9,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
-    let(:organization) { ENV['CF_V2_OTHER_TEST_ORGANIZATION'] }
+    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
 
     let(:app) do
       fuzz = TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_")
@@ -23,11 +23,15 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     after do
-      `#{cf_bin} delete #{app} -f --no-script`
+      `#{cf_bin} delete #{app} -f -o --no-script`
       Interact::Progress::Dots.stop!
     end
 
     it 'pushes a simple sinatra app using defaults as much as possible' do
+      run("#{cf_bin} logout") do |runner|
+        runner.wait_for_exit
+      end
+
       run("#{cf_bin} target http://#{target}") do |runner|
         expect(runner).to say %r{Setting target to http://#{target}... OK}
       end
@@ -73,10 +77,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
           runner.send_keys ""
 
           expect(runner).to say "Custom startup command> "
-          runner.send_keys "bundle exec ruby main.rb -p $PORT"
+          runner.send_keys ""
 
           expect(runner).to say "Memory Limit>"
-          runner.send_keys "64M"
+          runner.send_keys "128M"
 
           expect(runner).to say "Creating #{app}... OK"
 
@@ -127,11 +131,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-        expect(runner).to say /redis-.+?\s+   # name
-            redis\s+                          # service
+        expect(runner).to say /mysql-.+?\s+   # name
+            mysql\s+                          # service
             core\s+                           # provider
             [\d.]+\s+                         # version
-            100\s+                            # plan
+            200\s+                            # plan
             #{app}                            # bound apps
           /x
       end
@@ -143,7 +147,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
         expect(runner).to say "Delete orphaned service"
         runner.send_keys "y"
-        expect(runner).to say /Deleting redis.* OK/
+        expect(runner).to say /Deleting .* OK/
       end
     end
   end

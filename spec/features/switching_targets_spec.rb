@@ -7,6 +7,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:space) { ENV['CF_V2_TEST_SPACE'] }
+    let(:space2) { "#{ENV['CF_V2_TEST_SPACE']}-2"}
     let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
 
     before do
@@ -31,6 +33,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch organizations and spaces" do
+      run("#{cf_bin} logout") do |runner|
+        runner.wait_for_exit
+      end
+
       run("#{cf_bin} login") do |runner|
         expect(runner).to say "Email>"
         runner.send_keys username
@@ -43,15 +49,20 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       run("#{cf_bin} target -o #{organization}") do |runner|
         expect(runner).to say("Switching to organization #{organization}")
+
+        expect(runner).to say("Space>")
+        runner.send_keys space2
+
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target -s staging") do |runner|
-        expect(runner).to say("Switching to space staging")
+      run("#{cf_bin} target -s #{space}") do |runner|
+        expect(runner).to say("Switching to space #{space}")
         runner.wait_for_exit
       end
-      run("#{cf_bin} target -s production") do |runner|
-        expect(runner).to say("Switching to space production")
+
+      run("#{cf_bin} target -s #{space2}") do |runner|
+        expect(runner).to say("Switching to space #{space2}")
         runner.wait_for_exit
       end
     end
