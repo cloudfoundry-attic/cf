@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-command CF::User::Register do
+describe CF::User::Register do
+  before do
+    stub_client_and_precondition
+  end
+
   describe 'metadata' do
     let(:command) { Mothership.commands[:register] }
 

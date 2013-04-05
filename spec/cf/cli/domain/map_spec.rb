@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-command CF::Domain::Map do
+describe CF::Domain::Map do
+  before do
+    stub_client_and_precondition
+  end
+
   let(:client) do
     fake_client(
       :current_organization => organization,

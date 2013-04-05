@@ -1,35 +1,27 @@
-def command(klass, &specs)
-  describe klass do
-    let(:stub_precondition?) { true }
-
-    before do
-      any_instance_of klass do |cli|
-        stub(cli).precondition if stub_precondition?
-        stub(cli).client { client }
-      end
-    end
-
-    before(:all) do
-      klass.class_eval do
-        def wrap_errors
-          yield
-        rescue CF::UserError => e
-          err e.message
-        end
-      end
-    end
-
-    after(:all) do
-      klass.class_eval do
-        remove_method :wrap_errors
-      end
-    end
-
-    class_eval(&specs)
+module CliHelper
+  def stub_client_and_precondition
+    stub_client
+    stub_precondition
   end
-end
 
-module CommandHelper
+  def stub_client
+    any_instance_of described_class do |cli|
+      stub(cli).client { client }
+    end
+  end
+
+  def stub_precondition
+    any_instance_of described_class do |cli|
+      stub(cli).precondition
+    end
+  end
+
+  def wrap_errors
+    yield
+  rescue CF::UserError => e
+    err e.message
+  end
+
   def cf(argv)
     Mothership.new.exit_status 0
     stub(CF::CLI).exit { |code| code }
@@ -78,4 +70,5 @@ module CommandHelper
       dont_allow(cli).invoke *args
     end
   end
+
 end

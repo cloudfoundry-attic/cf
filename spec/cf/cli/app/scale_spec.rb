@@ -1,7 +1,11 @@
 require "spec_helper"
 require "webmock/rspec"
 
-command CF::App::Scale do
+describe CF::App::Scale do
+  before do
+    stub_client_and_precondition
+  end
+
   let(:client) { fake_client :apps => [app] }
 
   context "when the --disk flag is given" do

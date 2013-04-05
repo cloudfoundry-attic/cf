@@ -12,7 +12,6 @@ module CF
       input :name, :desc => "Filter by name"
       input :full, :desc => "Show full information for apps, services, etc.",
         :default => false
-
       def spaces
         org = input[:organization]
         spaces =

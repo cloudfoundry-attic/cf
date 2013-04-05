@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-command CF::Route::Map do
+describe CF::Route::Map do
+  before do
+    stub_client_and_precondition
+  end
+
   let(:client) { fake_client(:apps => apps, :routes => routes) }
 
   let(:app) { fake(:app, :space => space, :name => "app-name") }

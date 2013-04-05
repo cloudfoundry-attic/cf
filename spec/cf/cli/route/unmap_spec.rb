@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-command CF::Route::Unmap do
+describe CF::Route::Unmap do
+  before do
+    stub_client_and_precondition
+  end
+
   let(:client) { fake_client :apps => [app] }
 
   let(:app){ fake(:app, :space => space, :name => "app-name") }

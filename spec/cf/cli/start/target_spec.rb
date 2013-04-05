@@ -1,7 +1,11 @@
 require "spec_helper"
 require "webmock/rspec"
 
-command CF::Start::Target do
+describe CF::Start::Target do
+  before do
+    stub_client_and_precondition
+  end
+
   let(:client) { fake_client :apps => [app] }
   let(:app) { fake :app }
 

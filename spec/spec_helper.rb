@@ -44,7 +44,7 @@ RSpec.configure do |c|
   end
 
   c.include FakeHomeDir
-  c.include CommandHelper
+  c.include CliHelper
   c.include InteractHelper
   c.include ConfigHelper
 

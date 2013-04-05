@@ -1,9 +1,13 @@
 require 'spec_helper'
 
-command CF::Start::Login do
+describe CF::Start::Login do
   let(:client) { fake_client }
 
   describe 'metadata' do
+    before do
+      stub_client_and_precondition
+    end
+
     let(:command) { Mothership.commands[:login] }
 
     describe 'command' do
@@ -32,6 +36,10 @@ command CF::Start::Login do
   end
 
   describe "running the command" do
+    before do
+      stub_client
+    end
+
     stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
     let(:auth_token) { CFoundry::AuthToken.new("bearer some-new-access-token", "some-new-refresh-token") }
@@ -54,32 +62,37 @@ command CF::Start::Login do
 
     subject { cf ["login"] }
 
-    it "logs in with the provided credentials and saves the token data to the YAML file" do
-      subject
-
-      expect(tokens_yaml["https://api.some-domain.com"][:token]).to eq("bearer some-new-access-token")
-      expect(tokens_yaml["https://api.some-domain.com"][:refresh_token]).to eq("some-new-refresh-token")
-    end
-
-    it "calls use a PopulateTarget to ensure that an organization and space is set" do
-      mock(CF::Populators::Target).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
-      subject
-    end
-
-    context "when the user logs in with invalid credentials" do
+    context "when there is a target" do
       before do
-        stub(client).login("my-username", "my-password") { raise CFoundry::Denied }
+        stub_precondition
       end
 
-      it "informs the user gracefully" do
+      it "logs in with the provided credentials and saves the token data to the YAML file" do
         subject
-        expect(output).to say("Authenticating... FAILED")
+
+        expect(tokens_yaml["https://api.some-domain.com"][:token]).to eq("bearer some-new-access-token")
+        expect(tokens_yaml["https://api.some-domain.com"][:refresh_token]).to eq("some-new-refresh-token")
+      end
+
+      it "calls use a PopulateTarget to ensure that an organization and space is set" do
+        mock(CF::Populators::Target).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
+        subject
+      end
+
+      context "when the user logs in with invalid credentials" do
+        before do
+          stub(client).login("my-username", "my-password") { raise CFoundry::Denied }
+        end
+
+        it "informs the user gracefully" do
+          subject
+          expect(output).to say("Authenticating... FAILED")
+        end
       end
     end
 
-    context 'when there is no target' do
+    context "when there is no target" do
       let(:client) { nil }
-      let(:stub_precondition?) { false }
 
       it "tells the user to select a target" do
         subject
