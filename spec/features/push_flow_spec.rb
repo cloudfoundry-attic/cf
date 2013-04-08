@@ -3,7 +3,6 @@ require "webmock/rspec"
 
 if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2', :ruby19 => true do
-    include ConsoleAppSpeckerMatchers
     include CF::Interactive
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
@@ -28,15 +27,15 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it 'pushes a simple sinatra app using defaults as much as possible' do
-      run("#{cf_bin} logout") do |runner|
+      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target http://#{target}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target http://#{target}") do |runner|
         expect(runner).to say %r{Setting target to http://#{target}... OK}
       end
 
-      run("#{cf_bin} login") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login") do |runner|
         expect(runner).to say %r{target: https?://#{target}}
 
         expect(runner).to say "Email>"
@@ -64,12 +63,12 @@ if ENV['CF_V2_RUN_INTEGRATION']
         )
       end
 
-      run("#{cf_bin} app #{app}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} app #{app}") do |runner|
         expect(runner).to say "Unknown app '#{app}'."
       end
 
       Dir.chdir("#{SPEC_ROOT}/assets/hello-sinatra") do
-        run("#{cf_bin} push") do |runner|
+        BlueShell::Runner.run("#{cf_bin} push") do |runner|
           expect(runner).to say "Name>"
           runner.send_keys app
 
@@ -129,7 +128,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         end
       end
 
-      run("#{cf_bin} services") do |runner|
+      BlueShell::Runner.run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
         expect(runner).to say /mysql-.+?\s+   # name
             mysql\s+                          # service
@@ -140,7 +139,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           /x
       end
 
-      run("#{cf_bin} delete #{app}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"
         expect(runner).to say "Deleting #{app}... OK"

@@ -8,6 +8,7 @@ require "cf/test_support"
 require "webmock"
 require "ostruct"
 require "fakefs/safe"
+require "blue-shell"
 
 INTEGRATE_WITH = ENV["INTEGRATE_WITH"] || "default"
 TRAVIS_BUILD_ID = ENV["TRAVIS_BUILD_ID"]
@@ -35,7 +36,7 @@ end
 
 RSpec.configure do |c|
   c.include Fake::FakeMethods
-  c.include ConsoleAppSpeckerMatchers
+  c.include BlueShell::Matchers
 
   c.mock_with :rr
 
@@ -62,11 +63,5 @@ def name_list(xs)
     "none"
   else
     xs.collect(&:name).join(", ")
-  end
-end
-
-def run(command)
-  SpeckerRunner.new(command) do |runner|
-    yield runner
   end
 end

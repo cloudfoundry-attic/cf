@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake", "~> 0.9"
   s.add_development_dependency "rspec", "~> 2.11"
+  s.add_development_dependency "blue-shell"
   s.add_development_dependency "webmock", "~> 1.9"
   s.add_development_dependency "rr", "~> 1.0"
 end

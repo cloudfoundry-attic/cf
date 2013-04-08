@@ -33,15 +33,15 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     it "registers a new account and deletes it" do
       email = Faker::Internet.email
-      run("#{cf_bin} logout") do |runner|
+      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target #{target}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} login #{username} --password #{password}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
         expect(runner).to say(
           "Organization>" => proc {
             runner.send_keys organization
@@ -59,7 +59,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         )
       end
 
-      run("#{cf_bin} register #{email} --password p") do |runner|
+      BlueShell::Runner.run("#{cf_bin} register #{email} --password p") do |runner|
         expect(runner).to say "Confirm Password>"
         runner.send_keys 'p'
         expect(runner).to say "Your password strength is: good"
@@ -67,11 +67,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say "Authenticating... OK"
       end
 
-      run("#{cf_bin} logout") do |runner|
+      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} login #{username} --password #{password}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
         expect(runner).to say "Organization>"
         runner.send_keys "1"
         expect(runner).to say "Space>"
@@ -79,7 +79,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
 
       # TODO: do this when cf delete-user is implemented
-      #run("#{cf_bin} delete-user #{email}") do |runner|
+      #BlueShell::Runner.run("#{cf_bin} delete-user #{email}") do |runner|
       #  expect(runner).to say "Really delete user #{email}?>"
       #  runner.send_keys "y"
       #  expect(runner).to say "Deleting #{email}... OK"
@@ -93,7 +93,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       user.delete!
       client.base.uaa.delete_user(guid)
 
-      run("#{cf_bin} login #{email} --password p") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login #{email} --password p") do |runner|
         expect(runner).to say "Authenticating... FAILED"
 
         expect(runner).to say "Password>"

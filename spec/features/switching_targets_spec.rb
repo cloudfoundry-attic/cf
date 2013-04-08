@@ -2,7 +2,6 @@ require "spec_helper"
 
 if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
-    include ConsoleAppSpeckerMatchers
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
@@ -20,12 +19,12 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch targets, even if a target is invalid" do
-      run("#{cf_bin} target invalid-target") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target invalid-target") do |runner|
         expect(runner).to say "Target refused"
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target #{target}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
         expect(runner).to say "Setting target"
         expect(runner).to say target
         runner.wait_for_exit
@@ -33,11 +32,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch organizations and spaces" do
-      run("#{cf_bin} logout") do |runner|
+      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} login") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login") do |runner|
         expect(runner).to say "Email>"
         runner.send_keys username
 
@@ -47,7 +46,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say "Authenticating... OK"
       end
 
-      run("#{cf_bin} target -o #{organization}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target -o #{organization}") do |runner|
         expect(runner).to say("Switching to organization #{organization}")
 
         expect(runner).to say("Space>")
@@ -56,12 +55,12 @@ if ENV['CF_V2_RUN_INTEGRATION']
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target -s #{space}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target -s #{space}") do |runner|
         expect(runner).to say("Switching to space #{space}")
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} target -s #{space2}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target -s #{space2}") do |runner|
         expect(runner).to say("Switching to space #{space2}")
         runner.wait_for_exit
       end

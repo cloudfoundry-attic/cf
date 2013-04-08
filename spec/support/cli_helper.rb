@@ -52,11 +52,11 @@ module CliHelper
   end
 
   def output
-    @output ||= TrackingExpector.new(stdout)
+    @output ||= BlueShell::BufferedReaderExpector.new(stdout)
   end
 
   def error_output
-    @error_output ||= TrackingExpector.new(stderr)
+    @error_output ||= BlueShell::BufferedReaderExpector.new(stderr)
   end
 
   def mock_invoke(*args)

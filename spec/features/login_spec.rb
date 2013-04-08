@@ -2,7 +2,6 @@ require "spec_helper"
 
 if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A user logs in and switches spaces, after a different user has logged in', :ruby19 => true do
-    include ConsoleAppSpeckerMatchers
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
@@ -16,13 +15,13 @@ if ENV['CF_V2_RUN_INTEGRATION']
     before do
       Interact::Progress::Dots.start!
 
-      run("#{cf_bin} target #{target}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
         expect(runner).to say "Setting target"
         expect(runner).to say target
         runner.wait_for_exit
       end
 
-      run("#{cf_bin} logout") do |runner|
+      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
         runner.wait_for_exit
       end
     end
@@ -33,7 +32,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     context "when a different user is already logged in" do
       before do
-        run("#{cf_bin} login #{username} --password #{password}") do |runner|
+        BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
           expect(runner).to say "Authenticating... OK"
 
           expect(runner).to say(
@@ -57,7 +56,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
 
       it "can switch spaces on login" do
-        run("#{cf_bin} login #{second_username} --password #{second_password} --organization #{second_organization} --space #{second_space}") do |runner|
+        BlueShell::Runner.run("#{cf_bin} login #{second_username} --password #{second_password} --organization #{second_organization} --space #{second_space}") do |runner|
           expect(runner).to say "Authenticating... OK"
           expect(runner).to say "Switching to organization #{second_organization}... OK"
           expect(runner).to say "Switching to space #{second_space}... OK"
