@@ -12,8 +12,8 @@ module CF
       input :name, :desc => "Filter by name"
       input :full, :desc => "Show full information for apps, services, etc.",
         :default => false
+
       def spaces
-        org = input[:organization]
         spaces =
           with_progress("Getting spaces in #{c(org.name, :name)}") do
             org.spaces(:depth => quiet? ? 0 : 1).sort_by(&:name)

@@ -33,8 +33,6 @@ describe CF::Space::Create do
 
     let(:client) { fake_client(:current_organization => organization, :spaces => spaces) }
 
-
-
     before do
       stub(client).space { new_space }
       stub(new_space).create!
@@ -46,7 +44,7 @@ describe CF::Space::Create do
 
         stub(cli).check_logged_in
         stub(cli).check_target
-        stub(cli).check_organization
+        any_instance_of(CF::Populators::Organization, :populate_and_save! => organization)
       end
     end
 
@@ -66,44 +64,6 @@ describe CF::Space::Create do
       it "tells the user how they can switch to the new space" do
         subject
         expect(output).to say("Space created! Use switch-space #{new_space.name} to target it.")
-      end
-
-      it_should_behave_like "a_command_that_populates_organization" do
-        before do
-          any_instance_of described_class do |cli|
-            stub.proxy(cli).check_organization
-          end
-        end
-      end
-
-    end
-
-    context "when we don't specify an organization" do
-      subject { cf %W[create-space #{new_space.name}] }
-
-      context "when we have a default organization" do
-        it "uses that organization to create a space" do
-          subject
-
-          stdout.rewind
-          expect(stdout.readline).to include "Creating space"
-        end
-      end
-
-      context "when we don't have a default organization" do
-        let(:organization) { nil }
-
-        it "shows the help for the command" do
-          subject
-
-          stdout.rewind
-          expect(stdout.readline).to include "Create a space in an organization"
-        end
-
-        it "does not try to create the space" do
-          new_space.create! { raise "should not call this method" } # rr not behaving
-          subject
-        end
       end
     end
   end

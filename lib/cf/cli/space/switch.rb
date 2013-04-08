@@ -6,7 +6,9 @@ module CF::Space
     group :spaces, :hidden => true
     input :name, :desc => "Space name", :argument => true
     def switch_space
-      if (space = client.space_by_name(input[:name]))
+      space = client.space_by_name(input[:name])
+
+      if space
         invoke :target, :space => space
       else
         raise CF::UserError, "The space #{input[:name]} does not exist, please create the space first."

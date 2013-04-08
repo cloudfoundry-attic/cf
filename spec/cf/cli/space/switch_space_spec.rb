@@ -13,9 +13,8 @@ describe CF::Space::Switch do
 
       stub(cli).check_logged_in
       stub(cli).check_target
-      stub(cli).check_organization
+      any_instance_of(CF::Populators::Organization, :populate_and_save! => organization)
     end
-
   end
 
   describe 'metadata' do
@@ -39,7 +38,6 @@ describe CF::Space::Switch do
 
   subject { cf %W[--no-quiet switch-space #{space_to_switch_to.name} --no-color] }
 
-
   context "when the space exists" do
     before do
       any_instance_of(Mothership) do |m|
@@ -49,14 +47,6 @@ describe CF::Space::Switch do
 
     it "switches to that space" do
       subject
-    end
-
-    it_should_behave_like "a_command_that_populates_organization" do
-      before do
-        any_instance_of described_class do |cli|
-          stub.proxy(cli).check_organization
-        end
-      end
     end
   end
 

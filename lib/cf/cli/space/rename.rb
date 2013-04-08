@@ -11,7 +11,6 @@ module CF::Space
           :from_given => by_name(:space)
     input :name, :desc => "New space name", :argument => :optional
     def rename_space
-      org = input[:organization]
       space = input[:space, org]
       name = input[:name]
 

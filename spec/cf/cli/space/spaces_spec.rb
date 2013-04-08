@@ -7,7 +7,7 @@ describe CF::Space::Spaces do
   let!(:space_2) { fake(:space, :name => "aa_first", :apps => [fake(:app)], :service_instances => fake_list(:service_instance, 3), :domains => [fake(:domain)]) }
   let!(:space_3) { fake(:space, :name => "cc_last", :apps => fake_list(:app, 2), :service_instances => fake_list(:service_instance, 2), :domains => fake_list(:domain, 2)) }
   let(:spaces) { [space_1, space_2, space_3]}
-  let(:organization) { fake(:organization, :spaces => spaces) }
+  let(:organization) { fake(:organization, :spaces => spaces, :name => 'foo') }
   let(:client) { fake_client(:spaces => spaces, :current_organization => organization) }
 
   before do
@@ -15,7 +15,7 @@ describe CF::Space::Spaces do
       stub(cli).client { client }
       stub(cli).check_logged_in
       stub(cli).check_target
-      stub(cli).check_organization
+      any_instance_of(CF::Populators::Organization, :populate_and_save! => organization)
     end
   end
 
@@ -74,14 +74,6 @@ describe CF::Space::Spaces do
   end
 
   context 'when there are spaces' do
-    it_should_behave_like "a_command_that_populates_organization" do
-      before do
-        any_instance_of described_class do |cli|
-          stub.proxy(cli).check_organization
-        end
-      end
-    end
-
     context 'and the full flag is given' do
       let(:full) { true }
 

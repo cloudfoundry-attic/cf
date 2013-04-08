@@ -16,39 +16,26 @@ module CF::Space
     input :auditor, :desc => "Add yourself as auditor", :default => false
 
     def create_space
-      # TODO: ask org instead
-      return invoke :help,
-        :command => "create-space" if input[:organization].nil?
-
       space = client.space
-      space.organization = input[:organization]
+      space.organization = org
       space.name = input[:name]
 
-      with_progress("Creating space #{c(space.name, :name)}") do
-        space.create!
-      end
+      with_progress("Creating space #{c(space.name, :name)}") { space.create! }
 
       if input[:manager]
-        with_progress("Adding you as a manager") do
-          space.add_manager client.current_user
-        end
+        with_progress("Adding you as a manager") { space.add_manager client.current_user }
       end
 
       if input[:developer]
-        with_progress("Adding you as a developer") do
-          space.add_developer client.current_user
-        end
+        with_progress("Adding you as a developer") { space.add_developer client.current_user }
       end
 
       if input[:auditor]
-        with_progress("Adding you as an auditor") do
-          space.add_auditor client.current_user
-        end
+        with_progress("Adding you as an auditor") { space.add_auditor client.current_user }
       end
 
       if input[:target]
-        invoke :target, :organization => space.organization,
-          :space => space
+        invoke :target, :organization => space.organization, :space => space
       else
         line c("Space created! Use #{b("switch-space #{space.name}")} to target it.", :good)
       end

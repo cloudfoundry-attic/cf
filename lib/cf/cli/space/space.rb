@@ -14,8 +14,7 @@ module CF::Space
     input :full, :desc => "Show full information for apps, services, etc.",
           :default => false
     def space
-      org = input[:organization]
-      space = input[:space, org]
+      space = CF::Populators::Space.new(input, org).populate_and_save!
 
       unless space
         return if quiet?

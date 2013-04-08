@@ -4,14 +4,16 @@ require "cf/cli/populators/organization"
 module CF
   module Space
     class Base < CLI
+      attr_reader :org
+
       def precondition
         check_target
         check_logged_in
-        check_organization
       end
 
-      def check_organization
-        CF::Populators::Organization.new(input).populate_and_save!
+      def run(name)
+        @org = CF::Populators::Organization.new(input).populate_and_save!
+        super(name)
       end
 
       def self.space_by_name

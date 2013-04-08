@@ -13,7 +13,7 @@ describe CF::Space::Rename do
 
       stub(cli).check_logged_in
       stub(cli).check_target
-      stub(cli).check_organization
+      any_instance_of(CF::Populators::Organization, :populate_and_save! => organization)
     end
   end
 
@@ -75,15 +75,6 @@ describe CF::Space::Rename do
 
     context 'when no name is provided, but a space is' do
       subject { cf %W[rename-space --space #{renamed_space.name} --no-force] }
-
-      it_should_behave_like "a_command_that_populates_organization" do
-        subject { cf %W[rename-space --no-force --no-quiet #{renamed_space}] }
-        before do
-          any_instance_of described_class do |cli|
-            stub.proxy(cli).check_organization
-          end
-        end
-      end
 
       it 'asks for the new name and renames' do
         dont_allow_ask("Rename which space?", anything)
