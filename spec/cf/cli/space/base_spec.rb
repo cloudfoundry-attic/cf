@@ -1,6 +1,5 @@
 require 'spec_helper'
 require "cf/cli/app/base"
-require "pry-debugger"
 
 describe CF::Space::Base do
   describe '#run' do
