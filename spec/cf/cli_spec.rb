@@ -76,7 +76,7 @@ describe CF::CLI do
 
       it "tells the user they are not authenticated" do
         subject
-        expect(stdout.string).to include "Invalid authentication token. Try logging in again with 'cf login'"
+        expect(stdout.string).to include "Invalid authentication token. Try logging in again with 'cf login'. If problems continue, please contact your Cloud Operator."
       end
 
       it "exits without attempting to login again" do
