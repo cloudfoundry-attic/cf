@@ -32,9 +32,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch organizations and spaces" do
-      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-        runner.wait_for_exit
-      end
+      BlueShell::Runner.run("#{cf_bin} target #{target}")
+      BlueShell::Runner.run("#{cf_bin} logout")
 
       BlueShell::Runner.run("#{cf_bin} login") do |runner|
         expect(runner).to say "Email>"

@@ -48,6 +48,13 @@ GIT
       uuidtools (~> 2.1)
 
 GIT
+  remote: git://github.com/pivotal-vmware/blue-shell.git
+  revision: 71d963100d1d50d96c823404d45905264fda19f8
+  specs:
+    blue-shell (0.0.1)
+      rspec
+
+GIT
   remote: git://github.com/vito/interact.git
   revision: 956058c9c1c03f9b606fb7f45e598edfdfa0a20e
   specs:
@@ -58,13 +65,6 @@ GIT
   revision: 7a5a58d19bf82780a32b3ce006a95313ed732256
   specs:
     mothership (0.5.1)
-
-GIT
-  remote: git@github.com:pivotal-vmware/blue-shell.git
-  revision: 76735ebda30f62b0b649f58e765c48b3dc795d26
-  specs:
-    blue-shell (0.0.1)
-      rspec
 
 GEM
   remote: http://rubygems.org/
