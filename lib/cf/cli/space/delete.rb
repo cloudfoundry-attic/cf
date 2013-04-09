@@ -16,7 +16,6 @@ module CF::Space
     input :really, :type => :boolean, :forget => true, :hidden => true,
           :default => proc { force? || interact }
     def delete_space
-      org = input[:organization]
       spaces = input[:spaces, org]
 
       deleted_current = false
