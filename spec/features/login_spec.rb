@@ -21,12 +21,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
         runner.wait_for_exit
       end
 
-      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-        runner.wait_for_exit
-      end
+      logout
     end
 
     after do
+      logout
       Interact::Progress::Dots.stop!
     end
 

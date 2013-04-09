@@ -25,39 +25,16 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     before do
       Interact::Progress::Dots.start!
+      login
     end
 
     after do
+      logout
       Interact::Progress::Dots.stop!
     end
 
     it "registers a new account and deletes it" do
       email = Faker::Internet.email
-      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-        runner.wait_for_exit
-      end
-
-      BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
-        runner.wait_for_exit
-      end
-
-      BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
-        expect(runner).to say(
-          "Organization>" => proc {
-            runner.send_keys organization
-            expect(runner).to say /Switching to organization .*\.\.\. OK/
-          },
-          "Switching to organization" => proc {}
-        )
-
-        expect(runner).to say(
-          "Space>" => proc {
-            runner.send_keys "1"
-            expect(runner).to say /Switching to space .*\.\.\. OK/
-          },
-          "Switching to space" => proc {}
-        )
-      end
 
       BlueShell::Runner.run("#{cf_bin} register #{email} --password p") do |runner|
         expect(runner).to say "Confirm Password>"
@@ -67,16 +44,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say "Authenticating... OK"
       end
 
-      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-        runner.wait_for_exit
-      end
-
-      BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
-        expect(runner).to say "Organization>"
-        runner.send_keys "1"
-        expect(runner).to say "Space>"
-        runner.send_keys "1"
-      end
+      login
 
       # TODO: do this when cf delete-user is implemented
       #BlueShell::Runner.run("#{cf_bin} delete-user #{email}") do |runner|
@@ -99,7 +67,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say "Password>"
         runner.send_keys "another_password"
         expect(runner).to say "Password>"
-        runner.send_keys "passwords_for_everyone"
+        runner.send_keys "passwords_for_everyone!"
         expect(runner).to say "FAILED"
         runner.output.should_not =~ /CFoundry::/
         runner.output.should_not =~ %r{~/\.cf/crash}

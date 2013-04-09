@@ -1,7 +1,7 @@
 module FeaturesHelper
   def login
-    logout
     set_target
+    logout
 
     BlueShell::Runner.run("#{cf_bin} login #{username} --password #{password}") do |runner|
       expect(runner).to say(
@@ -14,7 +14,7 @@ module FeaturesHelper
 
       expect(runner).to say(
         "Space>" => proc {
-          runner.send_keys "1"
+          runner.send_keys respond_to?(:space) ? space : "1"
           expect(runner).to say /Switching to space .*\.\.\. OK/
         },
         "Switching to space" => proc {}

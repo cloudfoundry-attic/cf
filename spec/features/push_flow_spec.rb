@@ -19,50 +19,16 @@ if ENV['CF_V2_RUN_INTEGRATION']
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
       WebMock.allow_net_connect!
       Interact::Progress::Dots.start!
+      login
     end
 
     after do
       `#{cf_bin} delete #{app} -f -o --no-script`
+      logout
       Interact::Progress::Dots.stop!
     end
 
     it 'pushes a simple sinatra app using defaults as much as possible' do
-      BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-        runner.wait_for_exit
-      end
-
-      BlueShell::Runner.run("#{cf_bin} target http://#{target}") do |runner|
-        expect(runner).to say %r{Setting target to http://#{target}... OK}
-      end
-
-      BlueShell::Runner.run("#{cf_bin} login") do |runner|
-        expect(runner).to say %r{target: https?://#{target}}
-
-        expect(runner).to say "Email>"
-        runner.send_keys username
-
-        expect(runner).to say "Password>"
-        runner.send_keys password
-
-        expect(runner).to say "Authenticating... OK"
-
-        expect(runner).to say(
-          "Organization>" => proc {
-            runner.send_keys organization
-            expect(runner).to say /Switching to organization .*\.\.\. OK/
-          },
-          "Switching to organization" => proc {}
-        )
-
-        expect(runner).to say(
-          "Space>" => proc {
-            runner.send_keys "1"
-            expect(runner).to say /Switching to space .*\.\.\. OK/
-          },
-          "Switching to space" => proc {}
-        )
-      end
-
       BlueShell::Runner.run("#{cf_bin} app #{app}") do |runner|
         expect(runner).to say "Unknown app '#{app}'."
       end

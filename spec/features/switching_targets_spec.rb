@@ -15,6 +15,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     after do
+      logout
       Interact::Progress::Dots.stop!
     end
 
@@ -32,24 +33,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch organizations and spaces" do
-      BlueShell::Runner.run("#{cf_bin} target #{target}")
-      BlueShell::Runner.run("#{cf_bin} logout")
+      login
 
-      BlueShell::Runner.run("#{cf_bin} login") do |runner|
-        expect(runner).to say "Email>"
-        runner.send_keys username
-
-        expect(runner).to say "Password>"
-        runner.send_keys password
-
-        expect(runner).to say "Authenticating... OK"
-      end
-
-      BlueShell::Runner.run("#{cf_bin} target -o #{organization}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} target -o #{organization} -s #{space2}") do |runner|
         expect(runner).to say("Switching to organization #{organization}")
-
-        expect(runner).to say("Space>")
-        runner.send_keys space2
+        expect(runner).to say("Switching to space #{space2}")
 
         runner.wait_for_exit
       end
