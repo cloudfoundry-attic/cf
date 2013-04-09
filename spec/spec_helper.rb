@@ -48,6 +48,7 @@ RSpec.configure do |c|
   c.include CliHelper
   c.include InteractHelper
   c.include ConfigHelper
+  c.include FeaturesHelper
 
   c.before(:all) do
     WebMock.disable_net_connect!

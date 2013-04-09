@@ -19,9 +19,10 @@ describe CF::Populators::Space do
       fake_client :organizations => [organization]
     end
 
-    let(:input) { {:space => space} }
+    let(:input_hash) { {:space => space} }
+    let(:inputs) { Mothership::Inputs.new(nil, nil, input_hash) }
     let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
-    let(:populator) { populator = CF::Populators::Space.new(Mothership::Inputs.new(nil, nil, input), organization) }
+    let(:populator) { CF::Populators::Space.new(inputs, organization) }
 
     before do
       stub(client).current_user { user }
@@ -53,8 +54,21 @@ describe CF::Populators::Space do
       subject.should == space
     end
 
+    describe "mothership input arguments" do
+      let(:inputs) do
+        Mothership::Inputs.new(nil, nil, input_hash).tap do |input|
+          mock(input).[](:space, organization) { space }
+          stub(input).[](anything) { space }
+        end
+      end
+
+      it "passes through extra arguments to the input call" do
+        subject
+      end
+    end
+
     context "with a space in the input" do
-      let(:input) { {:space => space} }
+      let(:input_hash) { {:space => space} }
       before { write_token_file({:space => "space-id-2"}) }
 
       it "uses that space" do
@@ -78,7 +92,7 @@ describe CF::Populators::Space do
     end
 
     context "without a space in the input" do
-      let(:input) { {} }
+      let(:input_hash) { {} }
 
       context "with a space in the config file" do
         it "should not reprompt for space" do

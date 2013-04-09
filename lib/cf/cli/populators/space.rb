@@ -24,6 +24,10 @@ module CF
       def choices
         organization.spaces(:depth => 0)
       end
+
+      def finder_argument
+        organization
+      end
     end
   end
 end

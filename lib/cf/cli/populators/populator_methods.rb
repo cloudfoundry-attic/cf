@@ -22,7 +22,12 @@ module CF
 
       def get_object
         if input.has?(type)
-          object = input[type]
+          if respond_to?(:finder_argument, true)
+            object = input[type, finder_argument]
+          else
+            object = input[type]
+          end
+
           with_progress("Switching to #{type} #{c(object.name, :name)}") {}
         elsif info[type]
           previous_object = client.send(type, (info[type]))
