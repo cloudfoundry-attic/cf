@@ -7,7 +7,13 @@ module CF::User
     input :email, :desc => "User email", :argument => :optional
     input :password, :desc => "User password"
     input :verify, :desc => "Repeat password"
+    input :organization, :desc => "User organization",
+      :aliases => %w{--org -o},
+      :default => proc { client.current_organization },
+      :from_given => by_name(:organization)
+
     def create_user
+      org = CF::Populators::Organization.new(input).populate_and_save!
       email = input[:email]
       password = input[:password]
 
@@ -15,8 +21,14 @@ module CF::User
         fail "Passwords don't match."
       end
 
+      user = nil
       with_progress("Creating user") do
-        client.register(email, password)
+        user = client.register(email, password)
+      end
+
+      with_progress("Adding user to #{org.name}") do
+        user.audited_organizations = user.managed_organizations = user.organizations = [org]
+        user.update!
       end
     end
 
