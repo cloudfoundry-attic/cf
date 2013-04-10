@@ -37,7 +37,7 @@ module CF::Space
       if input[:target]
         invoke :target, :organization => space.organization, :space => space
       else
-        line c("Space created! Use #{b("switch-space #{space.name}")} to target it.", :good)
+        line c("Space created! Use #{b("`cf switch-space #{space.name}`")} to target it.", :good)
       end
     end
 

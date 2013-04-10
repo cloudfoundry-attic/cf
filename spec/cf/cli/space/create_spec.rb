@@ -63,7 +63,7 @@ describe CF::Space::Create do
 
       it "tells the user how they can switch to the new space" do
         subject
-        expect(output).to say("Space created! Use switch-space #{new_space.name} to target it.")
+        expect(output).to say("Space created! Use `cf switch-space #{new_space.name}` to target it.")
       end
     end
   end
