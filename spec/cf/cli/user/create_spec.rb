@@ -25,6 +25,7 @@ describe CF::User::Create do
   describe "running the command" do
     let(:client) { fake_client }
     let(:org) { fake(:organization) }
+    let(:user) { fake(:user) }
 
     before do
       any_instance_of(described_class) { |cli| stub(cli).client { client } }
@@ -56,6 +57,9 @@ describe CF::User::Create do
         stub_ask("Password", anything) { "password1" }
         stub_ask("Verify Password", anything) { confirmation }
         stub(CF::Populators::Organization).new(instance_of(Mothership::Inputs)) { stub!.populate_and_save! { org } }
+
+        stub(client).register("some-angry-dude@example.com", "password1") { user }
+        stub(user).update!
       end
 
       it "ensures that an org is present" do
@@ -74,12 +78,12 @@ describe CF::User::Create do
 
       context "when the password matches its confirmation" do
         it "creates a user" do
-          mock(client).register("some-angry-dude@example.com", "password1")
+          mock(client).register("some-angry-dude@example.com", "password1") { user }
+          stub(user).update!
           subject
         end
 
         it "adds the user to the current org" do
-          user = fake(:user)
           stub(client).register(anything, anything) { user }
           mock(user).update!
 
