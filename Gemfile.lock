@@ -38,12 +38,12 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: 0bf7e1c2b1dff7ec506a93af274b1ad9cf44d968
+  revision: 971141f809f40043d7de86e7fc43566c1b72d932
   specs:
-    tunnel-cf-plugin (0.3.0)
+    tunnel-cf-plugin (0.3.1.rc1)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (~> 0.6.0)
+      cfoundry (>= 0.6.1.rc2, < 0.7)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
 
@@ -80,7 +80,7 @@ GEM
     ffaker (1.15.0)
     gem-release (0.5.3)
     json_pure (1.7.7)
-    mime-types (1.21)
+    mime-types (1.22)
     multi_json (1.7.2)
     multipart-post (1.2.0)
     parallel (0.6.3)
