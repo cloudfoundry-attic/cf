@@ -6,7 +6,7 @@ describe CF::Populators::Organization do
   stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
   describe "#populate_and_save!" do
-    let(:tokens_file_path) { "~/.cf/tokens.yml" }
+    let(:tokens_file_path) { CF::TOKENS_FILE }
     let(:user) { stub! }
     let(:organizations) do
       [
@@ -25,6 +25,7 @@ describe CF::Populators::Organization do
       stub(client).current_user { user }
       stub(client).organization { organization }
       stub(client).current_organization { organization }
+      stub(client).target { 'https://api.some-domain.com' }
       any_instance_of(described_class) do |instance|
         stub(instance).client { client }
       end
@@ -74,6 +75,33 @@ describe CF::Populators::Organization do
         subject
         expect(output).to say("Switching to organization #{organization.name}")
       end
+
+      context "and a different organization and space in the token file" do
+        let(:input) { {:organization => organizations.last} }
+
+        before do
+          write_token_file({:organization => "organization-id-1", :space => "should-be-removed"})
+        end
+
+        it "removes the space from the token file" do
+          subject
+          refreshed_tokens = YAML.load_file(File.expand_path(tokens_file_path))
+          expect(refreshed_tokens["https://api.some-domain.com"][:space]).to be_nil
+        end
+
+      end
+
+      context "and the same organization and a space in the token file" do
+        before do
+          write_token_file({:organization => "organization-id-1", :space => "should-not-be-removed"})
+        end
+
+        it "does not remove the space from the token file" do
+          subject
+          expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "should-not-be-removed"
+        end
+      end
+
     end
 
     context "without an organization in the input" do
