@@ -25,7 +25,7 @@ group :test do
   gem "ffaker"
   gem "fakefs"
   gem "parallel_tests"
-  gem "blue-shell", :git => "git://github.com/pivotal-vmware/blue-shell.git"
+  gem "blue-shell", ">= 0.0.3", :git => "git://github.com/pivotal/blue-shell.git"
 end
 
 group :development do
