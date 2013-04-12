@@ -9,10 +9,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:space) { ENV['CF_V2_TEST_SPACE'] }
     let(:space2) { "#{ENV['CF_V2_TEST_SPACE']}-2"}
     let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
-    let(:organization_two) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
-
-    let(:created_space_1) { "space-#{rand(10000)}"}
-    let(:created_space_2) { "space-#{rand(10000)}"}
 
     before do
       Interact::Progress::Dots.start!
@@ -36,29 +32,24 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
     end
 
-    context "with created spaces in the second org" do
-      it "can switch organizations and spaces" do
-        login
+    it "can switch organizations and spaces" do
+      login
 
-        BlueShell::Runner.run("#{cf_bin} target -o #{organization_two}") do |runner|
-          expect(runner).to say("Switching to organization #{organization_two}")
-          expect(runner).to say("Space>")
-          runner.send_keys space2
+      BlueShell::Runner.run("#{cf_bin} target -o #{organization} -s #{space2}") do |runner|
+        expect(runner).to say("Switching to organization #{organization}")
+        expect(runner).to say("Switching to space #{space2}")
 
-          expect(runner).to say(/Switching to space #{space2}/)
+        runner.wait_for_exit
+      end
 
-          runner.wait_for_exit
-        end
+      BlueShell::Runner.run("#{cf_bin} target -s #{space}") do |runner|
+        expect(runner).to say("Switching to space #{space}")
+        runner.wait_for_exit
+      end
 
-        BlueShell::Runner.run("#{cf_bin} target -s #{space}") do |runner|
-          expect(runner).to say("Switching to space #{space}")
-          runner.wait_for_exit
-        end
-
-        BlueShell::Runner.run("#{cf_bin} target -s #{space2}") do |runner|
-          expect(runner).to say("Switching to space #{space2}")
-          runner.wait_for_exit
-        end
+      BlueShell::Runner.run("#{cf_bin} target -s #{space2}") do |runner|
+        expect(runner).to say("Switching to space #{space2}")
+        runner.wait_for_exit
       end
     end
   end

@@ -21,8 +21,6 @@ module CF
       private
 
       def get_object
-        previous_object = client.send(type, (info[type])) if info[type]
-
         if input.has?(type)
           if respond_to?(:finder_argument, true)
             object = input[type, finder_argument]
@@ -32,16 +30,11 @@ module CF
 
           with_progress("Switching to #{type} #{c(object.name, :name)}") {}
         elsif info[type]
+          previous_object = client.send(type, (info[type]))
           object = previous_object if valid?(previous_object)
         end
 
-        object ||= prompt_user
-
-        if (previous_object != object) && respond_to?(:changed, true)
-          changed
-        end
-
-        object
+        object || prompt_user
       end
 
       def prompt_user

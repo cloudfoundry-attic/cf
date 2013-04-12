@@ -6,10 +6,6 @@ module CF
     class Organization < Base
       include PopulatorMethods
 
-      def changed
-        info[:space] = nil
-      end
-
       private
 
       def choices
