@@ -94,21 +94,26 @@ module CF::App
       line "Checking #{c(app.name, :name)}..."
 
       seconds = 0
-      while instances = app.instances
-        indented { print_instances_summary(instances) }
 
-        if all_instances_running?(instances)
-          line "#{c("OK", :good)}"
-          return
+      begin
+        while instances = app.instances
+          indented { print_instances_summary(instances) }
+
+          if all_instances_running?(instances)
+            line "#{c("OK", :good)}"
+            return
+          end
+
+          if any_instance_flapping?(instances) || seconds == APP_CHECK_LIMIT
+            err "Application failed to start."
+            return
+          end
+
+          sleep 1
+          seconds += 1
         end
-
-        if any_instance_flapping?(instances) || seconds == APP_CHECK_LIMIT
-          err "Application failed to start."
-          return
-        end
-
-        sleep 1
-        seconds += 1
+      rescue CFoundry::StagingError
+        err "Application failed to stage"
       end
     end
 

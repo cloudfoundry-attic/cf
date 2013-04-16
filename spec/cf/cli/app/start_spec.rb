@@ -84,6 +84,19 @@ describe CF::App::Start do
           end
         end
 
+        context "staging fails" do
+          before do
+            stub(app).instances { raise CFoundry::StagingError.new("Failed to stage", 170001, nil, nil) }
+          end
+
+          it "says the app failed to stage" do
+            subject
+            expect(output).to say("Checking #{app.name}...")
+            expect(error_output).to say("Application failed to stage")
+            expect(output).to_not say(/\d (running|down|flapping)/)
+          end
+        end
+
         context "when any instance becomes flapping" do
           let(:final_instances) do
             [ CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "FLAPPING"),

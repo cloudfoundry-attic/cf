@@ -18,10 +18,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/console-cf-plugin.git
-  revision: a165f4cade721edd637df97d64488560c5913933
+  revision: 81b3f50cb43b62116a10eddfd23430235cbebda3
   specs:
-    console-cf-plugin (0.2.0)
-      tunnel-cf-plugin (~> 0.3.0)
+    console-cf-plugin (0.2.1.rc1)
+      tunnel-cf-plugin (>= 0.3.1.rc1, < 0.4)
 
 GIT
   remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
