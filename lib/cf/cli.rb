@@ -379,23 +379,10 @@ module CF
       info = target_info(target)
       token = info[:token] && CFoundry::AuthToken.from_hash(info)
 
-      @@client =
-        case info[:version]
-        when 2
-          fail "User switching not implemented." if input[:proxy]
-          CFoundry::V2::Client.new(target, token)
-        when 1
-          CFoundry::V1::Client.new(target, token)
-        else
-          CFoundry::Client.new(target, token)
-        end
+      fail "V1 targets are no longer supported." if info[:version] != 2
+      fail "User switching not implemented." if input[:proxy]
 
-      unless @@client.is_a?(CFoundry::V2::Client)
-        # TODO
-        fail "V1 targets are no longer supported."
-      end
-
-      @@client.proxy = input[:proxy]
+      @@client = CFoundry::V2::Client.new(target, token)
       @@client.trace = input[:trace]
 
       uri = URI.parse(target)
