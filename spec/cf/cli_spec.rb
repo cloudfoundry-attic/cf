@@ -142,7 +142,7 @@ describe CF::CLI do
       end
 
       context "when we are debugging" do
-        let(:inputs) { { :debug => true } }
+        let(:inputs) { {:debug => true} }
 
         it_behaves_like "an error that gets passed through",
           :with_exception => RuntimeError
@@ -178,7 +178,8 @@ describe CF::CLI do
           attr_accessor :new_token
         end
 
-        def precondition; end
+        def precondition;
+        end
 
         desc "XXX"
         def refresh_token
@@ -251,7 +252,7 @@ describe CF::CLI do
         error
       end
 
-      it { should include "Time of crash:"}
+      it { should include "Time of crash:" }
       it { should include "gemfiles are kinda hard" }
       it { should include "bar" }
       it { should_not include "fo/gems/bar" }
@@ -259,8 +260,8 @@ describe CF::CLI do
     end
 
     context 'when the exception is an APIError' do
-      let(:request) { { :method => "GET", :url => "http://api.cloudfoundry.com/foo", :headers => {}, :body => nil } }
-      let(:response) { { :status => 404, :body => "bar", :headers => {} } }
+      let(:request) { {:method => "GET", :url => "http://api.cloudfoundry.com/foo", :headers => {}, :body => nil} }
+      let(:response) { {:status => 404, :body => "bar", :headers => {}} }
       let(:exception) do
         error = CFoundry::APIError.new(nil, nil, request, response)
         error.set_backtrace(["fo/gems/bar", "baz quick"])
@@ -268,7 +269,7 @@ describe CF::CLI do
       end
 
       before do
-        stub(response).body {"Response Body"}
+        stub(response).body { "Response Body" }
       end
 
       it { should include "REQUEST: " }
@@ -348,18 +349,18 @@ describe CF::CLI do
     before do
       stub(context).targets_info do
         {
-          "https://api.some-domain.com" => { :token => "bearer token1" },
-          "https://api.some-other-domain.com" => { :token => "bearer token2" }
+          "https://api.some-domain.com" => {:token => "bearer token1"},
+          "https://api.some-other-domain.com" => {:token => "bearer token2"}
         }
       end
     end
 
     describe "#save_target_info" do
       it "adds the given target info, and writes the result to ~/.cf/tokens.yml" do
-        context.save_target_info({ :token => "bearer token3" }, "https://api.some-domain.com")
+        context.save_target_info({:token => "bearer token3"}, "https://api.some-domain.com")
         YAML.load_file(File.expand_path("~/.cf/tokens.yml")).should == {
-          "https://api.some-domain.com" => { :token => "bearer token3" },
-          "https://api.some-other-domain.com" => { :token => "bearer token2" }
+          "https://api.some-domain.com" => {:token => "bearer token3"},
+          "https://api.some-other-domain.com" => {:token => "bearer token2"}
         }
       end
     end
@@ -368,7 +369,7 @@ describe CF::CLI do
       it "removes the given target, and writes the result to ~/.cf/tokens.yml" do
         context.remove_target_info("https://api.some-domain.com")
         YAML.load_file(File.expand_path("~/.cf/tokens.yml")).should == {
-          "https://api.some-other-domain.com" => { :token => "bearer token2" }
+          "https://api.some-other-domain.com" => {:token => "bearer token2"}
         }
       end
     end
@@ -386,7 +387,7 @@ describe CF::CLI do
       end
 
       it "does not assign an AuthToken on the client if there is no token stored" do
-        mock(context).target_info("some-fake-target") { { :version => 2 } }
+        mock(context).target_info("some-fake-target") { {:version => 2} }
         expect(context.client("some-fake-target").token).to be_nil
       end
     end
@@ -407,7 +408,7 @@ describe CF::CLI do
 
     context "with a cloud controller" do
       before do
-        stub(context).target_info { { :version => 2} }
+        stub(context).target_info { {:version => 2} }
       end
 
       it "connects using the v2 api" do
@@ -415,73 +416,38 @@ describe CF::CLI do
       end
 
       context "with a proxy user" do
-        before { stub(context).input { { :proxy => 'foo@example.com' } } }
+        before { stub(context).input { {:proxy => 'foo@example.com'} } }
 
         it "fails with the right error message" do
-          expect {context.client}.to raise_error(CF::UserError, "User switching not implemented.")
+          expect { context.client }.to raise_error(CF::UserError, "User switching not implemented.")
         end
       end
 
-      context "when ENV['https_proxy'] is set" do
-        before { ENV['https_proxy'] = "http://lower.example.com:80" }
-        after { ENV.delete('https_proxy') }
+      %w{https_proxy HTTPS_PROXY http_proxy HTTP_PROXY}.each do |variable|
+        proxy_name = variable.downcase.to_sym
 
-        it "uses the https proxy URI on the enviroenment" do
-          expect(context.client.https_proxy).to eq('http://lower.example.com:80')
+        context "when ENV['#{variable}'] is set" do
+          before { ENV[variable] = "http://lower.example.com:80" }
+          after  { ENV.delete(variable) }
+
+          it "uses the #{proxy_name} proxy URI on the environment variable" do
+            expect(context.client.send(proxy_name)).to eq('http://lower.example.com:80')
+          end
         end
       end
 
-      context "when ENV['HTTPS_PROXY'] is set" do
-        before { ENV['HTTPS_PROXY'] = "http://upper.example.com:80" }
-        after { ENV.delete('HTTPS_PROXY') }
-
-        it "uses the https proxy URI on the environement" do
-          expect(context.client.https_proxy).to eq('http://upper.example.com:80')
-        end
-      end
-
-      context "with a https proxy URI" do
+      context 'when both input and environment variable are provided' do
         before do
           ENV['HTTPS_PROXY'] = "http://should.be.overwritten.example.com:80"
           stub(context).input { {:https_proxy => 'http://arg.example.com:80'} }
         end
+
         after { ENV.delete('HTTPS_PROXY') }
 
         it "uses the provided https proxy URI" do
           expect(context.client.https_proxy).to eq('http://arg.example.com:80')
         end
       end
-
-      context "when ENV['http_proxy'] is set" do
-        before { ENV['http_proxy'] = "http://lower.example.com:80" }
-        after { ENV.delete('http_proxy') }
-
-        it "uses the http proxy URI on the enviroenment" do
-          expect(context.client.http_proxy).to eq('http://lower.example.com:80')
-        end
-      end
-
-      context "when ENV['HTTP_PROXY'] is set" do
-        before { ENV['HTTP_PROXY'] = "http://upper.example.com:80" }
-        after { ENV.delete('HTTP_PROXY') }
-
-        it "uses the http proxy URI on the environement" do
-          expect(context.client.http_proxy).to eq('http://upper.example.com:80')
-        end
-      end
-
-      context "with a http proxy URI" do
-        before do
-          ENV['HTTP_PROXY'] = "http://should.be.overwritten.example.com:80"
-          stub(context).input { {:http_proxy => 'http://arg.example.com:80'} }
-        end
-        after { ENV.delete('HTTP_PROXY') }
-
-        it "uses the provided http proxy URI" do
-          expect(context.client.http_proxy).to eq('http://arg.example.com:80')
-        end
-      end
-
     end
   end
 end
