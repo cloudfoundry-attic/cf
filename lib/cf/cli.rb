@@ -379,7 +379,7 @@ module CF
       info = target_info(target)
       token = info[:token] && CFoundry::AuthToken.from_hash(info)
 
-      fail "V1 targets are no longer supported." if info[:version] != 2
+      fail "V1 targets are no longer supported." if info[:version] == 1
       fail "User switching not implemented." if input[:proxy]
 
       @@client = CFoundry::V2::Client.new(target, token)
@@ -393,11 +393,11 @@ module CF
         save_target_info(info, target)
       end
 
-      if org = info[:organization]
+      if (org = info[:organization])
         @@client.current_organization = @@client.organization(org)
       end
 
-      if space = info[:space]
+      if (space = info[:space])
         @@client.current_space = @@client.space(space)
       end
 
