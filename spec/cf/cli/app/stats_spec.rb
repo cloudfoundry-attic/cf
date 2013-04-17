@@ -2,8 +2,8 @@ require 'spec_helper'
 require 'stringio'
 
 describe CF::App::Stats do
-  let(:global) { { :color => false } }
-  let(:inputs) { { :app => apps[0] } }
+  let(:global) { {:color => false} }
+  let(:inputs) { {:app => apps[0]} }
   let(:given) { {} }
   let(:client) { fake_client(:apps => apps) }
   let(:apps) { [fake(:app, :name => "basic_app")] }
@@ -14,25 +14,25 @@ describe CF::App::Stats do
       stub(cli).precondition { nil }
     end
     stub(inputs[:app]).stats do
-      { "0" => {
-          :state => "RUNNING",
-          :stats => {
-            :name => "basic_app",
-            :uris => ["basic_app.p01.rbconsvcs.com"],
-            :host => "172.20.183.93",
-            :port => 61006,
-            :uptime => 3250,
-            :mem_quota => 301989888,
-            :disk_quota => 268435456,
-            :fds_quota => 256,
-            :usage => {
-              :time => "2013-01-04 19:53:39 +0000",
-              :cpu => 0.0019777013519415455,
-              :mem => 31395840,
-              :disk => 15638528
-            }
+      {"0" => {
+        :state => "RUNNING",
+        :stats => {
+          :name => "basic_app",
+          :uris => ["basic_app.p01.rbconsvcs.com"],
+          :host => "172.20.183.93",
+          :port => 61006,
+          :uptime => 3250,
+          :mem_quota => 301989888,
+          :disk_quota => 268435456,
+          :fds_quota => 256,
+          :usage => {
+            :time => "2013-01-04 19:53:39 +0000",
+            :cpu => 0.0019777013519415455,
+            :mem => 31395840,
+            :disk => 15638528
           }
         }
+      }
       }
     end
   end
@@ -55,7 +55,7 @@ describe CF::App::Stats do
     describe 'arguments' do
       subject { command.arguments }
       it 'has no arguments' do
-        should eq([:name=>:app, :type=>:normal, :value=>nil])
+        should eq([:name => :app, :type => :optional, :value => nil])
       end
     end
   end

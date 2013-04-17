@@ -9,3 +9,4 @@ end
 
 require "tunnel/plugin"
 require "console/plugin"
+require "manifests/plugin"

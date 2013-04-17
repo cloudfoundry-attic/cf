@@ -17,13 +17,6 @@ GIT
       rubyzip (~> 0.9)
 
 GIT
-  remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
-  revision: 98f75d595412ecf466c2fd45babd09ae269d11a3
-  specs:
-    manifests-cf-plugin (0.7.1.rc1)
-      cfoundry (>= 0.7.0.rc3, < 0.8)
-
-GIT
   remote: git://github.com/cloudfoundry/micro-cf-plugin.git
   revision: 766820c8a1fdbfb631e57aa3b2fe65e88503fcca
   specs:
@@ -57,7 +50,6 @@ PATH
       cfoundry (>= 0.7.0.rc3, < 0.8)
       interact (~> 0.5)
       json_pure (~> 1.6)
-      manifests-cf-plugin (~> 0.7.0)
       mothership (>= 0.5.1, < 1.0)
       multi_json (~> 1.3)
       rest-client (~> 1.6)
@@ -133,7 +125,6 @@ DEPENDENCIES
   gerrit-cli
   interact!
   json_pure (~> 1.6)
-  manifests-cf-plugin!
   micro-cf-plugin!
   mothership!
   multi_json (~> 1.3)
