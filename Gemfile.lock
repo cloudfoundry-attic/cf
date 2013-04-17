@@ -38,9 +38,9 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: f67e12be0fa557113382653f3a8b07362c83f284
+  revision: 6e6bdfd9573e04ea72fdaa60831a073a009388e3
   specs:
-    tunnel-cf-plugin (0.3.1.rc2)
+    tunnel-cf-plugin (0.3.1.rc3)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
       cfoundry (>= 0.7.0.rc3, < 0.8)
