@@ -28,13 +28,12 @@ $ rake gem:install
 ```
 $ cf help --all
 Getting Started
-  info            	Display information on the current target, user, etc.
-  target [URL]    	Set or display the target cloud, organization, and space
-  targets         	List known targets.
-  login [USERNAME]	Authenticate with the target
-  logout          	Log out from the target
-  register [EMAIL]	Create a user and log in
-  colors          	Show color configuration
+  colors       	Show color configuration
+  info         	Display information on the current target, user, etc.
+  login [EMAIL]	Authenticate with the target
+  logout       	Log out from the target
+  target [URL] 	Set or display the target cloud, organization, and space
+  targets      	List known targets.
 
 Applications
   app [APP]	Show app information
@@ -47,6 +46,7 @@ Applications
     restart APPS...    	Stop and start an application
     start APPS...      	Start an application
     stop APPS...       	Stop an application
+    console APP        	Open a console connected to your app
 
   Information
     crashes APPS...         	List an app's crashed instances
@@ -60,22 +60,22 @@ Applications
     instances APPS...       	List an app's instances
     logs [APP]              	Print out an app's logs
     crashlogs APP           	Print out the logs for an app's crashed instances
-    map APP URL             	Add a URL mapping for an app
-    unmap APP [URL]         	Remove a URL mapping from an app
     scale [APP]             	Update the instances/memory limit for an application
     stats [APP]             	Display application instance status
+    map [APP] [HOST] DOMAIN 	Add a URL mapping
+    unmap [URL] [APP]       	Remove a URL mapping
 
 Services
-  service INSTANCE	Show service instance information
-  services        	List your service instances
+  service SERVICE	Show service information
+  services       	List your services
 
   Management
-    bind-service [INSTANCE] [APP]  	Bind a service instance to an application
-    unbind-service [INSTANCE] [APP]	Unbind a service from an application
-    create-service [SERVICE] [NAME]	Create a service
-    delete-service [INSTANCE]      	Delete a service
-    rename-service [SERVICE] [NAME]	Rename a service
-    tunnel [INSTANCE] [CLIENT]     	Tells you to install tunnel-cf-plugin
+    bind-service [SERVICE] [APP]    	Bind a service to an application
+    create-service [OFFERING] [NAME]	Create a service
+    delete-service [SERVICE]        	Delete a service
+    rename-service [SERVICE] [NAME] 	Rename a service
+    unbind-service [SERVICE] [APP]  	Unbind a service from an application
+    tunnel [INSTANCE] [CLIENT]      	Create a local tunnel to a service.
 
 Organizations
   create-org [NAME]               	Create an organization
@@ -90,39 +90,48 @@ Spaces
   rename-space [SPACE] [NAME]       	Rename a space
   space [SPACE]                     	Show space information
   spaces [ORGANIZATION]             	List spaces in an organization
-  take-space NAME                   	Switch to a space, creating it if it doesn't exist
+  switch-space NAME                 	Switch to a space
 
 Routes
-  create-route [URL]  	Create a route
-  delete-route [ROUTE]	Delete a route
-  routes              	List routes in a space
+  routes	List routes in a space
 
 Domains
-  add-domain NAME       	Add a domain to a space
-  create-domain NAME    	Create a domain
-  delete-domain [DOMAIN]	Delete a domain
-  domains [SPACE]       	List domains in a space
-  remove-domain [DOMAIN]	Remove a domain from a space
+  domains [SPACE]    	List domains in a space
+  map-domain NAME    	Map a domain to an organization or space
+  unmap-domain DOMAIN	Unmap a domain from an organization or space
 
 Administration
-  users	List all users
+  users                                         	List all users
+  curl MODE PATH HEADERS...                     	Execute a raw request
+  guid TYPE [NAME]                              	Obtain guid of an object(s)
+  service-auth-tokens                           	List service auth tokens
+  create-service-auth-token [LABEL] [PROVIDER]  	Create a service auth token
+  update-service-auth-token [SERVICE_AUTH_TOKEN]	Update a service auth token
+  delete-service-auth-token [SERVICE_AUTH_TOKEN]	Delete a service auth token
 
   User Management
     create-user [EMAIL]	Create a user
-    delete-user EMAIL  	Delete a user
     passwd [USER]      	Update a user's password
+    register [EMAIL]   	Create a user and log in
+
+Micro Cloud Foundry
+  micro-status VMX [PASSWORD] 	Display Micro Cloud Foundry VM status
+  micro-offline VMX [PASSWORD]	Micro Cloud Foundry offline mode
+  micro-online VMX [PASSWORD] 	Micro Cloud Foundry online mode
 
 Options:
-      --[no-]color       Use colorful output
-      --[no-]script      Shortcut for --quiet and --force
-  -V, --verbose          Print extra information
-  -f, --[no-]force       Skip interaction when possible
-  -h, --help             Show command usage & instructions
-  -m, --manifest FILE    Path to manifest file to use
-  -q, --[no-]quiet       Simplify output format
-  -t, --trace            Show API requests and responses
-  -u, --proxy EMAIL      Run this command as another user (admin only)
-  -v, --version          Print version number
+      --[no-]color                 Use colorful output
+      --[no-]script                Shortcut for --quiet and --force
+      --debug                      Print full stack trace (instead of crash log)
+      --http-proxy HTTP_PROXY      Connect though an http proxy server
+      --https-proxy HTTPS_PROXY    Connect though an https proxy server
+  -V, --verbose                    Print extra information
+  -f, --[no-]force                 Skip interaction when possible
+  -h, --help                       Show command usage
+  -m, --manifest FILE              Path to manifest file to use
+  -q, --[no-]quiet                 Simplify output format
+  -t, --trace                      Show API traffic
+  -v, --version                    Print version number
 ```
 
 # Cloud Foundry Resources #

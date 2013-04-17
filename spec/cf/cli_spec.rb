@@ -415,14 +415,6 @@ describe CF::CLI do
         expect(context.client).to be_a(CFoundry::V2::Client)
       end
 
-      context "with a proxy user" do
-        before { stub(context).input { {:proxy => 'foo@example.com'} } }
-
-        it "fails with the right error message" do
-          expect { context.client }.to raise_error(CF::UserError, "User switching not implemented.")
-        end
-      end
-
       %w{https_proxy HTTPS_PROXY http_proxy HTTP_PROXY}.each do |variable|
         proxy_name = variable.downcase.to_sym
 

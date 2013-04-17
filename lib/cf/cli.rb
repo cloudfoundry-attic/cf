@@ -26,9 +26,6 @@ module CF
     option :help, :desc => "Show command usage", :alias => "-h",
       :default => false
 
-    option :proxy, :desc => "Run this command as another user (admin)", :alias => "-u",
-      :value => :email
-
     option :http_proxy, :desc => "Connect though an http proxy server", :alias => "--http-proxy",
       :value => :http_proxy
 
@@ -386,8 +383,6 @@ module CF
       token = info[:token] && CFoundry::AuthToken.from_hash(info)
 
       fail "V1 targets are no longer supported." if info[:version] == 1
-      fail "User switching not implemented." if input[:proxy]
-
 
       @@client = CFoundry::V2::Client.new(target, token)
 
