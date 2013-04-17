@@ -421,6 +421,67 @@ describe CF::CLI do
           expect {context.client}.to raise_error(CF::UserError, "User switching not implemented.")
         end
       end
+
+      context "when ENV['https_proxy'] is set" do
+        before { ENV['https_proxy'] = "http://lower.example.com:80" }
+        after { ENV.delete('https_proxy') }
+
+        it "uses the https proxy URI on the enviroenment" do
+          expect(context.client.https_proxy).to eq('http://lower.example.com:80')
+        end
+      end
+
+      context "when ENV['HTTPS_PROXY'] is set" do
+        before { ENV['HTTPS_PROXY'] = "http://upper.example.com:80" }
+        after { ENV.delete('HTTPS_PROXY') }
+
+        it "uses the https proxy URI on the environement" do
+          expect(context.client.https_proxy).to eq('http://upper.example.com:80')
+        end
+      end
+
+      context "with a https proxy URI" do
+        before do
+          ENV['HTTPS_PROXY'] = "http://should.be.overwritten.example.com:80"
+          stub(context).input { {:https_proxy => 'http://arg.example.com:80'} }
+        end
+        after { ENV.delete('HTTPS_PROXY') }
+
+        it "uses the provided https proxy URI" do
+          expect(context.client.https_proxy).to eq('http://arg.example.com:80')
+        end
+      end
+
+      context "when ENV['http_proxy'] is set" do
+        before { ENV['http_proxy'] = "http://lower.example.com:80" }
+        after { ENV.delete('http_proxy') }
+
+        it "uses the http proxy URI on the enviroenment" do
+          expect(context.client.http_proxy).to eq('http://lower.example.com:80')
+        end
+      end
+
+      context "when ENV['HTTP_PROXY'] is set" do
+        before { ENV['HTTP_PROXY'] = "http://upper.example.com:80" }
+        after { ENV.delete('HTTP_PROXY') }
+
+        it "uses the http proxy URI on the environement" do
+          expect(context.client.http_proxy).to eq('http://upper.example.com:80')
+        end
+      end
+
+      context "with a http proxy URI" do
+        before do
+          ENV['HTTP_PROXY'] = "http://should.be.overwritten.example.com:80"
+          stub(context).input { {:http_proxy => 'http://arg.example.com:80'} }
+        end
+        after { ENV.delete('HTTP_PROXY') }
+
+        it "uses the provided http proxy URI" do
+          expect(context.client.http_proxy).to eq('http://arg.example.com:80')
+        end
+      end
+
     end
   end
 end

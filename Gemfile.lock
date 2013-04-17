@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/cfoundry.git
-  revision: 9979e477346b1236b4eb72982e78287fa9735ca5
+  revision: 9c80d18636700643a520fac70cce520f6d6f9390
   submodules: true
   specs:
     cfoundry (0.7.0.rc3)
@@ -66,7 +66,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    addressable (2.3.4)
+    addressable (2.3.3)
     auto_tagger (0.2.9)
       capistrano (>= 2.5.3)
     caldecott-client (0.0.2)
@@ -103,7 +103,7 @@ GEM
     rake (10.0.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rr (1.0.5)
+    rr (1.0.4)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
