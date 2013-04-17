@@ -6,6 +6,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
 
     let(:second_username) { ENV['CF_V2_OTHER_TEST_USER'] }
     let(:second_organization) { ENV['CF_V2_OTHER_TEST_ORGANIZATION'] }
@@ -36,7 +37,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           expect(runner).to say(
             "Organization>" => proc {
-              runner.send_keys "1"
+              runner.send_keys organization
               expect(runner).to say /Switching to organization .*\.\.\. OK/
             },
             "Switching to organization" => proc {}

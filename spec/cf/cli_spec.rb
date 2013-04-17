@@ -405,19 +405,7 @@ describe CF::CLI do
       end
     end
 
-    context "with a v1 cloud controller" do
-      before do
-        stub(context).target_info { { :version => 1 } }
-      end
-
-      it "fails" do
-        expect {
-          context.client
-        }.to raise_error(CF::UserError, /no longer supported/)
-      end
-    end
-
-    context "with a v2 cloud controller" do
+    context "with a cloud controller" do
       before do
         stub(context).target_info { { :version => 2} }
       end

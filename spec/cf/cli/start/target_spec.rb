@@ -68,7 +68,7 @@ describe CF::Start::Target do
 
         context "when the target is valid but the connection is refused" do
           it "shows a pretty error message" do
-            any_instance_of(CFoundry::Client) do |cli|
+            any_instance_of(CFoundry::V2::Client) do |cli|
               stub(cli).info { raise CFoundry::TargetRefused, "foo" }
             end
 
@@ -79,7 +79,7 @@ describe CF::Start::Target do
 
         context "when the uri is malformed" do
           it "shows a pretty error message" do
-            any_instance_of(CFoundry::Client) do |cli|
+            any_instance_of(CFoundry::V2::Client) do |cli|
               stub(cli).info { raise CFoundry::InvalidTarget.new(target) }
             end
 

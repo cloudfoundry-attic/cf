@@ -15,6 +15,8 @@ module FeaturesHelper
   end
 
   def set_target
-    BlueShell::Runner.run("#{cf_bin} target #{target}")
+    BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
+      runner.wait_for_exit(20)
+    end
   end
 end
