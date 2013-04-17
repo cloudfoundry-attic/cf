@@ -10,10 +10,9 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
     let(:organization) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
 
-    let(:app) do
-      fuzz = TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_")
-      "hello-sinatra-#{fuzz}"
-    end
+    let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
+    let(:app) { "hello-sinatra-#{run_id}" }
+    let(:service_name) { "mysql-#{run_id}" }
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
@@ -23,7 +22,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     after do
-      `#{cf_bin} delete #{app} -f -o --no-script`
+      `#{cf_bin} unbind-service -f --no-script #{service_name} #{app}`
+      `#{cf_bin} delete #{app} -f --routes --no-script`
       logout
       Interact::Progress::Dots.stop!
     end
@@ -67,23 +67,23 @@ if ENV['CF_V2_RUN_INTEGRATION']
           runner.send_keys "mysql"
 
           expect(runner).to say "Name?>"
-          runner.send_keys ""
+          runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
           runner.send_keys "200"
 
-          expect(runner).to say /Creating service .+ OK/
+          expect(runner).to say /Creating service #{service_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
 
           expect(runner).to say "Create another service?> n"
           runner.send_keys ""
 
           # skip this
-          if runner.expect "Bind other services to application?> n", 1
+          if runner.expect "Bind other services to application?> n", 15
             runner.send_keys ""
           end
 
-          expect(runner).to say "Save configuration?> n", 10
+          expect(runner).to say "Save configuration?> n", 20
           runner.send_keys ""
 
           expect(runner).to say "Uploading #{app}... OK", 180
@@ -105,14 +105,14 @@ if ENV['CF_V2_RUN_INTEGRATION']
           /x
       end
 
+      BlueShell::Runner.run("#{cf_bin} unbind-service #{service_name} #{app}") do |runner|
+        runner.wait_for_exit(20)
+      end
+
       BlueShell::Runner.run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"
         expect(runner).to say "Deleting #{app}... OK"
-
-        expect(runner).to say "Delete orphaned service"
-        runner.send_keys "y"
-        expect(runner).to say /Deleting .* OK/
       end
     end
   end

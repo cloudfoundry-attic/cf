@@ -10,7 +10,7 @@ env:
     - INTEGRATE_WITH=1.8.7
   global:
     #CF_V2_TEST_TARGET
-    - secure: "RXL4jIW2rIwnGXfK9S8IuQUvrfgvTbnG56fXtIvjvoI3JChBn/3sthwchRV993fHmXuVIOgUC88Zj47Qibqm5y20lOlJoCH+tyaqYnMz8JS1HysN9Av5baSClDILpi726ubSHGzJK2wVqMKqb9w79nkSgtgoVoo43dGkj31dUns="
+    - secure: "hksZm2Ff9xctJMKUb6ffd1Z/2nH2CSk4FTf6S8jVDqycpTD+EmaABueMk/XF\n2DqMocMd3ElW1l2ZYEHzGwjjmo/nlk0C7uH2C9Li7d5SVc29EGhc+jla6koz\nmWHP1lECPYIjcUsjwhUIbkSkTayYJNXzwPq15njbauqUmT6o4tM="
 
     #CF_V2_TEST_USER
     - secure: "CtXrICfDuXSlqKyo/KTi1n0l/ftLr6rPcVcekKz6o9PMUNShIft6qW6HkyhawzW8Oelhr0Woc2sMEbhAkPwW/O+l5rNDDcMzMb6d7BrcaBZd5bcu4qCJZLa0IDF3w4TOhWqPvdGYJ+aRW7gLRvkciYjVV7ZepJvOuqekOotRZ+Y="

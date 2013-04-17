@@ -1,16 +1,16 @@
 GIT
   remote: git://github.com/cloudfoundry/admin-cf-plugin.git
-  revision: 9925b92da7ec8782ce8974f7f3e8761092398c53
+  revision: b67a277dafec1e33a3d16447cba21f59e7705088
   specs:
     admin-cf-plugin (0.2.0)
-      cfoundry (~> 0.6.0)
+      cfoundry (>= 0.7.0.rc3, < 0.8)
 
 GIT
   remote: git://github.com/cloudfoundry/cfoundry.git
-  revision: 355595ed57a67c4bdbc3ba180f1b2b0596b9dbb5
+  revision: 9979e477346b1236b4eb72982e78287fa9735ca5
   submodules: true
   specs:
-    cfoundry (0.6.1.rc3)
+    cfoundry (0.7.0.rc3)
       cf-uaa-lib (~> 1.3.10)
       multi_json (~> 1.3)
       multipart-post (~> 1.1)
@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
-  revision: f5f35b0bc0606b5d33a3b419a7e52628e45111d9
+  revision: 98f75d595412ecf466c2fd45babd09ae269d11a3
   specs:
-    manifests-cf-plugin (0.7.0)
-      cfoundry (~> 0.6.0)
+    manifests-cf-plugin (0.7.1.rc1)
+      cfoundry (>= 0.7.0.rc3, < 0.8)
 
 GIT
   remote: git://github.com/cloudfoundry/micro-cf-plugin.git
@@ -38,12 +38,12 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: 971141f809f40043d7de86e7fc43566c1b72d932
+  revision: f67e12be0fa557113382653f3a8b07362c83f284
   specs:
-    tunnel-cf-plugin (0.3.1.rc1)
+    tunnel-cf-plugin (0.3.1.rc2)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.6.1.rc2, < 0.7)
+      cfoundry (>= 0.7.0.rc3, < 0.8)
       rest-client (~> 1.6)
       uuidtools (~> 2.1)
 
@@ -69,7 +69,7 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    addressable (2.3.3)
+    addressable (2.3.4)
     caldecott-client (0.0.2)
       multi_json (~> 1.3)
     cf-uaa-lib (1.3.10)
@@ -78,18 +78,18 @@ GEM
     diff-lcs (1.2.3)
     fakefs (0.4.2)
     ffaker (1.15.0)
-    gem-release (0.5.3)
+    gem-release (0.5.4)
     json_pure (1.7.7)
     mime-types (1.22)
     multi_json (1.7.2)
     multipart-post (1.2.0)
-    parallel (0.6.3)
-    parallel_tests (0.10.4)
+    parallel (0.6.4)
+    parallel_tests (0.11.0)
       parallel
     rake (10.0.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rr (1.0.4)
+    rr (1.0.5)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
