@@ -1,0 +1,7 @@
+--- 
+applications: 
+  .: 
+    instances: 1
+    memory: 128M
+    name: railsfoo
+    url: railsfoo.${target-base}

@@ -64,7 +64,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "mysql"
+          runner.send_keys "mysql 5.5"
 
           expect(runner).to say "Name?>"
           runner.send_keys service_name

@@ -1,0 +1,5 @@
+some_other_key: 12345
+postgresql:
+  psql:
+    environment:
+      - PGPASSWORD='dont_ask_password'

@@ -17,13 +17,6 @@ GIT
       rubyzip (~> 0.9)
 
 GIT
-  remote: git://github.com/cloudfoundry/console-cf-plugin.git
-  revision: 81b3f50cb43b62116a10eddfd23430235cbebda3
-  specs:
-    console-cf-plugin (0.2.1.rc1)
-      tunnel-cf-plugin (>= 0.3.1.rc1, < 0.4)
-
-GIT
   remote: git://github.com/cloudfoundry/manifests-cf-plugin.git
   revision: 98f75d595412ecf466c2fd45babd09ae269d11a3
   specs:
@@ -35,17 +28,6 @@ GIT
   revision: 766820c8a1fdbfb631e57aa3b2fe65e88503fcca
   specs:
     micro-cf-plugin (0.1.0)
-
-GIT
-  remote: git://github.com/cloudfoundry/tunnel-cf-plugin.git
-  revision: 6e6bdfd9573e04ea72fdaa60831a073a009388e3
-  specs:
-    tunnel-cf-plugin (0.3.1.rc3)
-      addressable (~> 2.2)
-      caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.7.0.rc3, < 0.8)
-      rest-client (~> 1.6)
-      uuidtools (~> 2.1)
 
 GIT
   remote: git://github.com/pivotal/blue-shell.git
@@ -66,12 +48,35 @@ GIT
   specs:
     mothership (0.5.1)
 
+PATH
+  remote: .
+  specs:
+    cf (0.6.1.rc9)
+      addressable (~> 2.2)
+      caldecott-client (~> 0.0.2)
+      cfoundry (>= 0.7.0.rc3, < 0.8)
+      interact (~> 0.5)
+      json_pure (~> 1.6)
+      manifests-cf-plugin (~> 0.7.0)
+      mothership (>= 0.5.1, < 1.0)
+      multi_json (~> 1.3)
+      rest-client (~> 1.6)
+      uuidtools (~> 2.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
     addressable (2.3.4)
+    auto_tagger (0.2.9)
+      capistrano (>= 2.5.3)
     caldecott-client (0.0.2)
       multi_json (~> 1.3)
+    capistrano (2.14.2)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     cf-uaa-lib (1.3.10)
       multi_json
     crack (0.3.2)
@@ -79,10 +84,19 @@ GEM
     fakefs (0.4.2)
     ffaker (1.15.0)
     gem-release (0.5.4)
+    gerrit-cli (0.0.1)
+    highline (1.6.18)
     json_pure (1.7.7)
     mime-types (1.22)
     multi_json (1.7.2)
     multipart-post (1.2.0)
+    net-scp (1.1.0)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.6.7)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     parallel (0.6.4)
     parallel_tests (0.11.0)
       parallel
@@ -109,12 +123,14 @@ PLATFORMS
 
 DEPENDENCIES
   admin-cf-plugin!
+  auto_tagger
   blue-shell (>= 0.0.3)!
+  cf!
   cfoundry!
-  console-cf-plugin!
   fakefs
   ffaker
   gem-release
+  gerrit-cli
   interact!
   json_pure (~> 1.6)
   manifests-cf-plugin!
@@ -125,5 +141,4 @@ DEPENDENCIES
   rake
   rr (~> 1.0)
   rspec (~> 2.11)
-  tunnel-cf-plugin!
   webmock (~> 1.9)
