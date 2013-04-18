@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: git://github.com/cloudfoundry/cfoundry.git
-  revision: aff985fef82102b3528fd4a6acf9e7bfb284384b
+  revision: 6a02d55135844dfe469c8325b5d311bed46c30a2
   submodules: true
   specs:
-    cfoundry (0.7.0.rc3)
+    cfoundry (0.7.0.rc4)
       cf-uaa-lib (~> 1.3.10)
       multi_json (~> 1.3)
       multipart-post (~> 1.1)
@@ -44,10 +44,10 @@ GIT
 PATH
   remote: .
   specs:
-    cf (0.6.1.rc9)
+    cf (0.6.1.rc11)
       addressable (~> 2.2)
       caldecott-client (~> 0.0.2)
-      cfoundry (>= 0.7.0.rc3, < 0.8)
+      cfoundry (>= 0.7.0.rc4, < 0.8)
       interact (~> 0.5)
       json_pure (~> 1.6)
       mothership (>= 0.5.1, < 1.0)
