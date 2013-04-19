@@ -64,13 +64,13 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "mysql 5.5"
+          runner.send_keys "mysql n/a"
 
           expect(runner).to say "Name?>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
-          runner.send_keys "200"
+          runner.send_keys "cfinternal"
 
           expect(runner).to say /Creating service #{service_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
@@ -98,9 +98,9 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
         expect(runner).to say /mysql-.+?\s+   # name
             mysql\s+                          # service
-            core\s+                           # provider
-            [\d.]+\s+                         # version
-            200\s+                            # plan
+            aws\s+                            # provider
+            n\/a\s+                           # version
+            cfinternal\s+                     # plan
             #{app}                            # bound apps
           /x
       end

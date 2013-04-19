@@ -16,6 +16,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
     let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
+    let(:space) { ENV['CF_V2_TEST_SPACE'] }
+
 
     let(:client) do
       client = CFoundry::V2::Client.new("https://#{target}")

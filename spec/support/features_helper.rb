@@ -3,10 +3,12 @@ module FeaturesHelper
     set_target
     logout
 
-    cmd = "yes 1 | #{cf_bin} login #{username} --password #{password} -o #{organization}"
-    cmd += " -s #{space}" if respond_to?(:space)
+    to_space = respond_to?(:space) ? space : ENV['CF_V2_TEST_SPACE']
+
+    cmd = "#{cf_bin} login #{username} --password #{password} -o #{organization}"
+    cmd += " -s #{to_space}"
     BlueShell::Runner.run(cmd) do |runner|
-      runner.wait_for_exit 30
+      runner.wait_for_exit 60
     end
   end
 
