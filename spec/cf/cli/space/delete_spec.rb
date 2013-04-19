@@ -75,7 +75,7 @@ describe CF::Space::Delete do
 
     context "when a space fails to delete" do
       before do
-        stub(space).delete! { raise CFoundry::APIError.new("We don't delete children.", 40005) }
+        stub(space).delete! { raise CFoundry::AssociationNotEmpty.new("We don't delete children.", 10006) }
         subject
       end
 

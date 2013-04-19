@@ -17,37 +17,26 @@ module CF::Organization
       org = input[:organization]
       return unless input[:really, org]
 
-      spaces = org.spaces
-      unless spaces.empty?
-        unless force?
-          line "This organization is not empty!"
-          line
-          line "spaces: #{name_list(spaces)}"
-          line
-
-          return unless input[:recursive]
-        end
-
-        spaces.each do |s|
-          invoke :delete_space, :space => s, :really => true,
-                 :recursive => true, :warn => false
-        end
-      end
-
       is_current = org == client.current_organization
 
-      with_progress("Deleting organization #{c(org.name, :name)}") do
-        org.delete!
+      begin
+        with_progress("Deleting organization #{c(org.name, :name)}") do
+          org.delete!
+        end
+      rescue CFoundry::AssociationNotEmpty => boom
+        line
+        line c(boom.description, :bad)
+        line c("If you want to delete the organization along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
       end
 
-      if orgs.size == 1
+      if client.organizations.size == 1
         return unless input[:warn]
 
         line
         line c("There are no longer any organizations.", :warning)
         line "You may want to create one with #{c("create-org", :good)}."
       elsif is_current
-        invalidate_target
+        invalidate_client
         invoke :target
       end
     end
