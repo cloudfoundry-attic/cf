@@ -6,3 +6,4 @@ coverage/*
 .idea
 spec/tmp
 .pairs
+Gemfile.lock
