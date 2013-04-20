@@ -28,12 +28,17 @@ module CF::Space
 
         begin
           with_progress("Deleting space #{c(space.name, :name)}") do
-            space.delete!
+            if input[:recursive]
+              space.delete!(:recursive => true)
+            else
+              space.delete!
+            end
           end
         rescue CFoundry::APIError => boom
           line
           line c(boom.description, :bad)
           line c("If you want to delete the space along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
+          exit_status(1)
         end
       end
 

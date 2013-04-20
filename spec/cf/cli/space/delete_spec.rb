@@ -86,6 +86,19 @@ describe CF::Space::Delete do
       it "informs the user of how to recursively delete" do
         expect(output).to say "If you want to delete the space along with all dependent objects, rerun the command with the '--recursive' flag."
       end
+
+      it "returns a non-zero exit code" do
+        @status.should_not == 0
+      end
+    end
+
+    context "when deleting with --recursive" do
+      subject { cf %W[delete-space some_space_name --recursive --force] }
+
+      it "sends recursive true in its delete request" do
+        mock(space).delete!(:recursive => true)
+        subject
+      end
     end
   end
 end

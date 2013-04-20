@@ -69,5 +69,35 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say(space)
       end
     end
+
+    let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
+    let(:app) { "hello-sinatra-recursive-#{run_id}" }
+
+    it "can create an app in a space, then delete it recursively" do
+      new_space = "test-space-#{rand(10000)}"
+      BlueShell::Runner.run("#{cf_bin} create-space #{new_space}") { |runner| runner.wait_for_exit(30) }
+      BlueShell::Runner.run("#{cf_bin} switch-space #{new_space}") { |runner| runner.wait_for_exit(30) }
+
+      push_app("hello-sinatra", app)
+
+      BlueShell::Runner.run("#{cf_bin} delete-space #{new_space} --force") do |runner|
+        expect(runner).to say("If you want to delete the space along with all dependent objects, rerun the command with the '--recursive' flag.")
+        runner.wait_for_exit(30)
+      end.should_not be_successful
+
+      BlueShell::Runner.run("#{cf_bin} spaces") do |runner|
+        expect(runner).to say(new_space)
+        expect(runner).to say(app)
+      end
+
+      BlueShell::Runner.run("#{cf_bin} delete-space #{new_space} --recursive --force") do |runner|
+        expect(runner).to say("Deleting space #{new_space}... OK")
+      end
+
+      BlueShell::Runner.run("#{cf_bin} spaces") do |runner|
+        expect(runner).to_not say(new_space)
+        expect(runner).to_not say(app)
+      end
+    end
   end
 end

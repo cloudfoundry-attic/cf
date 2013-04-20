@@ -39,10 +39,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
           runner.send_keys app
 
           expect(runner).to say "Instances> 1"
-          runner.send_keys ""
+          runner.send_return
 
           expect(runner).to say "Custom startup command> "
-          runner.send_keys ""
+          runner.send_return
 
           expect(runner).to say "Memory Limit>"
           runner.send_keys "128M"
@@ -50,7 +50,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "Creating #{app}... OK"
 
           expect(runner).to say "Subdomain> #{app}"
-          runner.send_keys ""
+          runner.send_return
 
           expect(runner).to say "1:"
           expect(runner).to say "Domain>"
@@ -76,15 +76,15 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say /Binding .+ to .+ OK/
 
           expect(runner).to say "Create another service?> n"
-          runner.send_keys ""
+          runner.send_return
 
           # skip this
           if runner.expect "Bind other services to application?> n", 15
-            runner.send_keys ""
+            runner.send_return
           end
 
           expect(runner).to say "Save configuration?> n", 20
-          runner.send_keys ""
+          runner.send_return
 
           expect(runner).to say "Uploading #{app}... OK", 180
           expect(runner).to say "Starting #{app}... OK", 180
