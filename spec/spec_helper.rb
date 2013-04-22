@@ -58,8 +58,8 @@ RSpec.configure do |c|
     CF::CLI.send(:class_variable_set, :@@client, nil)
   end
 
-  c.after(:each) do
-    if example.exception != nil
+  c.after do
+    if example.exception != nil && example.exception.message.include?("~/.cf/crash")
       puts '~/.cf/crash output for failed spec:'
       puts `cat ~/.cf/crash`
     end
