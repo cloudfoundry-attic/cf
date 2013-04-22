@@ -1,2 +1,3 @@
 -c
 --order random
+--format RSpec::Instafail

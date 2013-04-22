@@ -57,6 +57,13 @@ RSpec.configure do |c|
   c.before do
     CF::CLI.send(:class_variable_set, :@@client, nil)
   end
+
+  c.after(:each) do
+    if example.exception != nil
+      puts '~/.cf/crash output for failed spec:'
+      puts `cat ~/.cf/crash`
+    end
+  end
 end
 
 def name_list(xs)
