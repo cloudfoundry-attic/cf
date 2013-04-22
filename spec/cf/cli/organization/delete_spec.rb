@@ -76,5 +76,14 @@ describe CF::Organization::Delete do
         expect(output).to say "If you want to delete the organization along with all dependent objects, rerun the command with the '--recursive' flag."
       end
     end
+
+    context "when deleting with --recursive" do
+      subject { cf %W[delete-org MyOrg --recursive --force] }
+
+      it "sends recursive true in its delete request" do
+        mock(organization).delete!(:recursive => true)
+        subject
+      end
+    end
   end
 end

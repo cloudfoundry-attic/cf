@@ -21,7 +21,11 @@ module CF::Organization
 
       begin
         with_progress("Deleting organization #{c(org.name, :name)}") do
-          org.delete!
+          if input[:recursive]
+            org.delete!(:recursive => true)
+          else
+            org.delete!
+          end
         end
       rescue CFoundry::AssociationNotEmpty => boom
         line
