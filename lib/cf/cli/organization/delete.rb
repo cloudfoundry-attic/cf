@@ -31,6 +31,8 @@ module CF::Organization
         line
         line c(boom.description, :bad)
         line c("If you want to delete the organization along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
+        exit_status(1)
+        return
       end
 
       if client.organizations.size == 1

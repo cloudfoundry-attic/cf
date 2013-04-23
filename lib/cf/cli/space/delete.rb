@@ -34,7 +34,7 @@ module CF::Space
               space.delete!
             end
           end
-        rescue CFoundry::APIError => boom
+        rescue CFoundry::AssociationNotEmpty => boom
           line
           line c(boom.description, :bad)
           line c("If you want to delete the space along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
