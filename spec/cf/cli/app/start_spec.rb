@@ -97,6 +97,25 @@ describe CF::App::Start do
           end
         end
 
+        context "staging has not completed" do
+          let(:final_instances) do
+            [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING"),
+              CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")
+            ]
+          end
+
+          before do
+            stub(app).instances { raise CFoundry::NotStaged.new("Staging is pending", 170002, nil, nil) }
+          end
+
+          it "keeps polling" do
+            subject
+            expect(output).to say("Checking #{app.name}...")
+            expect(output).to say("Staging in progress...")
+            expect(output).to say("2 running")
+          end
+        end
+
         context "when any instance becomes flapping" do
           let(:final_instances) do
             [ CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "FLAPPING"),

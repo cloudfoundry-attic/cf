@@ -96,17 +96,24 @@ module CF::App
       seconds = 0
 
       begin
-        while instances = app.instances
-          indented { print_instances_summary(instances) }
-
-          if all_instances_running?(instances)
-            line "#{c("OK", :good)}"
-            return
-          end
-
+        instances = []
+        while true
           if any_instance_flapping?(instances) || seconds == APP_CHECK_LIMIT
             err "Application failed to start."
             return
+          end
+
+          begin
+            return unless instances = app.instances
+
+            indented { print_instances_summary(instances) }
+
+            if all_instances_running?(instances)
+              line "#{c("OK", :good)}"
+              return
+            end
+          rescue CFoundry::NotStaged
+            line "Staging in progress..."
           end
 
           sleep 1
