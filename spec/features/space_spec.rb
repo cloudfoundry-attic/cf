@@ -41,29 +41,42 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
     end
 
-    it "can create, switch, rename, and delete spaces" do
-      new_space = "test-space-#{rand(10000)}"
-      new_space_two = "test-space-renamed-#{rand(10000)}"
-      BlueShell::Runner.run("#{cf_bin} create-space #{new_space}") do |runner|
-        expect(runner).to say("Creating space #{new_space}... OK")
+    describe "needs cleanup after specs" do
+      let(:new_space) { "test-space-#{rand(10000)}" }
+      let(:new_space_two) { "test-space-renamed-#{rand(10000)}" }
+
+      after do
+        begin
+          BlueShell::Runner.run("#{cf_bin} delete-space #{new_space} -r -f")
+        rescue
+        end
+        begin
+          BlueShell::Runner.run("#{cf_bin} delete-space #{new_space_two} -r -f")
+        rescue
+        end
       end
 
-      BlueShell::Runner.run("#{cf_bin} switch-space #{new_space}") do |runner|
-        expect(runner).to say("Switching to space #{new_space}... OK")
-      end
+      it "can create, switch, rename, and delete spaces" do
+        BlueShell::Runner.run("#{cf_bin} create-space #{new_space}") do |runner|
+          expect(runner).to say("Creating space #{new_space}... OK")
+        end
 
-      BlueShell::Runner.run("#{cf_bin} rename-space #{new_space} #{new_space_two}") do |runner|
-        expect(runner).to say("Renaming to #{new_space_two}... OK")
-      end
+        BlueShell::Runner.run("#{cf_bin} switch-space #{new_space}") do |runner|
+          expect(runner).to say("Switching to space #{new_space}... OK")
+        end
 
-      BlueShell::Runner.run("#{cf_bin} delete-space #{new_space_two}") do |runner|
-        expect(runner).to say("Really delete")
-        runner.send_keys "y"
+        BlueShell::Runner.run("#{cf_bin} rename-space #{new_space} #{new_space_two}") do |runner|
+          expect(runner).to say("Renaming to #{new_space_two}... OK")
+        end
 
-        expect(runner).to say("Deleting space #{new_space_two}... OK")
+        BlueShell::Runner.run("#{cf_bin} delete-space #{new_space_two}") do |runner|
+          expect(runner).to say("Really delete")
+          runner.send_keys "y"
+
+          expect(runner).to say("Deleting space #{new_space_two}... OK")
+        end
       end
     end
-
     it "shows all the spaces in the org" do
       BlueShell::Runner.run("#{cf_bin} spaces") do |runner|
         expect(runner).to say(space)
