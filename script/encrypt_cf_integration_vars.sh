@@ -8,7 +8,7 @@ do
   value=`eval echo "\\$$var"`;
   echo \#$var
   encrypted=`travis encrypt $var=$value 2>/dev/null`
-  echo secure:$encrypted
+  echo "- secure: $encrypted"
   echo
 done
 
