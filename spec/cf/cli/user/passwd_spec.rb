@@ -6,18 +6,11 @@ describe CF::User::Passwd do
 
     describe 'command' do
       subject { command }
-      its(:description) { should eq "Update a user's password" }
+      its(:description) { should eq "Update the current user's password" }
       it { expect(Mothership::Help.group(:admin, :user)).to include(subject) }
     end
 
     include_examples 'inputs must have descriptions'
-
-    describe 'arguments' do
-      subject { command.arguments }
-      it 'have the correct commands (with inconsistent user instead of email)' do
-        should eq [{:type => :optional, :value => nil, :name => :user}]
-      end
-    end
   end
 
   describe '#passwd' do

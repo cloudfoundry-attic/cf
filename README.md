@@ -111,7 +111,7 @@ Administration
 
   User Management
     create-user [EMAIL]	Create a user
-    passwd [USER]      	Update a user's password
+    passwd             	Update the current user's password
     register [EMAIL]   	Create a user and log in
 
 Micro Cloud Foundry
