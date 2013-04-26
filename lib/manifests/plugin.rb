@@ -67,7 +67,6 @@ class ManifestsPlugin < CF::App::Base
     app.memory = megabytes(input[:memory]) if input.has?(:memory)
     app.total_instances = input[:instances] if input.has?(:instances)
     app.command = input[:command] if input.has?(:command)
-    app.production = input[:plan].upcase.start_with?("P") if input.has?(:plan)
     app.buildpack = input[:buildpack] if input.has?(:buildpack)
   end
 
