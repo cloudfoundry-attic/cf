@@ -23,6 +23,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     after do
       `#{cf_bin} unbind-service -f --no-script #{service_name} #{app}`
+      `#{cf_bin} delete-service -f --no-script #{service_name}`
       `#{cf_bin} delete #{app} -f --routes --no-script`
       logout
       Interact::Progress::Dots.stop!
