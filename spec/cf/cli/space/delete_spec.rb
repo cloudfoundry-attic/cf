@@ -65,11 +65,24 @@ describe CF::Space::Delete do
     end
 
     context "when deleting the current space" do
-      it "warns the user what they've done" do
+      before do
         stub(client).current_space { space }
+      end
 
+      it "warns the user what they've done" do
         subject
         expect(output).to say("The space that you were targeting has now been deleted. Please use `cf target -s SPACE_NAME` to target a different one.")
+      end
+
+      context "when the current space has dependent objects" do
+        before do
+          stub(space).delete! { raise CFoundry::AssociationNotEmpty.new("We don't delete children.", 10006) }
+        end
+
+        it "does not print a success message" do
+          subject
+          expect(output).to_not say("The space that you were targeting has now been deleted")
+        end
       end
     end
 

@@ -39,6 +39,7 @@ module CF::Space
           line c(boom.description, :bad)
           line c("If you want to delete the space along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
           exit_status(1)
+          return
         end
       end
 
