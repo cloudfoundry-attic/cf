@@ -33,13 +33,26 @@ describe CF::Space::Delete do
     end
 
 
-    context "without the force parameter" do
+    context "without the force parameter when prompting" do
       subject { cf %W[delete-space some_space_name --quiet] }
-      it "confirms deletion of each space and deletes them" do
-        mock(space).delete!
-        mock_ask("Really delete #{space.name}?", {:default => false}) { true }
+      context "when the user responds 'y'" do
+        it "deletes the space, exits cleanly" do
+          mock(space).delete!
+          mock_ask("Really delete #{space.name}?", {:default => false}) { true }
 
-        subject
+          subject
+          @status.should == 0
+        end
+      end
+
+      context "when the user responds 'n'" do
+        it "exits cleanly without deleting the space" do
+          dont_allow(space).delete!
+          mock_ask("Really delete #{space.name}?", {:default => false}) { false }
+
+          subject
+          @status.should == 0
+        end
       end
     end
 

@@ -23,25 +23,23 @@ module CF::Space
 
       deleting_current_space = (space == client.current_space)
 
-      begin
-        with_progress("Deleting space #{c(space.name, :name)}") do
-          if input[:recursive]
-            space.delete!(:recursive => true)
-          else
-            space.delete!
-          end
-
-          if deleting_current_space
-            line
-            line c("The space that you were targeting has now been deleted. Please use #{b("`cf target -s SPACE_NAME`")} to target a different one.", :warning)
-          end
+      with_progress("Deleting space #{c(space.name, :name)}") do
+        if input[:recursive]
+          space.delete!(:recursive => true)
+        else
+          space.delete!
         end
-      rescue CFoundry::AssociationNotEmpty => boom
-        line
-        line c(boom.description, :bad)
-        line c("If you want to delete the space along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
-        exit_status(1)
+
+        if deleting_current_space
+          line
+          line c("The space that you were targeting has now been deleted. Please use #{b("`cf target -s SPACE_NAME`")} to target a different one.", :warning)
+        end
       end
+    rescue CFoundry::AssociationNotEmpty => boom
+      line
+      line c(boom.description, :bad)
+      line c("If you want to delete the space along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
+      exit_status(1)
     end
 
     private

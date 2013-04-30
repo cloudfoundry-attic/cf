@@ -19,20 +19,12 @@ module CF::Organization
 
       is_current = org == client.current_organization
 
-      begin
-        with_progress("Deleting organization #{c(org.name, :name)}") do
-          if input[:recursive]
-            org.delete!(:recursive => true)
-          else
-            org.delete!
-          end
+      with_progress("Deleting organization #{c(org.name, :name)}") do
+        if input[:recursive]
+          org.delete!(:recursive => true)
+        else
+          org.delete!
         end
-      rescue CFoundry::AssociationNotEmpty => boom
-        line
-        line c(boom.description, :bad)
-        line c("If you want to delete the organization along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
-        exit_status(1)
-        return
       end
 
       if client.organizations.size == 1
@@ -45,6 +37,11 @@ module CF::Organization
         invalidate_client
         invoke :target
       end
+    rescue CFoundry::AssociationNotEmpty => boom
+      line
+      line c(boom.description, :bad)
+      line c("If you want to delete the organization along with all dependent objects, rerun the command with the #{b("'--recursive'")} flag.", :bad)
+      exit_status(1)
     end
 
     private
