@@ -4,7 +4,7 @@ require "tunnel/tunnel"
 module CFTunnelPlugin
   class Tunnel < CF::CLI
     CLIENTS_FILE = "tunnel-clients.yml"
-    STOCK_CLIENTS = File.expand_path("../../../config/clients.yml", __FILE__)
+    STOCK_CLIENTS = File.expand_path("../config/clients.yml", __FILE__)
 
     desc "Create a local tunnel to a service."
     group :services, :manage
