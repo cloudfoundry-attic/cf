@@ -12,7 +12,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
-    let(:service_name) { "mysql-#{run_id}" }
+    let(:service_name) { "redistogo-dev-#{run_id}" }
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
@@ -65,13 +65,13 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "mysql n/a"
+          runner.send_keys "redistogo-dev n/a"
 
           expect(runner).to say "Name?>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
-          runner.send_keys "cfinternal"
+          runner.send_keys "1"
 
           expect(runner).to say /Creating service #{service_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
@@ -97,11 +97,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       BlueShell::Runner.run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-        expect(runner).to say /mysql-.+?\s+   # name
-            mysql\s+                          # service
-            aws\s+                            # provider
+        expect(runner).to say /redistogo-dev-.+?\s+   # name
+            redistogo-dev\s+                          # service
+            redistogo\s+                            # provider
             n\/a\s+                           # version
-            cfinternal\s+                     # plan
+            100\s+                     # plan
             #{app}                            # bound apps
           /x
       end

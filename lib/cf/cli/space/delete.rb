@@ -29,11 +29,11 @@ module CF::Space
         else
           space.delete!
         end
+      end
 
-        if deleting_current_space
-          line
-          line c("The space that you were targeting has now been deleted. Please use #{b("`cf target -s SPACE_NAME`")} to target a different one.", :warning)
-        end
+      if deleting_current_space
+        line
+        line c("The space that you were targeting has now been deleted. Please use #{b("`cf target -s SPACE_NAME`")} to target a different one.", :warning)
       end
     rescue CFoundry::AssociationNotEmpty => boom
       line
