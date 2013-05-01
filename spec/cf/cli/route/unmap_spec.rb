@@ -94,57 +94,6 @@ describe CF::Route::Unmap do
     end
   end
 
-  context "when a url is specified and the --delete option is given" do
-    let(:route) { fake(:route, :host => host_name, :domain => domain) }
-    let(:client) { fake_client :routes => [route] }
-
-    subject { cf %W[unmap #{url} --delete] }
-
-    it "deletes the route" do
-      mock(route).delete!
-      subject
-    end
-  end
-
-  context "when the --delete and --all options are both passed" do
-    let(:other_route) { fake(:route, :host => "abcd", :domain => domain) }
-    let(:route) { fake(:route, :host => "efgh", :domain => domain) }
-    let(:client) { fake_client :routes => [route, other_route] }
-
-    subject { cf %W[unmap --delete --all] }
-
-    before do
-      any_instance_of(route.class) do |route|
-        stub(route).delete!
-      end
-    end
-
-    it "asks if the user really wants to unmap all urls" do
-      mock_ask("Really delete ALL URLS?", :default => false) { false }
-      subject
-    end
-
-    context "when the user responds with a yes" do
-      before { stub_ask("Really delete ALL URLS?", anything) { true } }
-
-      it "deletes all the user's routes" do
-        client.routes.each { |r| mock(r).delete! }
-        subject
-      end
-    end
-
-    context "when the user responds with a no" do
-      before { stub_ask("Really delete ALL URLS?", anything) { false } }
-
-      it "does not delete any routes" do
-        any_instance_of(route.class) do |route|
-          dont_allow(route).delete!
-        end
-        subject
-      end
-    end
-  end
-
   context "when only a url is passed" do
     let(:route) { fake(:route, :host => host_name, :domain => domain) }
     let(:client) { fake_client :routes => [route] }
@@ -153,7 +102,7 @@ describe CF::Route::Unmap do
 
     it "displays an error message" do
       subject
-      expect(error_output).to say("Missing either --delete or --app.")
+      expect(error_output).to say("Missing --app.")
     end
   end
 end
