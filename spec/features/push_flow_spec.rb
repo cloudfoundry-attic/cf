@@ -65,13 +65,13 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "redistogo-dev n/a"
+          runner.send_keys "rds_mysql"
 
           expect(runner).to say "Name?>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
-          runner.send_keys "1"
+          runner.send_keys "10mb"
 
           expect(runner).to say /Creating service #{service_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
