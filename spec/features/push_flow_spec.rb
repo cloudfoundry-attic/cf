@@ -97,12 +97,12 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       BlueShell::Runner.run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-        expect(runner).to say /redistogo-dev-.+?\s+   # name
-            redistogo-dev\s+                          # service
-            redistogo\s+                            # provider
-            n\/a\s+                           # version
-            100\s+                     # plan
-            #{app}                            # bound apps
+        expect(runner).to say /rds_mysql-.+?\s+ # name
+            rds_mysql\s+                        # service
+            aws\s+                              # provider
+            n\/a\s+                             # version
+            10mb\s+                             # plan
+            #{app}                              # bound apps
           /x
       end
 
