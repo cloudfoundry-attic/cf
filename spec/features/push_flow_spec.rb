@@ -12,7 +12,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
-    let(:service_name) { "redistogo-dev-#{run_id}" }
+    let(:service_name) { "rds_mysql-#{run_id}" }
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
