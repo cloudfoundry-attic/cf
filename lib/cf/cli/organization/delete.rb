@@ -27,7 +27,7 @@ module CF::Organization
         end
       end
 
-      if client.organizations.size == 1
+      if client.organizations(:depth => 0).size == 1
         return unless input[:warn]
 
         line
