@@ -47,7 +47,7 @@ module CF::Organization
     private
 
     def ask_organization
-      orgs = client.organizations
+      orgs = client.organizations(:depth => 0)
       fail "No organizations." if orgs.empty?
 
       ask("Which organization", :choices => orgs.sort_by(&:name),
