@@ -39,7 +39,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       #end
 
       # TODO: not this.
-      client.login(new_user, "p")
+      client.login(new_user, password)
       user = client.current_user
       guid = user.guid
       client.login(username, password)
@@ -56,16 +56,16 @@ if ENV['CF_V2_RUN_INTEGRATION']
         runner.send_keys new_user
 
         expect(runner).to say "Password>"
-        runner.send_keys "p"
+        runner.send_keys password
 
         expect(runner).to say "Verify Password>"
-        runner.send_keys "p"
+        runner.send_keys password
 
         expect(runner).to say "Creating user... OK"
         expect(runner).to say "Adding user to #{organization}... OK"
       end
 
-      BlueShell::Runner.run("#{cf_bin} login #{new_user} --password p") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login #{new_user} --password #{password}") do |runner|
         expect(runner).to say "Authenticating... OK"
 
         expect(runner).to say "Space>"

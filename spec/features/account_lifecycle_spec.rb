@@ -38,9 +38,9 @@ if ENV['CF_V2_RUN_INTEGRATION']
     it "registers a new account and deletes it" do
       email = Faker::Internet.email
 
-      BlueShell::Runner.run("#{cf_bin} register #{email} --password p") do |runner|
+      BlueShell::Runner.run("#{cf_bin} register #{email} --password #{password}") do |runner|
         expect(runner).to say "Confirm Password>"
-        runner.send_keys 'p'
+        runner.send_keys password
         expect(runner).to say "Your password strength is: good"
         expect(runner).to say "Creating user... OK"
         expect(runner).to say "Authenticating... OK"
@@ -56,14 +56,14 @@ if ENV['CF_V2_RUN_INTEGRATION']
       #end
 
       # TODO: not this.
-      client.login(email, "p")
+      client.login(email, password)
       user = client.current_user
       guid = user.guid
       client.login(username, password)
       user.delete!
       client.base.uaa.delete_user(guid)
 
-      BlueShell::Runner.run("#{cf_bin} login #{email} --password p") do |runner|
+      BlueShell::Runner.run("#{cf_bin} login #{email} --password #{password}") do |runner|
         expect(runner).to say "Authenticating... FAILED"
 
         expect(runner).to say "Password>"
