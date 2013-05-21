@@ -29,13 +29,14 @@ describe CF::Organization::Delete do
         stub(cli).check_target
         any_instance_of(CF::Populators::Organization, :populate_and_save! => organization)
       end
-      stub(organization).delete!
+      stub(organization).delete! { true }
     end
 
     context "without the force parameter" do
       subject { cf %W[delete-org MyOrg --quiet] }
+
       it "confirms deletion of the organization and deletes it" do
-        mock(organization).delete!
+        mock(organization).delete!(:recursive => false) { true }
         mock_ask("Really delete #{organization.name}?", {:default => false}) { true }
 
         subject
@@ -82,9 +83,11 @@ describe CF::Organization::Delete do
     end
 
     context "when deleting with --recursive" do
+      before { stub()}
       subject { cf %W[delete-org MyOrg --recursive --force] }
 
       it "sends recursive true in its delete request" do
+        mock_invoke :target
         mock(organization).delete!(:recursive => true)
         subject
       end

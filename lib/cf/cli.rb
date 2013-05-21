@@ -398,13 +398,8 @@ module CF
         save_target_info(info, target)
       end
 
-      if (org = info[:organization])
-        @@client.current_organization = @@client.organization(org)
-      end
-
-      if (space = info[:space])
-        @@client.current_space = @@client.space(space)
-      end
+      @@client.current_organization = @@client.organization(info[:organization]) if info[:organization]
+      @@client.current_space = @@client.space(info[:space]) if info[:space]
 
       @@client
     rescue CFoundry::InvalidTarget
