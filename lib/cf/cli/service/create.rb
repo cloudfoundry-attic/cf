@@ -44,17 +44,13 @@ module CF::Service
         end
       end
 
-      until offerings.size < 2
-        # cast to Array since it might be given as a Service with #invoke
-        offerings = Array(input[:offering, offerings.sort_by(&:label)])
-        input.forget(:offering)
-      end
+      selected_offerings = offerings.any? ? Array(input[:offering, offerings.sort_by(&:label)]) : []
 
-      if offerings.empty?
+      if selected_offerings.empty?
         fail "Cannot find services matching the given criteria."
       end
 
-      offering = offerings.first
+      offering = selected_offerings.first
 
       service = client.service_instance
       service.name = input[:name, offering]
