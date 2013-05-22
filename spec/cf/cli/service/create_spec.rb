@@ -44,7 +44,7 @@ module CF::Service
             stub(service_instance).create!
           end
 
-          command
+          capture_output { command }
         end
       end
 
@@ -59,7 +59,7 @@ module CF::Service
             stub(service_instance).create!
           end
 
-          command
+          capture_output { command }
         end
       end
     end
