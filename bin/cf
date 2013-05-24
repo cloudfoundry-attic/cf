@@ -6,6 +6,8 @@ require "rubygems"
 require "cf"
 require "cf/plugin"
 
+$stdout.sync = true
+
 CF::Plugin.load_all
 
 CF::CLI.start(ARGV)
