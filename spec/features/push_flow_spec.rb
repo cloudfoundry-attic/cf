@@ -12,7 +12,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
-    let(:service_name) { "rds_mysql-#{run_id}" }
+    let(:service_name) { "rds-mysql-#{run_id}" }
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
@@ -67,7 +67,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "What kind?>"
           runner.send_keys "rds-mysql"
 
-          expect(runner).to say "Name>"
+          expect(runner).to say "Name?>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
@@ -97,8 +97,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       BlueShell::Runner.run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-        expect(runner).to say /rds_mysql-.+?\s+ # name
-            rds_mysql\s+                        # service
+        expect(runner).to say /rds-mysql-.+?\s+ # name
+            rds-mysql\s+                        # service
             aws\s+                              # provider
             n\/a\s+                             # version
             10mb\s+                             # plan
