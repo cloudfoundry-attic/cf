@@ -67,7 +67,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "What kind?>"
           runner.send_keys "rds_mysql"
 
-          expect(runner).to say "Name?>"
+          expect(runner).to say "Name>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
