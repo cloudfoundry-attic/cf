@@ -1,7 +1,7 @@
 # cf - CLI for Cloud Foundry
 
 [![Build Status](https://travis-ci.org/cloudfoundry/cf.png)](https://travis-ci.org/cloudfoundry/cf)
-[![Gem Version](https://badge.fury.io/rb/cf.png)](http://badge.fury.io/rb/cf) 
+[![Gem Version](https://badge.fury.io/rb/cf.png)](http://badge.fury.io/rb/cf)
 [![Code Climate](https://codeclimate.com/github/cloudfoundry/cf.png)](https://codeclimate.com/github/cloudfoundry/cf)
 
 The CLI for Cloud Foundry has been completely rewritten. Installation, usage & contribution instructions are below.
