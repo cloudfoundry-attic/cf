@@ -13,7 +13,9 @@ module FeaturesHelper
   end
 
   def logout
-    BlueShell::Runner.run("#{cf_bin} logout")
+    BlueShell::Runner.run("#{cf_bin} logout") do |runner|
+      runner.wait_for_exit 60
+    end
   end
 
   def set_target

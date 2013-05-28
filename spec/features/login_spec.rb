@@ -15,13 +15,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     before do
       Interact::Progress::Dots.start!
-
-      BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
-        expect(runner).to say "Setting target"
-        expect(runner).to say target
-        runner.wait_for_exit
-      end
-
+      set_target
       logout
     end
 
