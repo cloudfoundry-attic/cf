@@ -22,7 +22,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:client) do
       client = CFoundry::V2::Client.new("https://#{target}")
-      client.login(admin_username, admin_password)
+      client.login(username, password)
       client
     end
 
