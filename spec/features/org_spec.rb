@@ -14,8 +14,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
     let(:space) { ENV['CF_V2_TEST_SPACE'] }
-    let(:admin_username) { ENV['CF_V2_ADMIN_USERNAME'] }
-    let(:admin_password) { ENV['CF_V2_ADMIN_PW'] }
+    let(:username) { ENV['CF_V2_ADMIN_USERNAME'] }
+    let(:password) { ENV['CF_V2_ADMIN_PW'] }
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:new_org_name) { "new-org-#{run_id}" }
@@ -28,10 +28,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     before do
       Interact::Progress::Dots.start!
-      "cf login #{admin_username} --password #{admin_password} -o #{organization} -s #{space}"
-      BlueShell::Runner.run("cf login #{admin_username} --password #{admin_password} -o #{organization} -s #{space}") do |runner|
-        runner.wait_for_exit(60)
-      end
+      login
     end
 
     after do
