@@ -120,31 +120,21 @@ class CFTunnel
   end
 
   def push_helper(token)
-    target_base = @client.target.sub(/^[^\.]+\./, "")
-
-    url = "#{random_helper_url}.#{target_base}"
-    is_v2 = @client.is_a?(CFoundry::V2::Client)
-
     app = @client.app
     app.name = HELPER_NAME
     app.command = "bundle exec ruby server.rb"
     app.total_instances = 1
     app.memory = 128
-    app.env = { "CALDECOTT_AUTH" => token }
+    app.env = {"CALDECOTT_AUTH" => token}
 
-    if is_v2
-      app.space = @client.current_space
-    else
-      app.services = [@service] if @service
-      app.url = url
-    end
-
+    space = app.space = @client.current_space
     app.create!
 
-    if is_v2
-      app.bind(@service) if @service
-      app.create_route(url)
-    end
+    app.bind(@service) if @service
+
+    domain = @client.domains.find { |d| d.owning_organization == nil }
+
+    app.create_route(:domain => domain, :space => space, :host => random_helper_url)
 
     begin
       app.upload(HELPER_APP)
