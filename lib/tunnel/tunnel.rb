@@ -120,32 +120,9 @@ class CFTunnel
   end
 
   def push_helper(token)
-    target_base = @client.target.sub(/^[^\.]+\./, "")
-
-    url = "#{random_helper_url}.#{target_base}"
-    is_v2 = @client.is_a?(CFoundry::V2::Client)
-
-    app = @client.app
-    app.name = HELPER_NAME
-    app.command = "bundle exec ruby server.rb"
-    app.total_instances = 1
-    app.memory = 128
-    app.env = { "CALDECOTT_AUTH" => token }
-
-    if is_v2
-      app.space = @client.current_space
-    else
-      app.services = [@service] if @service
-      app.url = url
-    end
-
-    app.create!
-
-    if is_v2
-      app.bind(@service) if @service
-      app.create_route(url)
-    end
-
+    
+    app = create_helper_app(token)
+    
     begin
       app.upload(HELPER_APP)
       invalidate_tunnel_app_info
@@ -153,6 +130,29 @@ class CFTunnel
       app.delete!
       raise
     end
+  end
+  
+  def create_helper_app(token)
+    url = "#{random_helper_url}.#{helper_url_base}"
+    app = @client.app
+    app.name = HELPER_NAME
+    app.command = "bundle exec ruby server.rb"
+    app.total_instances = 1
+    app.memory = 128
+    app.env = { "CALDECOTT_AUTH" => token }
+    
+    if @client.is_a?(CFoundry::V2::Client)
+      app.space = @client.current_space
+      app.create!
+      app.bind(@service) if @service
+      app.add_route(helper_route)
+    else
+      app.services = [@service] if @service
+      app.url = url
+      app.create!
+    end
+    
+    app
   end
 
   def delete_helper
@@ -284,8 +284,31 @@ class CFTunnel
   end
 
   def random_helper_url
+    return @random_helper_url if @random_helper_url
+    
     random = sprintf("%x", rand(1000000))
-    "caldecott-#{random}"
+    @random_helper_url = "caldecott-#{random}"
+  end
+  
+  def helper_url_base
+    if @client.is_a?(CFoundry::V2::Client)
+      helper_domain.name
+    else
+      @client.target.sub(/^[^\.]+\./, "")
+    end
+  end
+  
+  def helper_route
+    route = @client.route
+    route.host = random_helper_url
+    route.domain = helper_domain
+    route.space = @client.current_space
+    route.create!
+    route
+  end
+  
+  def helper_domain
+    @helper_domain ||= @client.current_space.domains.first
   end
 
   def safe_path(*segments)
