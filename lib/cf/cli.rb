@@ -122,9 +122,11 @@ module CF
         line
         line c("Not authenticated! Try logging in:", :warning)
 
-        # TODO: there's no color here; global flags not being passed
-        # through (mothership bug?)
-        invoke :login
+        if !force?
+          # TODO: there's no color here; global flags not being passed
+          # through (mothership bug?)
+          invoke :login
+        end
 
         retry
       end
