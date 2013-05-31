@@ -39,7 +39,7 @@ module CF::Service
           if plan.is_a?(String)
             s.service_plans.none? { |p| p.name == plan.upcase }
           else
-            s.service_plans.include? plan
+            !s.service_plans.include? plan
           end
         end
       end

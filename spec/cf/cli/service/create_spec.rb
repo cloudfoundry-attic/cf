@@ -62,6 +62,26 @@ module CF::Service
           capture_output { command }
         end
       end
+
+      describe "when the service plan is specified by an object, not a string" do
+        let(:services) { [selected_service] }
+        let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
+        let(:command) { Mothership.new.invoke(:create_service, params, {}) }
+        let(:client) { fake_client(:services => services) }
+        let(:params) { {
+          :name => "my-service-name",
+          :offering => selected_service,
+          :plan => service_plan,
+        } }
+
+        it "creates the specified service" do
+          any_instance_of(CFoundry::V2::ServiceInstance) do |service_instance|
+            mock(service_instance).service_plan = service_plan
+            mock(service_instance).create!
+          end
+          capture_output { command }
+        end
+      end
     end
   end
 end
