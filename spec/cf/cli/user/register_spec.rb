@@ -1,143 +1,144 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe CF::User::Register do
-  before do
-    stub_client_and_precondition
-  end
+module CF
+  module User
+    describe Register do
+      let(:client) { fake_client }
 
-  describe 'metadata' do
-    let(:command) { Mothership.commands[:register] }
-
-    describe 'command' do
-      subject { command }
-      its(:description) { should eq "Create a user and log in" }
-      it { expect(Mothership::Help.group(:admin, :user)).to include(subject) }
-    end
-
-    include_examples 'inputs must have descriptions'
-
-    describe 'arguments' do
-      subject { command.arguments }
-      it 'have the correct commands' do
-        should eq [
-          {:type => :optional, :value => nil, :name => :email}
-        ]
-      end
-    end
-  end
-
-  describe '#register' do
-    let(:client) { fake_client }
-    let(:email) { 'a@b.com' }
-    let(:password) { 'password' }
-    let(:verify_password) { password }
-    let(:force) { false }
-    let(:login) { false }
-    let(:score) { :strong }
-
-    before do
-      stub(client).register
-      stub(client).base.stub!.password_score(password) { score }
-    end
-
-    subject { cf %W[register --email #{email} --password #{password} --verify #{verify_password} --#{bool_flag(:login)} --#{bool_flag(:force)}] }
-
-    context 'when the passwords dont match' do
-      let(:verify_password) { "other_password" }
-
-      it { should eq 1 }
-
-      it 'fails' do
-        subject
-        expect(error_output).to say("Passwords do not match.")
+      before do
+        stub_client_and_precondition
       end
 
-      it "doesn't print out the score" do
-        subject
-        expect(output).to_not say("strength")
-      end
+      describe "metadata" do
+        let(:command) { Mothership.commands[:register] }
 
-      it "doesn't log in or register" do
-        dont_allow(client).register
-        dont_allow_invoke
-        subject
-      end
-
-      context 'and the force flag is passed' do
-        let(:force) { true }
-
-        it "doesn't verify the password" do
-          mock(client).register(email, password)
-          subject
-          expect(error_output).to_not say("Passwords do not match.")
+        describe "command" do
+          subject { command }
+          its(:description) { should eq "Create a user and log in" }
+          it { expect(Mothership::Help.group(:admin, :user)).to include(subject) }
         end
-      end
-    end
 
-    context 'when the password is good or strong' do
-      it { should eq 0 }
+        include_examples "inputs must have descriptions"
 
-      it 'prints out the password score' do
-        subject
-        expect(stdout.string).to include "Your password strength is: strong"
-      end
-
-      it 'registers the user' do
-        mock(client).register(email, password)
-        subject
-      end
-
-      context 'and the login flag is true' do
-        let(:login) { true }
-
-        it 'logs in' do
-          any_instance_of(described_class) do |register|
-            mock(register).invoke(:login, :username => email, :password => password)
+        describe "arguments" do
+          subject { command.arguments }
+          it "have the correct commands" do
+            should eq [
+              {:type => :optional, :value => nil, :name => :email}
+            ]
           end
-          subject
         end
       end
 
-      context 'and the login flag is false' do
-        it "doesn't log in" do
-          any_instance_of(described_class) do |register|
-            dont_allow(register).invoke(:login, :username => email, :password => password)
+      describe "#register" do
+        let(:email) { "a@b.com" }
+        let(:password) { "password" }
+        let(:verify_password) { password }
+        let(:force) { false }
+        let(:login) { false }
+        let(:score) { :strong }
+
+        before do
+          client.stub(:register)
+          client.base.stub(:password_score) { score }
+        end
+
+        subject { cf %W[register --email #{email} --password #{password} --verify #{verify_password} --#{bool_flag(:login)} --#{bool_flag(:force)}] }
+
+        context "when the passwords dont match" do
+          let(:verify_password) { "other_password" }
+
+          it { should eq 1 }
+
+          it "fails" do
+            subject
+            expect(error_output).to say("Passwords do not match.")
           end
-          subject
+
+          it "doesn't print out the score" do
+            subject
+            expect(output).to_not say("strength")
+          end
+
+          it "doesn't log in or register" do
+            client.should_not_receive(:register)
+            dont_allow_invoke
+            subject
+          end
+
+          context "and the force flag is passed" do
+            let(:force) { true }
+
+            it "doesn't verify the password" do
+              client.should_receive(:register).with(email, password)
+              subject
+              expect(error_output).to_not say("Passwords do not match.")
+            end
+          end
         end
-      end
-    end
 
-    context 'when the password is weak' do
-      let(:score) { :weak }
-      let(:login) { true }
+        context "when the password is good or strong" do
+          it { should eq 0 }
 
-      it { should eq 1 }
+          it "prints out the password score" do
+            subject
+            expect(stdout.string).to include "Your password strength is: strong"
+          end
 
-      it 'prints out the password score' do
-        subject
-        expect(error_output).to say("Your password strength is: weak")
-      end
+          it "registers the user" do
+            client.should_receive(:register).with(email, password)
+            subject
+          end
 
-      it "doesn't register" do
-        dont_allow(client).register(email, password)
-        subject
-      end
+          context "and the login flag is true" do
+            let(:login) { true }
 
-      it "doesn't log in" do
-        dont_allow_invoke :login
-        subject
-      end
-    end
+            it "logs in" do
+              described_class.any_instance.should_receive(:invoke).with(:login, :username => email, :password => password)
+              subject
+            end
+          end
 
-    context 'when arguments are not passed in the command line' do
-      subject { cf %W[register --no-force --no-login] }
+          context "and the login flag is false" do
+            it "doesn't log in" do
+              described_class.any_instance.should_not_receive(:invoke)
+              subject
+            end
+          end
+        end
 
-      it 'asks for the email, password and confirm password' do
-        mock_ask("Email") { email }
-        mock_ask("Password", anything) { password }
-        mock_ask("Confirm Password", anything) { verify_password }
-        subject
+        context "when the password is weak" do
+          let(:score) { :weak }
+          let(:login) { true }
+
+          it { should eq 1 }
+
+          it "prints out the password score" do
+            subject
+            expect(error_output).to say("Your password strength is: weak")
+          end
+
+          it "doesn't register" do
+            client.should_not_receive(:register).with(email, password)
+            subject
+          end
+
+          it "doesn't log in" do
+            dont_allow_invoke :login
+            subject
+          end
+        end
+
+        context "when arguments are not passed in the command line" do
+          subject { cf %W[register --no-force --no-login] }
+
+          it "asks for the email, password and confirm password" do
+            mock_ask("Email") { email }
+            mock_ask("Password", anything) { password }
+            mock_ask("Confirm Password", anything) { verify_password }
+            subject
+          end
+        end
       end
     end
   end

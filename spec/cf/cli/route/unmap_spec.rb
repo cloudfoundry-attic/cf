@@ -42,7 +42,7 @@ describe CF::Route::Unmap do
       let(:route) { fake(:route, :space => space, :host => host_name, :domain => domain) }
 
       it "unmaps the url from the app" do
-        mock(app).remove_route(route)
+        app.should_receive(:remove_route).with(route)
         subject
       end
     end
@@ -68,14 +68,14 @@ describe CF::Route::Unmap do
         route
       end
 
-      stub(app).remove_route(anything)
+      app.stub(:remove_route)
 
       subject
     end
 
     it "unmaps the selected url from the app" do
       stub_ask("Which URL?", anything) { route }
-      mock(app).remove_route(route)
+      app.should_receive(:remove_route).with(route)
       subject
     end
   end
@@ -88,8 +88,8 @@ describe CF::Route::Unmap do
     subject { cf %W[unmap --all --app #{app.name}] }
 
     it "unmaps all routes from the given app" do
-      mock(app).remove_route(route)
-      mock(app).remove_route(other_route)
+      app.should_receive(:remove_route).with(route)
+      app.should_receive(:remove_route).with(other_route)
       subject
     end
   end

@@ -7,7 +7,7 @@ shared_examples_for "an error that's obvious to the user" do |options|
   end
 
   it "sets the exit code to 1" do
-    mock(context).exit_status(1)
+    context.should_receive(:exit_status).with(1)
     subject
   end
 

@@ -6,6 +6,7 @@ require "cfoundry/test_support"
 require "cf"
 require "cf/test_support"
 require "webmock"
+require "webmock/rspec"
 require "ostruct"
 require "fakefs/safe"
 require "blue-shell"
@@ -37,8 +38,6 @@ end
 RSpec.configure do |c|
   c.include Fake::FakeMethods
   c.include BlueShell::Matchers
-
-  c.mock_with :rr
 
   if RUBY_VERSION =~ /^1\.8\.\d/
     c.filter_run_excluding :ruby19 => true

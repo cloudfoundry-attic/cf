@@ -1,24 +1,24 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe CF::Start::Login do
   let(:client) { fake_client }
 
-  describe 'metadata' do
+  describe "metadata" do
     before do
       stub_client_and_precondition
     end
 
     let(:command) { Mothership.commands[:login] }
 
-    describe 'command' do
+    describe "command" do
       subject { command }
       its(:description) { should eq "Authenticate with the target" }
       specify { expect(Mothership::Help.group(:start)).to include(subject) }
     end
 
-    include_examples 'inputs must have descriptions'
+    include_examples "inputs must have descriptions"
 
-    describe 'flags' do
+    describe "flags" do
       subject { command.flags }
 
       its(["-o"]) { should eq :organization }
@@ -27,9 +27,9 @@ describe CF::Start::Login do
       its(["-s"]) { should eq :space }
     end
 
-    describe 'arguments' do
+    describe "arguments" do
       subject(:arguments) { command.arguments }
-      it 'have the correct commands' do
+      it "have the correct commands" do
         expect(arguments).to eq [{:type => :optional, :value => :email, :name => :username}]
       end
     end
@@ -44,26 +44,25 @@ describe CF::Start::Login do
 
     let(:auth_token) { CFoundry::AuthToken.new("bearer some-new-access-token", "some-new-refresh-token") }
     let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
-    let(:tokens_file_path) { '~/.cf/tokens.yml' }
+    let(:tokens_file_path) { "~/.cf/tokens.yml" }
 
     before do
-      stub(client).login("my-username", "my-password") { auth_token }
-      stub(client).login_prompts do
-        {
-          :username => ["text", "Username"],
-          :password => ["password", "8-digit PIN"]
-        }
-      end
+      client.stub(:login).with("my-username", "my-password") { auth_token }
+      client.stub(:login_prompts).and_return(
+      {
+        :username => ["text", "Username"],
+        :password => ["password", "8-digit PIN"]
+      })
 
       stub_ask("Username", {}) { "my-username" }
       stub_ask("8-digit PIN", {:echo => "*", :forget => true}) { "my-password" }
-      any_instance_of(CF::Populators::Target, :populate_and_save! => true)
     end
 
     subject { cf ["login"] }
 
     context "when there is a target" do
       before do
+        CF::Populators::Target.any_instance.stub(:populate_and_save!)
         stub_precondition
       end
 
@@ -75,13 +74,13 @@ describe CF::Start::Login do
       end
 
       it "calls use a PopulateTarget to ensure that an organization and space is set" do
-        mock(CF::Populators::Target).new(is_a(Mothership::Inputs)) { mock!.populate_and_save! }
+        CF::Populators::Target.should_receive(:new) { double(:target, :populate_and_save! => true) }
         subject
       end
 
       context "when the user logs in with invalid credentials" do
         before do
-          stub(client).login("my-username", "my-password") { raise CFoundry::Denied }
+          client.should_receive(:login).with("my-username", "my-password").and_raise(CFoundry::Denied)
         end
 
         it "informs the user gracefully" do
@@ -92,9 +91,8 @@ describe CF::Start::Login do
     end
 
     context "when there is no target" do
-      let(:client) { nil }
-
       it "tells the user to select a target" do
+        client.stub(:target) { nil }
         subject
         expect(error_output).to say("Please select a target with 'cf target'.")
       end

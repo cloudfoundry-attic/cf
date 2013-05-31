@@ -1,29 +1,19 @@
 module InteractHelper
   def stub_ask(*args, &block)
-    a_stub = nil
-    any_instance_of CF::CLI do |interactive|
-      a_stub = stub(interactive).ask(*args, &block)
-    end
-    a_stub
+    CF::CLI.any_instance.stub(:ask).with(*args, &block)
   end
 
   def mock_ask(*args, &block)
-    a_mock = nil
-    any_instance_of CF::CLI do |interactive|
-      a_mock = mock(interactive).ask(*args, &block)
-    end
-    a_mock
+    CF::CLI.any_instance.should_receive(:ask).with(*args, &block)
   end
 
   def dont_allow_ask(*args)
-    any_instance_of CF::CLI do |interactive|
-      dont_allow(interactive).ask(*args)
-    end
+    CF::CLI.any_instance.should_not_receive(:ask).with(*args)
   end
 
   def mock_with_progress(message)
-    any_instance_of CF::CLI do |interactive|
-      mock(interactive).with_progress(message) { |_, block| block.call }
+    CF::CLI.any_instance.should_receive(:with_progress).with(message) do |_, &block|
+      block.call
     end
   end
 end

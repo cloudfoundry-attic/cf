@@ -10,10 +10,8 @@ describe CF::App::Delete do
   let(:new_name) { "some-new-name" }
 
   before do
-    any_instance_of(CF::CLI) do |cli|
-      stub(cli).client { client }
-      stub(cli).precondition { nil }
-    end
+    CF::CLI.any_instance.stub(:client).and_return(client)
+    CF::CLI.any_instance.stub(:precondition).and_return(nil)
   end
 
   subject { Mothership.new.invoke(:delete, inputs, given, global) }
@@ -74,7 +72,7 @@ describe CF::App::Delete do
       it 'asks for the app' do
         mock_ask("Delete which application?", anything) { basic_app }
         stub_ask { true }
-        stub(basic_app).delete!
+        basic_app.stub(:delete!)
         subject
       end
     end
@@ -87,7 +85,7 @@ describe CF::App::Delete do
         context 'and the user answers no' do
           it 'does not delete the application' do
             mock_ask("Really delete #{deleted_app.name}?", anything) { false }
-            dont_allow(deleted_app).delete!
+            deleted_app.should_not_receive(:delete!)
             subject
           end
         end
@@ -95,7 +93,7 @@ describe CF::App::Delete do
         context 'and the user answers yes' do
           it 'deletes the application' do
             mock_ask("Really delete #{deleted_app.name}?", anything) { true }
-            mock(deleted_app).delete!
+            deleted_app.should_receive(:delete!)
             subject
           end
         end
@@ -106,7 +104,7 @@ describe CF::App::Delete do
 
         it 'deletes the application without asking to confirm' do
           dont_allow_ask
-          mock(deleted_app).delete!
+          deleted_app.should_receive(:delete!)
           subject
         end
       end
@@ -120,16 +118,13 @@ describe CF::App::Delete do
         context 'and the user answers yes' do
           it 'asks to delete orphaned services' do
             stub_ask("Really delete #{deleted_app.name}?", anything) { true }
-            stub(deleted_app).delete!
+            deleted_app.stub(:delete!)
 
-            stub(service_2).invalidate!
+            service_2.stub(:invalidate!)
 
             mock_ask("Delete orphaned service #{service_2.name}?", anything) { true }
 
-            any_instance_of(CF::App::Delete) do |del|
-              mock(del).invoke :delete_service, :service => service_2,
-                :really => true
-            end
+            CF::App::Delete.any_instance.should_receive(:invoke).with(:delete_service, :service => service_2, :really => true)
 
             subject
           end
@@ -138,15 +133,13 @@ describe CF::App::Delete do
         context 'and the user answers no' do
           it 'does not ask to delete orphaned serivces, or delete them' do
             stub_ask("Really delete #{deleted_app.name}?", anything) { false }
-            dont_allow(deleted_app).delete!
+            deleted_app.should_not_receive(:delete!)
 
-            stub(service_2).invalidate!
+            service_2.stub(:invalidate!)
 
             dont_allow_ask("Delete orphaned service #{service_2.name}?")
 
-            any_instance_of(CF::App::Delete) do |del|
-              dont_allow(del).invoke(:delete_service, anything)
-            end
+            CF::App::Delete.any_instance.should_not_receive(:invoke).with(:delete_service, anything)
 
             subject
           end
@@ -158,11 +151,9 @@ describe CF::App::Delete do
 
         it 'does not delete orphaned services' do
           dont_allow_ask
-          stub(deleted_app).delete!
+          deleted_app.stub(:delete!)
 
-          any_instance_of(CF::App::Delete) do |del|
-            dont_allow(del).invoke(:delete_service, anything)
-          end
+          CF::App::Delete.any_instance.should_not_receive(:invoke).with(:delete_service, anything)
 
           subject
         end
@@ -173,12 +164,9 @@ describe CF::App::Delete do
 
         it 'deletes the orphaned services' do
           stub_ask("Really delete #{deleted_app.name}?", anything) { true }
-          stub(deleted_app).delete!
+          deleted_app.stub(:delete!)
 
-          any_instance_of(CF::App::Delete) do |del|
-            mock(del).invoke :delete_service, :service => service_2,
-              :really => true
-          end
+          CF::App::Delete.any_instance.should_receive(:invoke).with(:delete_service, :service => service_2, :really => true)
 
           subject
         end

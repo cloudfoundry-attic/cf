@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe CFManifests do
   let(:inputs_hash) { {} }
@@ -9,7 +9,7 @@ describe CFManifests do
   let(:cmd) do
     manifest = CF::App::Push.new(nil, inputs)
     manifest.extend CFManifests
-    stub(manifest).client { client }
+    manifest.stub(:client) { client }
     manifest
   end
 
@@ -28,22 +28,22 @@ describe CFManifests do
   let(:manifest_file) { "/abc/manifest.yml" }
 
   before do
-    stub(cmd).target_base { target_base }
+    cmd.stub(:target_base) { target_base }
 
-    stub(cmd).manifest { manifest }
-    stub(cmd).manifest_file { manifest_file }
+    cmd.stub(:manifest) { manifest }
+    cmd.stub(:manifest_file) { manifest_file }
   end
 
-  describe '#find_apps' do
+  describe "#find_apps" do
     subject { cmd.find_apps(nil) }
 
-    context 'when there is no manifest file' do
-      before { stub(cmd).manifest { nil } }
+    context "when there is no manifest file" do
+      before { cmd.stub(:manifest).and_return(nil) }
       it { should eq [] }
     end
   end
 
-  describe '#create_manifest_for' do
+  describe "#create_manifest_for" do
     let(:app) {
       fake :app,
         :memory => 2048,
@@ -105,7 +105,7 @@ describe CFManifests do
       end
     end
 
-    context 'when there is no url' do
+    context "when there is no url" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -115,7 +115,7 @@ describe CFManifests do
       its(["url"]) { should eq "none" }
     end
 
-    context 'when there is no command' do
+    context "when there is no command" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -125,7 +125,7 @@ describe CFManifests do
       it { should_not include "command" }
     end
 
-    context 'when there are no service bindings' do
+    context "when there are no service bindings" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -174,21 +174,21 @@ describe CFManifests do
           let(:service_bindings) { [fake(:service_binding, :service_instance => service_1)] }
 
           it "does neither create nor bind the service again" do
-            dont_allow(cmd).invoke :create_service, anything
-            dont_allow(cmd).invoke :bind_service, anything
+            cmd.should_not_receive(:invoke).with(:create_service, anything)
+            cmd.should_not_receive(:invoke).with(:bind_service, anything)
             cmd.send(:setup_services, app, info)
           end
         end
 
         context "but are not bound" do
           it "does not create the services" do
-            dont_allow(cmd).invoke :create_service, anything
-            stub(cmd).invoke :bind_service, anything
+            cmd.should_not_receive(:invoke).with(:create_service, anything)
+            cmd.stub(:invoke).with(:bind_service, anything)
             cmd.send(:setup_services, app, info)
           end
 
           it "binds the service" do
-            mock(cmd).invoke :bind_service, :app => app, :service => service_1
+            cmd.should_receive(:invoke).with(:bind_service, :app => app, :service => service_1)
             cmd.send(:setup_services, app, info)
           end
         end
@@ -196,9 +196,9 @@ describe CFManifests do
 
       context "and the services do not exist" do
         it "creates the services" do
-          mock(cmd).invoke :create_service, :app => app,
-            :name => service_1.name, :offering => mysql, :plan => plan_100
-          dont_allow(cmd).invoke :bind_service, anything
+          cmd.should_receive(:invoke).with(:create_service, :app => app,
+            :name => service_1.name, :offering => mysql, :plan => plan_100)
+          cmd.should_not_receive(:invoke).with(:bind_service, anything)
           cmd.send(:setup_services, app, info)
         end
       end
@@ -302,7 +302,7 @@ describe CFManifests do
     subject { cmd.current_apps }
 
     it "returns the applications with the cwd as their path" do
-      stub(Dir).pwd { "/abc" }
+      Dir.stub(:pwd) { "/abc" }
       expect(subject).to eq [{ :name => "foo", :path => "/abc"}, { :name => "bar", :path => "/abc" }]
     end
   end

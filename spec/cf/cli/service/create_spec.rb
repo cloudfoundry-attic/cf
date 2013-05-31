@@ -1,65 +1,61 @@
 require "spec_helper"
 
-module CF::Service
-  describe Create do
-    before do
-      any_instance_of(CF::CLI) do |cli|
-        stub(cli).client { client }
-      end
-    end
+module CF
+  module Service
+    describe Create do
+      describe "metadata" do
+        let(:command) { Mothership.commands[:create_service] }
 
-    describe "metadata" do
-      let(:command) { Mothership.commands[:create_service] }
-
-      describe "command" do
-        subject { command }
-        its(:description) { should eq "Create a service" }
-        it { expect(Mothership::Help.group(:services, :manage)).to include(subject) }
-      end
-
-      include_examples "inputs must have descriptions"
-
-      describe "arguments" do
-        subject { command.arguments }
-        it "has the correct argument order" do
-          should eq([{:type => :optional, :value => nil, :name => :offering}, {:type => :optional, :value => nil, :name => :name}])
+        describe "command" do
+          subject { command }
+          its(:description) { should eq "Create a service" }
+          it { expect(Mothership::Help.group(:services, :manage)).to include(subject) }
         end
-      end
-    end
 
-    context "when there are services" do
-      let(:service_plan) { fake(:service_plan, :name => "F20") }
-      let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
-      let(:command) { Mothership.new.invoke(:create_service, {}, {}) }
-      let(:client) { fake_client(:services => services) }
+        include_examples "inputs must have descriptions"
 
-      describe "when there is at least one service" do
-        let(:services) { [selected_service] }
-
-        it "asks for the service" do
-          mock_ask("What kind?", anything) { selected_service }
-          mock_ask("Name?", anything) { selected_service.label }
-          mock_ask("Which plan?", anything) { service_plan }
-          any_instance_of(CFoundry::V2::ServiceInstance) do |service_instance|
-            stub(service_instance).create!
+        describe "arguments" do
+          subject { command.arguments }
+          it "has the correct argument order" do
+            should eq([{:type => :optional, :value => nil, :name => :offering}, {:type => :optional, :value => nil, :name => :name}])
           end
-
-          capture_output { command }
         end
       end
 
-      describe "when there are more than one services" do
-        let(:services) { [selected_service, fake(:service), fake(:service)] }
+      context "when there are services" do
+        let(:service_plan) { fake(:service_plan, :name => "F20") }
+        let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
+        let(:command) { Mothership.new.invoke(:create_service, {}, {}) }
+        let(:client) { fake_client(:services => services) }
 
-        it "asks for the service" do
-          mock_ask("What kind?", anything) { selected_service }
-          mock_ask("Name?", anything) { selected_service.label }
-          mock_ask("Which plan?", anything) { service_plan }
-          any_instance_of(CFoundry::V2::ServiceInstance) do |service_instance|
-            stub(service_instance).create!
+        before do
+          CF::CLI.any_instance.stub(:client).and_return(client)
+        end
+
+        describe "when there is at least one service" do
+          let(:services) { [selected_service] }
+
+          it "asks for the service" do
+            mock_ask("What kind?", anything) { selected_service }
+            mock_ask("Name?", anything) { selected_service.label }
+            mock_ask("Which plan?", anything) { service_plan }
+            CFoundry::V2::ServiceInstance.any_instance.stub(:create!)
+
+            capture_output { command }
           end
+        end
 
-          capture_output { command }
+        describe "when there are more than one services" do
+          let(:services) { [selected_service, fake(:service), fake(:service)] }
+
+          it "asks for the service" do
+            mock_ask("What kind?", anything) { selected_service }
+            mock_ask("Name?", anything) { selected_service.label }
+            mock_ask("Which plan?", anything) { service_plan }
+            CFoundry::V2::ServiceInstance.any_instance.stub(:create!)
+
+            capture_output { command }
+          end
         end
       end
 

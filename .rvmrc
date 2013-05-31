@@ -1,2 +1,2 @@
-rvm use ruby-1.8.7@cf --create
+rvm use ruby-1.9.2@cf --create
 alias cf=./bin/cf.dev
