@@ -21,7 +21,9 @@ module CF::Organization
       remote_organizations = client.organizations(:depth => 0)
 
       with_progress("Deleting organization #{c(org.name, :name)}") do
-        deleted = org.delete!(:recursive => !!input[:recursive])
+        #raise Exception.new(!!input[:recursive].to_s)
+        #deleted = org.delete!(:recursive => !!input[:recursive])
+        deleted = org.delete!({:recursive => false})
         remote_organizations.delete(org) if deleted
       end
 

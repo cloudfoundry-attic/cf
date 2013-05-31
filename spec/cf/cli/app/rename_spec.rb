@@ -1,5 +1,4 @@
-require 'spec_helper'
-require "cf/cli/app/rename"
+require "spec_helper"
 
 describe CF::App::Rename do
   let(:global) { { :color => false, :quiet => true } }
@@ -10,28 +9,26 @@ describe CF::App::Rename do
   let(:new_name) { "some-new-name" }
 
   before do
-    any_instance_of(CF::CLI) do |cli|
-      stub(cli).client { client }
-      stub(cli).precondition { nil }
-    end
+    CF::CLI.any_instance.stub(:client).and_return(client)
+    CF::CLI.any_instance.stub(:precondition).and_return(nil)
   end
 
   subject { Mothership.new.invoke(:rename, inputs, given, global) }
 
-  describe 'metadata' do
+  describe "metadata" do
     let(:command) { Mothership.commands[:rename] }
 
-    describe 'command' do
+    describe "command" do
       subject { command }
       its(:description) { should eq "Rename an application" }
       it { expect(Mothership::Help.group(:apps, :manage)).to include(subject) }
     end
 
-    include_examples 'inputs must have descriptions'
+    include_examples "inputs must have descriptions"
 
-    describe 'arguments' do
+    describe "arguments" do
       subject { command.arguments }
-      it 'has the correct argument order' do
+      it "has the correct argument order" do
         should eq([
           { :type => :optional, :value => nil, :name => :app },
           { :type => :optional, :value => nil, :name => :name }
@@ -40,62 +37,62 @@ describe CF::App::Rename do
     end
   end
 
-  context 'when there are no apps' do
-    context 'and an app is given' do
+  context "when there are no apps" do
+    context "and an app is given" do
       let(:given) { { :app => "some-app" } }
       it { expect { subject }.to raise_error(CF::UserError, "Unknown app 'some-app'.") }
     end
 
-    context 'and an app is not given' do
+    context "and an app is not given" do
       it { expect { subject }.to raise_error(CF::UserError, "No applications.") }
     end
   end
 
-  context 'when there are apps' do
+  context "when there are apps" do
     let(:client) { fake_client(:apps => apps) }
     let(:apps) { fake_list(:app, 2) }
     let(:renamed_app) { apps.first }
 
-    context 'when the defaults are used' do
-      it 'asks for the app and new name and renames' do
+    context "when the defaults are used" do
+      it "asks for the app and new name and renames" do
         mock_ask("Rename which application?", anything) { renamed_app }
         mock_ask("New name") { new_name }
-        mock(renamed_app).name=(new_name)
-        mock(renamed_app).update!
+        renamed_app.should_receive(:name=).with(new_name)
+        renamed_app.should_receive(:update!)
         subject
       end
     end
 
-    context 'when no name is provided, but a app is' do
+    context "when no name is provided, but a app is" do
       let(:given) { { :app => renamed_app.name } }
 
-      it 'asks for the new name and renames' do
+      it "asks for the new name and renames" do
         dont_allow_ask("Rename which application?", anything)
         mock_ask("New name") { new_name }
-        mock(renamed_app).name=(new_name)
-        mock(renamed_app).update!
+        renamed_app.should_receive(:name=).with(new_name)
+        renamed_app.should_receive(:update!)
         subject
       end
     end
 
-    context 'when an app is provided and a name' do
+    context "when an app is provided and a name" do
       let(:inputs) { { :app => renamed_app, :name => new_name } }
 
-      it 'renames the app' do
-        mock(renamed_app).update!
+      it "renames the app" do
+        renamed_app.should_receive(:update!)
         subject
       end
 
-      it 'displays the progress' do
+      it "displays the progress" do
         mock_with_progress("Renaming to #{new_name}")
-        mock(renamed_app).update!
+        renamed_app.should_receive(:update!)
 
         subject
       end
 
-      context 'and the name already exists' do
-        it 'fails' do
-          mock(renamed_app).update! { raise CFoundry::AppNameTaken.new("Bad Name", 404) }
+      context "and the name already exists" do
+        it "fails" do
+          renamed_app.should_receive(:update!) { raise CFoundry::AppNameTaken.new("Bad Name", 404) }
           expect { subject }.to raise_error(CFoundry::AppNameTaken)
         end
       end

@@ -16,9 +16,7 @@ describe CF::Start::Info do
   end
 
   before do
-    any_instance_of described_class do |cli|
-      stub(cli).client { client }
-    end
+    described_class.any_instance.stub(:client).and_return(client)
   end
 
   describe 'metadata' do
@@ -50,7 +48,7 @@ describe CF::Start::Info do
 
   context 'when given no flags' do
     it "displays target information" do
-      mock(client).info { target_info }
+      client.should_receive(:info).and_return(target_info)
 
       subject
 
@@ -67,7 +65,7 @@ describe CF::Start::Info do
     let(:services) { true }
 
     it 'does not grab /info' do
-      dont_allow(client).info
+      client.should_not_receive(:info)
       subject
     end
 
@@ -89,7 +87,7 @@ describe CF::Start::Info do
     let(:all) { true }
 
     it 'runs as --services' do
-      mock(client).info { target_info }
+      client.should_receive(:info).and_return(target_info)
 
       subject
 

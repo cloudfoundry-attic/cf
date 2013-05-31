@@ -4,7 +4,7 @@ describe CFTunnelPlugin::Tunnel do
   describe "#tunnel_clients" do
     context "when the user has a custom clients.yml in their cf directory" do
       it "overrides the default client config with the user's customizations" do
-        stub(subject).config_file_path { "#{SPEC_ROOT}/fixtures/fake_home_dirs/with_custom_clients/.cf/#{CFTunnelPlugin::Tunnel::CLIENTS_FILE}" }
+        subject.stub(:config_file_path) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/with_custom_clients/.cf/#{CFTunnelPlugin::Tunnel::CLIENTS_FILE}" }
 
         expect(subject.tunnel_clients["postgresql"]).to eq({
           "psql" => {
@@ -17,7 +17,7 @@ describe CFTunnelPlugin::Tunnel do
 
     context "when the user does not have a custom clients.yml" do
       it "returns the default client config" do
-        stub(subject).config_file_path { File.expand_path("./.cf/#{CFTunnelPlugin::Tunnel::CLIENTS_FILE}") }
+        subject.stub(:config_file_path) { File.expand_path("./.cf/#{CFTunnelPlugin::Tunnel::CLIENTS_FILE}") }
 
         expect(subject.tunnel_clients["postgresql"]).to eq({
           "psql" => {

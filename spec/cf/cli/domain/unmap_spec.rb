@@ -1,73 +1,77 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe CF::Domain::Unmap do
-  before do
-    stub_client_and_precondition
-  end
-
-  let(:client) do
-    fake_client(
-      :current_organization => organization,
-      :current_space => space,
-      :spaces => [space],
-      :organizations => [organization],
-      :domains => [domain])
-  end
-
-  let(:organization) { fake(:organization, :spaces => [space]) }
-  let(:space) { fake(:space) }
-  let(:domain) { fake(:domain, :name => "some.domain.com") }
-
-  context "when the --delete flag is given" do
-    subject { cf %W[unmap-domain #{domain.name} --delete] }
-
-    it "asks for a confirmation" do
-      mock_ask("Really delete #{domain.name}?", :default => false) { false }
-      stub(domain).delete!
-      subject
-    end
-
-    context "and the user answers 'no' to the confirmation" do
-      it "does NOT delete the domain" do
-        stub_ask("Really delete #{domain.name}?", anything) { false }
-        dont_allow(domain).delete!
-        subject
+module CF
+  module Domain
+    describe Unmap do
+      before do
+        stub_client_and_precondition
       end
-    end
 
-    context "and the user answers 'yes' to the confirmation" do
-      it "deletes the domain" do
-        stub_ask("Really delete #{domain.name}?", anything) { true }
-        mock(domain).delete!
-        subject
+      let(:client) do
+        fake_client(
+          :current_organization => organization,
+          :current_space => space,
+          :spaces => [space],
+          :organizations => [organization],
+          :domains => [domain])
       end
-    end
-  end
 
-  context "when a space is given" do
-    subject { cf %W[unmap-domain #{domain.name} --space #{space.name}] }
+      let(:organization) { fake(:organization, :spaces => [space]) }
+      let(:space) { fake(:space) }
+      let(:domain) { fake(:domain, :name => "some.domain.com") }
 
-    it "unmaps the domain from the space" do
-      mock(space).remove_domain(domain)
-      subject
-    end
-  end
+      context "when the --delete flag is given" do
+        subject { cf %W[unmap-domain #{domain.name} --delete] }
 
-  context "when an organization is given" do
-    subject { cf %W[unmap-domain #{domain.name} --organization #{organization.name}] }
+        it "asks for a confirmation" do
+          mock_ask("Really delete #{domain.name}?", :default => false) { false }
+          domain.stub(:delete!)
+          subject
+        end
 
-    it "unmaps the domain from the organization" do
-      mock(organization).remove_domain(domain)
-      subject
-    end
-  end
+        context "and the user answers 'no' to the confirmation" do
+          it "does NOT delete the domain" do
+            stub_ask("Really delete #{domain.name}?", anything) { false }
+            domain.should_not_receive(:delete!)
+            subject
+          end
+        end
 
-  context "when only the domain is given" do
-    subject { cf %W[unmap-domain #{domain.name}] }
+        context "and the user answers 'yes' to the confirmation" do
+          it "deletes the domain" do
+            stub_ask("Really delete #{domain.name}?", anything) { true }
+            domain.should_receive(:delete!)
+            subject
+          end
+        end
+      end
 
-    it "unmaps the domain from the current space" do
-      mock(client.current_space).remove_domain(domain)
-      subject
+      context "when a space is given" do
+        subject { cf %W[unmap-domain #{domain.name} --space #{space.name}] }
+
+        it "unmaps the domain from the space" do
+          space.should_receive(:remove_domain).with(domain)
+          subject
+        end
+      end
+
+      context "when an organization is given" do
+        subject { cf %W[unmap-domain #{domain.name} --organization #{organization.name}] }
+
+        it "unmaps the domain from the organization" do
+          organization.should_receive(:remove_domain).with(domain)
+          subject
+        end
+      end
+
+      context "when only the domain is given" do
+        subject { cf %W[unmap-domain #{domain.name}] }
+
+        it "unmaps the domain from the current space" do
+          client.current_space.should_receive(:remove_domain).with(domain)
+          subject
+        end
+      end
     end
   end
 end

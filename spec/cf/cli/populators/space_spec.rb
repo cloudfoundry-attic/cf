@@ -1,142 +1,141 @@
 require "spec_helper"
-require "webmock/rspec"
-require "cf/cli/populators/space"
 
-describe CF::Populators::Space do
-  stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
+module CF
+  module Populators
 
-  describe "#populate_and_save!" do
-    let(:tokens_file_path) { "~/.cf/tokens.yml" }
-    let(:spaces) {
-      [fake(:space, :name => "Development", :guid => "space-id-1", :developers => [user]),
-        fake(:space, :name => "Staging", :guid => "space-id-2")]
-    }
+    describe Space do
+      stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
-    let(:user) { stub! }
-    let(:organization) { fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => spaces) }
-    let(:space) { spaces.first }
-    let(:client) do
-      fake_client :organizations => [organization]
-    end
+      describe "#populate_and_save!" do
+        let(:tokens_file_path) { "~/.cf/tokens.yml" }
+        let(:spaces) {
+          [double(:space, :name => "Development", :guid => "space-id-1", :developers => [user]),
+            double(:space, :name => "Staging", :guid => "space-id-2")]
+        }
 
-    let(:input_hash) { {:space => space} }
-    let(:inputs) { Mothership::Inputs.new(nil, nil, input_hash) }
-    let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
-    let(:populator) { CF::Populators::Space.new(inputs, organization) }
-
-    before do
-      stub(client).current_user { user }
-      stub(client).space { space }
-      any_instance_of(described_class) do |instance|
-        stub(instance).client { client }
-      end
-
-      write_token_file({:space => "space-id-1", :organization => "organization-id-1"})
-    end
-
-    subject do
-      capture_output { populator.populate_and_save! }
-    end
-
-    it "updates the client with the new space" do
-      write_token_file({:space => "space-id-2"})
-      any_instance_of(described_class) do |instance|
-        stub.proxy(instance).client
-      end
-      populator.client.current_space.guid.should == "space-id-2"
-
-      subject
-
-      populator.client.current_space.guid.should == "space-id-1"
-    end
-
-    it "returns the space" do
-      subject.should == space
-    end
-
-    describe "mothership input arguments" do
-      let(:inputs) do
-        Mothership::Inputs.new(nil, nil, input_hash).tap do |input|
-          mock(input).[](:space, organization) { space }
-          stub(input).[](anything) { space }
+        let(:user) { build(:user) }
+        let(:organization) { double(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => spaces) }
+        let(:space) { spaces.first }
+        let(:client) do
+          fake_client :organizations => [organization]
         end
-      end
 
-      it "passes through extra arguments to the input call" do
-        subject
-      end
-    end
+        let(:input_hash) { {:space => space} }
+        let(:inputs) { Mothership::Inputs.new(nil, nil, input_hash) }
+        let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
+        let(:populator) { CF::Populators::Space.new(inputs, organization) }
 
-    context "with a space in the input" do
-      let(:input_hash) { {:space => space} }
-      before { write_token_file({:space => "space-id-2"}) }
+        before do
+          client.stub(:current_user).and_return(user)
+          client.stub(:space).and_return(space)
+          described_class.any_instance.stub(:client).and_return(client)
 
-      it "uses that space" do
-        subject.should == space
-      end
+          write_token_file({:space => "space-id-1", :organization => "organization-id-1"})
+        end
 
-      it "should not reprompt for space" do
-        dont_allow_ask("Space", anything)
-        subject
-      end
+        subject do
+          capture_output { populator.populate_and_save! }
+        end
 
-      it "sets the space in the token file" do
-        subject
-        expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
-      end
+        it "updates the client with the new space" do
+          write_token_file({:space => "space-id-2"})
+          described_class.any_instance.unstub(:client)
+          populator.client.current_space.guid.should == "space-id-2"
 
-      it "prints out that it is switching to that space" do
-        subject
-        expect(output).to say("Switching to space #{space.name}")
-      end
-    end
-
-    context "without a space in the input" do
-      let(:input_hash) { {} }
-
-      context "with a space in the config file" do
-        it "should not reprompt for space" do
-          dont_allow_ask("Space", anything)
           subject
+
+          populator.client.current_space.guid.should == "space-id-1"
         end
 
-        it "sets the space in the token file" do
-          subject
-          expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
+        it "returns the space" do
+          subject.should == space
         end
 
-        context "but that space doesn't exist anymore (not valid)" do
-          before { stub(space).developers { raise CFoundry::APIError } }
+        describe "mothership input arguments" do
+          let(:inputs) do
+            Mothership::Inputs.new(nil, nil, input_hash).tap do |input|
+              input.should_receive(:[]).with(:space, organization).and_return(space)
+              input.stub(:[]).and_return(space)
+            end
+          end
 
-          it "asks the user for an space" do
-            mock_ask("Space", anything) { space }
+          it "passes through extra arguments to the input call" do
             subject
           end
         end
-      end
 
-      context "without a space in the config file" do
-        before { write_token_file({}) }
+        context "with a space in the input" do
+          let(:input_hash) { {:space => space} }
+          before { write_token_file({:space => "space-id-2"}) }
 
-        it "prompts for the space" do
-          mock_ask("Space", anything) { space }
-          subject
+          it "uses that space" do
+            subject.should == space
+          end
 
-          expect(output).to say("Switching to space #{space.name}")
+          it "should not reprompt for space" do
+            dont_allow_ask("Space", anything)
+            subject
+          end
+
+          it "sets the space in the token file" do
+            subject
+            expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
+          end
+
+          it "prints out that it is switching to that space" do
+            subject
+            expect(output).to say("Switching to space #{space.name}")
+          end
         end
 
-        it "sets the space in the token file" do
-          mock_ask("Space", anything) { space }
+        context "without a space in the input" do
+          let(:input_hash) { {} }
 
-          subject
-          expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
-        end
+          context "with a space in the config file" do
+            it "should not reprompt for space" do
+              dont_allow_ask("Space", anything)
+              subject
+            end
 
-        context "when the user has no spaces in that organization" do
-          let(:organization) { fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user]) }
+            it "sets the space in the token file" do
+              subject
+              expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
+            end
 
-          it "tells the user to create one by raising a UserFriendlyError" do
-            expect { subject }.to raise_error(CF::UserFriendlyError, /There are no spaces/)
+            context "but that space doesn't exist anymore (not valid)" do
+              before { space.stub(:developers).and_raise(CFoundry::APIError) }
+
+              it "asks the user for an space" do
+                mock_ask("Space", anything) { space }
+                subject
+              end
+            end
+          end
+
+          context "without a space in the config file" do
+            before { write_token_file({}) }
+
+            it "prompts for the space" do
+              mock_ask("Space", anything) { space }
+              subject
+
+              expect(output).to say("Switching to space #{space.name}")
+            end
+
+            it "sets the space in the token file" do
+              mock_ask("Space", anything) { space }
+
+              subject
+              expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"
+            end
+
+            context "when the user has no spaces in that organization" do
+              let(:organization) { fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user]) }
+
+              it "tells the user to create one by raising a UserFriendlyError" do
+                expect { subject }.to raise_error(CF::UserFriendlyError, /There are no spaces/)
+              end
+            end
           end
         end
       end

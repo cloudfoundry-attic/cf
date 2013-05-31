@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe CFManifests do
   let(:inputs_hash) { {} }
@@ -9,7 +9,7 @@ describe CFManifests do
   let(:cmd) do
     manifest = CF::App::Push.new(nil, inputs)
     manifest.extend CFManifests
-    stub(manifest).client { client }
+    manifest.stub(:client) { client }
     manifest
   end
 
@@ -28,22 +28,22 @@ describe CFManifests do
   let(:manifest_file) { "/abc/manifest.yml" }
 
   before do
-    stub(cmd).target_base { target_base }
+    cmd.stub(:target_base) { target_base }
 
-    stub(cmd).manifest { manifest }
-    stub(cmd).manifest_file { manifest_file }
+    cmd.stub(:manifest) { manifest }
+    cmd.stub(:manifest_file) { manifest_file }
   end
 
-  describe '#find_apps' do
+  describe "#find_apps" do
     subject { cmd.find_apps(nil) }
 
-    context 'when there is no manifest file' do
+    context "when there is no manifest file" do
       before { stub(cmd).manifest { nil } }
       it { should eq [] }
     end
   end
 
-  describe '#create_manifest_for' do
+  describe "#create_manifest_for" do
     let(:app) {
       fake :app,
         :memory => 2048,
@@ -105,7 +105,7 @@ describe CFManifests do
       end
     end
 
-    context 'when there is no url' do
+    context "when there is no url" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -115,7 +115,7 @@ describe CFManifests do
       its(["url"]) { should eq "none" }
     end
 
-    context 'when there is no command' do
+    context "when there is no command" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -125,7 +125,7 @@ describe CFManifests do
       it { should_not include "command" }
     end
 
-    context 'when there are no service bindings' do
+    context "when there are no service bindings" do
       let(:app) {
         fake :app,
           :memory => 2048,
@@ -302,7 +302,7 @@ describe CFManifests do
     subject { cmd.current_apps }
 
     it "returns the applications with the cwd as their path" do
-      stub(Dir).pwd { "/abc" }
+      Dir.stub(:pwd) { "/abc" }
       expect(subject).to eq [{ :name => "foo", :path => "/abc"}, { :name => "bar", :path => "/abc" }]
     end
   end

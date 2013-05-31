@@ -13,14 +13,14 @@ describe ManifestsPlugin do
   let(:client) { fake_client }
 
   before do
-    stub(plugin).manifest { manifest }
-    stub(plugin).manifest_file { manifest_file } if manifest_file
-    stub(plugin).client { client }
+    plugin.stub(:manifest) { manifest }
+    plugin.stub(:manifest_file) { manifest_file } if manifest_file
+    plugin.stub(:client) { client }
   end
 
   describe "#wrap_with_optional_name" do
     let(:name_made_optional) { true }
-    let(:wrapped) { mock! }
+    let(:wrapped) { double(:wrapped).as_null_object }
 
     subject { plugin.send(:wrap_with_optional_name, name_made_optional, wrapped, inputs) }
 
@@ -28,8 +28,8 @@ describe ManifestsPlugin do
       let(:inputs_hash) { { :all => true } }
 
       it "skips all manifest-related logic, and invokes the command" do
-        mock(wrapped).call
-        dont_allow(plugin).show_manifest_usage
+        wrapped.should_receive(:call)
+        plugin.should_not_receive(:show_manifest_usage)
         subject
       end
     end
@@ -41,8 +41,8 @@ describe ManifestsPlugin do
         let(:given_hash) { { :app => "foo" } }
 
         it "passes through to the command" do
-          mock(wrapped).call
-          dont_allow(plugin).show_manifest_usage
+          wrapped.should_receive(:call)
+          plugin.should_not_receive(:show_manifest_usage)
           subject
         end
       end
@@ -52,7 +52,7 @@ describe ManifestsPlugin do
 
         context "and we made it optional" do
           it "fails manually" do
-            mock(plugin).no_apps
+            plugin.should_receive(:no_apps)
             subject
           end
         end
@@ -61,8 +61,8 @@ describe ManifestsPlugin do
           let(:name_made_optional) { false }
 
           it "passes through to the command" do
-            mock(wrapped).call
-            dont_allow(plugin).show_manifest_usage
+            wrapped.should_receive(:call)
+            plugin.should_not_receive(:show_manifest_usage)
             subject
           end
         end
@@ -73,7 +73,7 @@ describe ManifestsPlugin do
       let(:manifest_file) { "/abc/manifest.yml" }
 
       before do
-        stub(plugin).show_manifest_usage
+        plugin.stub(:show_manifest_usage)
       end
 
       context "when no apps are given" do
@@ -81,11 +81,11 @@ describe ManifestsPlugin do
           let(:manifest) { { :applications => [{ :name => "foo", :path => "/abc/foo" }] } }
 
           it "calls the command for only that app" do
-            mock(wrapped).call(anything) do |inputs|
+            wrapped.should_receive(:call).with(anything) do |inputs|
               expect(inputs.given[:app]).to eq "foo"
             end
 
-            stub(Dir).pwd { "/abc/foo" }
+            Dir.stub(:pwd) { "/abc/foo" }
 
             subject
           end
@@ -96,7 +96,7 @@ describe ManifestsPlugin do
 
           it "calls the command for all apps in the manifest" do
             uncalled_apps = ["foo", "bar"]
-            mock(wrapped).call(anything).twice do |inputs|
+            wrapped.should_receive(:call).with(anything).twice do |inputs|
               uncalled_apps.delete inputs.given[:app]
             end
 
@@ -114,10 +114,10 @@ describe ManifestsPlugin do
           let(:given_hash) { { :apps => ["x", "a"] } }
 
           it "passes through to the original command" do
-            mock(plugin).show_manifest_usage
+            plugin.should_receive(:show_manifest_usage)
 
             uncalled_apps = ["a", "x"]
-            mock(wrapped).call(anything).twice do |inputs|
+            wrapped.should_receive(:call).with(anything).twice do |inputs|
               uncalled_apps.delete inputs.given[:app]
             end
 
@@ -136,8 +136,8 @@ describe ManifestsPlugin do
           let(:given_hash) { { :apps => ["x", "y"] } }
 
           it "passes through to the original command" do
-            dont_allow(plugin).show_manifest_usage
-            mock(wrapped).call
+            wrapped.should_receive(:call)
+            plugin.should_not_receive(:show_manifest_usage)
             subject
           end
         end
@@ -148,7 +148,7 @@ describe ManifestsPlugin do
         let(:given_hash) { { :app => "foo" } }
 
         it "calls the command with that app" do
-          mock(wrapped).call(anything) do |inputs|
+          wrapped.should_receive(:call).with(anything) do |inputs|
             expect(inputs.given[:app]).to eq "foo"
           end
 
@@ -161,7 +161,7 @@ describe ManifestsPlugin do
         let(:given_hash) { { :app => "/abc/foo" } }
 
         it "calls the command with that app" do
-          mock(wrapped).call(anything) do |inputs|
+          wrapped.should_receive(:call).with(anything) do |inputs|
             expect(inputs.given[:app]).to eq "foo"
           end
 
@@ -172,13 +172,13 @@ describe ManifestsPlugin do
   end
 
   describe "#wrap_push" do
-    let(:wrapped) { mock! }
+    let(:wrapped) { double(:wrapped).as_null_object }
     let(:command) { Mothership.commands[:push] }
 
     subject { plugin.send(:wrap_push, wrapped, inputs) }
 
     before do
-      stub(plugin).show_manifest_usage
+      plugin.stub(:show_manifest_usage)
     end
 
     context "with a manifest" do
@@ -209,7 +209,7 @@ describe ManifestsPlugin do
               let(:given_hash) { { :name => "a", :instances => "100" } }
 
               it "rebases their inputs on the manifest's values" do
-                mock(wrapped).call(anything) do |inputs|
+                wrapped.should_receive(:call).with(anything) do |inputs|
                   expect(inputs.given).to eq(
                     :name => "a", :path => "/abc/a", :instances => "100", :memory => "128M")
                 end
@@ -221,7 +221,7 @@ describe ManifestsPlugin do
 
           context "and the app does NOT exist" do
             it "pushes a new app with the inputs from the manifest" do
-              mock(wrapped).call(anything) do |inputs|
+              wrapped.should_receive(:call).with(anything) do |inputs|
                 expect(inputs.given).to eq(
                   :name => "a", :path => "/abc/a", :instances => "200", :memory => "128M")
               end
@@ -263,7 +263,7 @@ describe ManifestsPlugin do
 
           it "pushes the found apps" do
             pushed_apps = []
-            mock(wrapped).call(anything).twice do |inputs|
+            wrapped.should_receive(:call).with(anything).twice do |inputs|
               pushed_apps << inputs[:name]
             end
 
@@ -284,12 +284,12 @@ describe ManifestsPlugin do
     end
 
     context "without a manifest" do
-      let(:app) { mock! }
+      let(:app) { double(:app).as_null_object }
       let(:manifest) { nil }
 
       it "asks to save the manifest when uploading the application" do
         mock_ask("Save configuration?", :default => false)
-        stub(wrapped).call { plugin.filter(:push_app, app) }
+        wrapped.stub(:call) { plugin.filter(:push_app, app) }
         subject
       end
     end
@@ -298,7 +298,7 @@ describe ManifestsPlugin do
   describe "#push_input_for" do
     context "with an existing app" do
       before do
-        stub(plugin).from_manifest { "PATH" }
+        plugin.stub(:from_manifest) { "PATH" }
         app.changes.clear
       end
 
@@ -320,14 +320,14 @@ describe ManifestsPlugin do
           end
 
           it "does not ask to set --reset" do
-            dont_allow(plugin).warn_reset_changes
+            plugin.should_not_receive(:warn_reset_changes)
             subject
           end
         end
 
         context "without changes" do
           it "does not ask to set --reset" do
-            dont_allow(plugin).warn_reset_changes
+            plugin.should_not_receive(:warn_reset_changes)
             subject
           end
         end
@@ -340,19 +340,19 @@ describe ManifestsPlugin do
           let(:manifest_memory) { "128M" }
 
           it "asks user to provide --reset" do
-            mock(plugin).warn_reset_changes
+            plugin.should_receive(:warn_reset_changes)
             subject
           end
 
           it "does not apply changes" do
-            stub(plugin).warn_reset_changes
+            plugin.stub(:warn_reset_changes)
             subject[:memory].should == nil
           end
         end
 
         context "without changes" do
           it "does not ask to set --reset" do
-            dont_allow(plugin).warn_reset_changes
+            plugin.should_not_receive(:warn_reset_changes)
             subject
           end
         end

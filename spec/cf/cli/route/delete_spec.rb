@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CF::Route::Delete do
   before do
     stub_client_and_precondition
-    stub(route).delete!
+    route.stub(:delete!)
   end
 
   let(:route) { fake(:route, :host => host_name, :domain => domain) }
@@ -47,7 +47,7 @@ describe CF::Route::Delete do
       end
 
       it "deletes the route" do
-        mock(route).delete!
+        route.should_receive(:delete!)
         command
       end
 
@@ -63,7 +63,7 @@ describe CF::Route::Delete do
       end
 
       it "does not delete the route" do
-        dont_allow(route).delete!
+        route.should_not_receive(:delete!)
         command
       end
 
@@ -78,7 +78,7 @@ describe CF::Route::Delete do
     let(:command) { cf %W[delete-route #{url} --force] }
 
     it "deletes the route" do
-      mock(route).delete!
+      route.should_receive(:delete!)
       command
     end
 

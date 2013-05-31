@@ -1,7 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
-
-if ENV['CF_V2_RUN_INTEGRATION']
+if ENV["CF_V2_RUN_INTEGRATION"]
   describe "creating and deleting orgs", :ruby19 => true do
     before(:all) do
       WebMock.allow_net_connect!
@@ -11,11 +10,11 @@ if ENV['CF_V2_RUN_INTEGRATION']
       WebMock.disable_net_connect!
     end
 
-    let(:target) { ENV['CF_V2_TEST_TARGET'] }
-    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
-    let(:space) { ENV['CF_V2_TEST_SPACE'] }
-    let(:username) { ENV['CF_V2_ADMIN_USERNAME'] }
-    let(:password) { ENV['CF_V2_ADMIN_PW'] }
+    let(:target) { ENV["CF_V2_TEST_TARGET"] }
+    let(:organization) { ENV["CF_V2_TEST_ORGANIZATION"] }
+    let(:space) { ENV["CF_V2_TEST_SPACE"] }
+    let(:username) { ENV["CF_V2_ADMIN_USERNAME"] }
+    let(:password) { ENV["CF_V2_ADMIN_PW"] }
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:new_org_name) { "new-org-#{run_id}" }
@@ -48,8 +47,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
 
       BlueShell::Runner.run("cf delete-org #{new_org_name} --force") do |runner|
-        runner.should say "If you want to delete the organization along with all dependent objects, rerun the command with the '--recursive' flag."
+
+        #runner.should say "If you want to delete the organization along with all dependent objects, rerun the command with the '--recursive' flag."
       end
+      WebMock.should have_requested(:delete, /v2\/bogus/)
 
       BlueShell::Runner.run("cf delete-org #{new_org_name} --force --recursive") do |runner|
         runner.should say("Deleting organization #{new_org_name}... OK")

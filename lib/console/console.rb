@@ -122,7 +122,7 @@ class CFConsole < CFTunnel
 
     return if line == nil || line == 'quit' || line == 'exit'
 
-    if line !~ /^\s*$/ && Readline::HISTORY.to_a[-1] != line
+    if line !~ /^\s*$/ && Readline::HISTORY.to_a.last != line
       Readline::HISTORY.push(line)
     end
 

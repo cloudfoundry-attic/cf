@@ -6,7 +6,8 @@ source "http://rubygems.org"
 
 gemspec
 
-gem "cfoundry", :git => "git://github.com/cloudfoundry/cfoundry.git", :submodules => true
+#gem "cfoundry", :git => "git://github.com/cloudfoundry/cfoundry.git", :submodules => true
+gem "cfoundry", :path => "../cfoundry"
 
 gem "interact", :git => "git://github.com/vito/interact.git"
 gem "mothership", :git => "git://github.com/vito/mothership.git"

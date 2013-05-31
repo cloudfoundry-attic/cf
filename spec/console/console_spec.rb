@@ -1,15 +1,15 @@
 require "spec_helper"
 
-describe "CFConsole" do
+describe CFConsole do
   before do
-    @app = mock("app")
+    @app = double("app")
     @console = CFConsole.new(nil, @app)
   end
 
   it "should return connection info for apps that have a console ip and port" do
-    instance = mock("instance")
-    mock(@app).instances { [instance] }
-    mock(instance).console { {:ip => "192.168.1.1", :port => 3344} }
+    instance = double("instance")
+    @app.should_receive(:instances) { [instance] }
+    instance.should_receive(:console) { {:ip => "192.168.1.1", :port => 3344} }
 
     @console.get_connection_info(nil).should == {
       "hostname" => "192.168.1.1",
@@ -18,7 +18,7 @@ describe "CFConsole" do
   end
 
   it "should raise error when no app instances found" do
-    mock(@app).instances { [] }
+    @app.should_receive(:instances) { [] }
 
     expect {
       @console.get_connection_info(nil)
@@ -26,9 +26,9 @@ describe "CFConsole" do
   end
 
   it "should raise error when app does not have console access" do
-    instance = mock("instance")
-    mock(@app).instances { [instance] }
-    mock(instance).console { nil }
+    instance = double("instance")
+    @app.should_receive(:instances) { [instance] }
+    instance.should_receive(:console) { nil }
 
     expect {
       @console.get_connection_info(nil)
@@ -46,7 +46,7 @@ describe "CFConsole" do
 
     context "when console credentials cannot be obtained" do
       it "should raise error" do
-        mock(@app).file(*@creds[:path]) { "username: cfuser" }
+        @app.should_receive(:file).with(*@creds[:path]) { "username: cfuser" }
 
         expect {
           @console.start_console
@@ -56,63 +56,63 @@ describe "CFConsole" do
 
     context "when console credentials can be obtained" do
       before do
-        mock(@app).file(*@creds[:path]) { @creds[:yaml] }
+        @app.should_receive(:file).with(*@creds[:path]) { @creds[:yaml] }
         @telnet = Object.new
-        mock(@console).telnet_client { @telnet }
+        @console.should_receive(:telnet_client).and_return(@telnet)
       end
 
       it "should raise error if authentication fails" do
-        mock(@telnet).login(@creds[:telnet]) { "Login failed" }
-        mock(@telnet).close
+        @telnet.should_receive(:login).with(@creds[:telnet]) { "Login failed" }
+        @telnet.should_receive(:close)
 
         expect { @console.start_console }.to raise_error("Login failed")
       end
 
       it "should retry authentication on timeout" do
-        mock(@telnet).login(@creds[:telnet]){ raise TimeoutError }
-        mock(@telnet).login(@creds[:telnet]) { "Switch to inspect mode\nirb():001:0> " }
+        @telnet.should_receive(:login).with(@creds[:telnet]){ raise TimeoutError }
+        @telnet.should_receive(:login).with(@creds[:telnet]) { "Switch to inspect mode\nirb():001:0> " }
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
       end
 
       it "should retry authentication on EOF" do
-        mock(@console).telnet_client { @telnet }
-        mock(@telnet).login(@creds[:telnet]) { raise EOFError }
-        mock(@telnet).close
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
+        @console.should_receive(:telnet_client).and_return(@telnet)
+        @telnet.should_receive(:login).with(@creds[:telnet]) { raise EOFError }
+        @telnet.should_receive(:close)
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
       end
 
       it "should operate console interactively" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(Readline).readline("irb():001:0> ") { "puts 'hi'" }
-        mock(Readline::HISTORY).push("puts 'hi'")
-        mock(@telnet).cmd("puts 'hi'") { "nil" + "\n" + "irb():002:0> " }
-        mock(@console).puts("nil")
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        Readline.should_receive(:readline).with("irb():001:0> ") { "puts 'hi'" }
+        Readline::HISTORY.should_receive(:push).with("puts 'hi'")
+        @telnet.should_receive(:cmd).with("puts 'hi'").and_return("nil" + "\n" + "irb():002:0> ")
+        @console.should_receive(:puts).with("nil")
         verify_console_exit("irb():002:0> ")
 
         @console.start_console
       end
 
       it "should not crash if command times out" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(Readline).readline("irb():001:0> ") { "puts 'hi'" }
-        mock(Readline::HISTORY).push("puts 'hi'")
-        mock(@telnet).cmd("puts 'hi'") { raise TimeoutError }
-        mock(@console).puts("Timed out sending command to server.")
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        Readline.should_receive(:readline).with("irb():001:0> ") { "puts 'hi'" }
+        Readline::HISTORY.should_receive(:push).with("puts 'hi'")
+        @telnet.should_receive(:cmd).with("puts 'hi'") { raise TimeoutError }
+        @console.should_receive(:puts).with("Timed out sending command to server.")
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
       end
 
       it "should raise error if an EOF is received" do
-        mock(@telnet).login(@creds[:telnet]) { "Switch to inspect mode\nirb():001:0> " }
-        mock(Readline).readline("irb():001:0> ") { "puts 'hi'" }
-        mock(Readline::HISTORY).push("puts 'hi'")
-        mock(@telnet).cmd("puts 'hi'") { raise EOFError }
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("Switch to inspect mode\nirb():001:0> ")
+        Readline.should_receive(:readline).with("irb():001:0> ") { "puts 'hi'" }
+        Readline::HISTORY.should_receive(:push).with("puts 'hi'")
+        @telnet.should_receive(:cmd).with("puts 'hi'") { raise EOFError }
 
         expect {
           @console.start_console
@@ -120,30 +120,30 @@ describe "CFConsole" do
       end
 
       it "should not keep blank lines in history" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(Readline).readline("irb():001:0> ") { "" }
-        dont_allow(Readline::HISTORY).push("")
-        mock(@telnet).cmd("") { "irb():002:0*> " }
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        Readline.should_receive(:readline).with("irb():001:0> ") { "" }
+        Readline::HISTORY.should_not_receive(:push)
+        @telnet.should_receive(:cmd).and_return("irb():002:0*> ")
         verify_console_exit("irb():002:0*> ")
 
         @console.start_console
       end
 
       it "should not keep identical commands in history" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(Readline).readline("irb():001:0> ") { "puts 'hi'" }
-        mock(Readline::HISTORY).to_a { ["puts 'hi'"] }
-        dont_allow(Readline::HISTORY).push("puts 'hi'")
-        mock(@telnet).cmd("puts 'hi'") { "nil" + "\n" + "irb():002:0> " }
-        mock(@console).puts("nil")
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        Readline.should_receive(:readline).with("irb():001:0> ") { "puts 'hi'" }
+        Readline::HISTORY.should_receive(:to_a).and_return(["puts 'hi'"])
+        Readline::HISTORY.should_not_receive(:push).with("puts 'hi'")
+        @telnet.should_receive(:cmd).with("puts 'hi'").and_return("nil" + "\n" + "irb():002:0> ")
+        @console.should_receive(:puts).with("nil")
         verify_console_exit("irb():002:0> ")
 
         @console.start_console
       end
 
       it "should return tab completion data" do
-        mock(@telnet).login(@creds[:telnet]) { "Switch to inspect mode\nirb():001:0> " }
-        mock(@telnet).cmd("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { "to_s,nil?\n" }
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("Switch to inspect mode\nirb():001:0> ")
+        @telnet.should_receive(:cmd).with("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { "to_s,nil?\n" }
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
@@ -151,8 +151,8 @@ describe "CFConsole" do
       end
 
       it "should return tab completion data receiving empty completion string" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(@telnet).cmd("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { "\n" }
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        @telnet.should_receive(:cmd).with("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { "\n" }
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
@@ -160,8 +160,8 @@ describe "CFConsole" do
       end
 
       it "should not crash on timeout of remote tab completion data" do
-        mock(@telnet).login(@creds[:telnet]) { "Switch to inspect mode\nirb():001:0> " }
-        mock(@telnet).cmd("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { raise TimeoutError }
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("Switch to inspect mode\nirb():001:0> ")
+        @telnet.should_receive(:cmd).with("String" => "app.\t", "Match" => /\S*\n$/, "Timeout" => 10) { raise TimeoutError }
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
@@ -169,11 +169,11 @@ describe "CFConsole" do
       end
 
       it "should properly initialize Readline for tab completion" do
-        mock(@telnet).login(@creds[:telnet]) { "irb():001:0> " }
-        mock(Readline).respond_to?("basic_word_break_characters=") { true }
-        mock(Readline).basic_word_break_characters=(" \t\n`><=;|&{(")
-        mock(Readline).completion_append_character=(nil)
-        mock(Readline).completion_proc=(anything)
+        @telnet.should_receive(:login).with(@creds[:telnet]).and_return("irb():001:0> ")
+        Readline.should_receive(:respond_to?).with("basic_word_break_characters=") { true }
+        Readline.should_receive(:basic_word_break_characters=).with(" \t\n`><=;|&{(")
+        Readline.should_receive(:completion_append_character=).with(nil)
+        Readline.should_receive(:completion_proc=).with(anything)
         verify_console_exit("irb():001:0> ")
 
         @console.start_console
@@ -182,8 +182,8 @@ describe "CFConsole" do
   end
 
   def verify_console_exit(prompt)
-    mock(Readline).readline(prompt) { "exit" }
-    mock(@telnet).cmd("String" => "exit", "Timeout" => 1) { raise TimeoutError }
-    mock(@telnet).close
+    Readline.should_receive(:readline).with(prompt) { "exit" }
+    @telnet.should_receive(:cmd).with("String" => "exit", "Timeout" => 1) { raise TimeoutError }
+    @telnet.should_receive(:close)
   end
 end

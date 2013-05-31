@@ -10,11 +10,10 @@ describe CF::App::Stats do
   let(:time) { Time.local(2012, 11, 1, 2, 30) }
 
   before do
-    any_instance_of(CF::CLI) do |cli|
-      stub(cli).client { client }
-      stub(cli).precondition { nil }
-    end
-    stub(client.base).instances(anything) do
+    CF::CLI.any_instance.stub(:client).and_return(client)
+    CF::CLI.any_instance.stub(:precondition).and_return(nil)
+
+    client.base.stub(:instances).with(anything) do
       {
         "12" => {:state => "STOPPED", :since => time.to_i, :debug_ip => "foo", :debug_port => "bar", :console_ip => "baz", :console_port => "qux"},
         "1" => {:state => "STOPPED", :since => time.to_i, :debug_ip => "foo", :debug_port => "bar", :console_ip => "baz", :console_port => "qux"},

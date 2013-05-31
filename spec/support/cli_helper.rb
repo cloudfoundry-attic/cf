@@ -5,15 +5,11 @@ module CliHelper
   end
 
   def stub_client
-    any_instance_of described_class do |cli|
-      stub(cli).client { client }
-    end
+    described_class.any_instance.stub(:client).and_return(client)
   end
 
   def stub_precondition
-    any_instance_of described_class do |cli|
-      stub(cli).precondition
-    end
+    described_class.any_instance.stub(:precondition)
   end
 
   def wrap_errors
@@ -24,7 +20,7 @@ module CliHelper
 
   def cf(argv)
     Mothership.new.exit_status 0
-    stub(CF::CLI).exit { |code| code }
+    CF::CLI.stub(:exit) { |code| code }
     capture_output { CF::CLI.start(argv + ["--debug", "--no-script"]) }
   end
 
@@ -60,15 +56,10 @@ module CliHelper
   end
 
   def mock_invoke(*args)
-    any_instance_of described_class do |cli|
-      mock(cli).invoke *args
-    end
+    described_class.any_instance.should_receive(:invoke).with(*args)
   end
 
   def dont_allow_invoke(*args)
-    any_instance_of described_class do |cli|
-      dont_allow(cli).invoke *args
-    end
+    described_class.any_instance.should_not_receive(:invoke).with(*args)
   end
-
 end
