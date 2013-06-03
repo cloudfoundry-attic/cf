@@ -9,17 +9,18 @@ module CF::Service
     desc "Create a service"
     group :services, :manage
     input :offering, :desc => "What kind of service (e.g. redis, mysql)",
-          :argument => :optional, :from_given => offerings_from_label
+      :argument => :optional, :from_given => offerings_from_label
     input :name, :desc => "Name for your service", :argument => :optional
     input :plan, :desc => "Service plan",
-          :from_given => find_by_name_insensitive("plan"),
-          :default => proc {
-              interact
-          }
+      :from_given => find_by_name_insensitive("plan"),
+      :default => proc {
+        interact
+      }
     input :provider, :desc => "Service provider"
     input :version, :desc => "Service version"
     input :app, :desc => "Application to immediately bind to",
-          :alias => "--bind", :from_given => by_name(:app)
+      :alias => "--bind", :from_given => by_name(:app)
+
     def create_service
       offerings = client.services
 
@@ -37,7 +38,7 @@ module CF::Service
       if plan = input.direct(:plan)
         offerings.reject! do |s|
           if plan.is_a?(String)
-            s.service_plans.none? { |p| p.name == plan.upcase }
+            s.service_plans.none? { |p| p.name.casecmp(plan) == 0 }
           else
             !s.service_plans.include? plan
           end
@@ -55,7 +56,12 @@ module CF::Service
       service = client.service_instance
       service.name = input[:name, offering]
 
-      service.service_plan = input[:plan, offering.service_plans]
+      plan = input[:plan, offering.service_plans]
+      service.service_plan = if plan.is_a?(String)
+                               offering.service_plans.find { |p| p.name.casecmp(plan) == 0 }
+                             else
+                               plan
+                             end
       service.space = client.current_space
 
       with_progress("Creating service #{c(service.name, :name)}") do
@@ -73,14 +79,14 @@ module CF::Service
 
     def ask_offering(offerings)
       [ask("What kind?", :choices => offerings.sort_by(&:label),
-           :display => proc { |s|
-              str = "#{c(s.label, :name)} #{s.version}"
-              if s.provider != "core"
-                str << ", via #{s.provider}"
-              end
-              str
-           },
-           :complete => proc { |s| "#{s.label} #{s.version}" })]
+        :display => proc { |s|
+          str = "#{c(s.label, :name)} #{s.version}"
+          if s.provider != "core"
+            str << ", via #{s.provider}"
+          end
+          str
+        },
+        :complete => proc { |s| "#{s.label} #{s.version}" })]
     end
 
     def ask_name(offering)

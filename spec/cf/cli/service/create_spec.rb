@@ -25,8 +25,9 @@ module CF
       context "when there are services" do
         let(:service_plan) { fake(:service_plan, :name => "F20") }
         let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
-        let(:command) { Mothership.new.invoke(:create_service, {}, {}) }
+        let(:command) { Mothership.new.invoke(:create_service, params, {}) }
         let(:client) { fake_client(:services => services) }
+        let(:params) { {} }
 
         before do
           CF::CLI.any_instance.stub(:client).and_return(client)
@@ -57,25 +58,36 @@ module CF
             capture_output { command }
           end
         end
-      end
 
-      describe "when the service plan is specified by an object, not a string" do
-        let(:services) { [selected_service] }
-        let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
-        let(:command) { Mothership.new.invoke(:create_service, params, {}) }
-        let(:client) { fake_client(:services => services) }
-        let(:params) { {
-          :name => "my-service-name",
-          :offering => selected_service,
-          :plan => service_plan,
-        } }
+        describe "when the service plan is specified by an object, not a string" do
+          let(:services) { [selected_service] }
+          let(:params) { {
+            :name => "my-service-name",
+            :offering => selected_service,
+            :plan => service_plan,
+          } }
 
-        it "creates the specified service" do
-          any_instance_of(CFoundry::V2::ServiceInstance) do |service_instance|
-            mock(service_instance).service_plan = service_plan
-            mock(service_instance).create!
+          it "creates the specified service" do
+            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            capture_output { command }
           end
-          capture_output { command }
+        end
+
+        describe "when entering command line options" do
+          let(:service_plan) { fake(:service_plan, :name => "f20") }
+          let(:params) { {
+            :name => "my-service-name",
+            :offering => selected_service,
+            :plan => "F20",
+          } }
+          let(:services) { [selected_service] }
+
+          it "uses case insensitive match" do
+            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            capture_output { command }
+          end
         end
       end
     end
