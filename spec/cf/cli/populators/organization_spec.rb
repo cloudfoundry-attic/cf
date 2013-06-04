@@ -31,7 +31,7 @@ module CF
           write_token_file({:organization => "organization-id-1"})
         end
 
-        subject do
+        def execute_populate_and_save
           capture_output { populator.populate_and_save! }
         end
 
@@ -40,13 +40,13 @@ module CF
           described_class.any_instance.unstub(:client)
           populator.client.current_organization.guid.should == "organization-id-2"
 
-          subject
+          execute_populate_and_save
 
           populator.client.current_organization.guid.should == "organization-id-1"
         end
 
         it "returns the organization" do
-          subject.should == organization
+          execute_populate_and_save.should == organization
         end
 
         context "with an organization in the input" do
@@ -54,21 +54,21 @@ module CF
           before { write_token_file({:organization => "organization-id-2"}) }
 
           it "uses that organization" do
-            subject.should == organization
+            execute_populate_and_save.should == organization
           end
 
           it "should not reprompt for organization" do
             dont_allow_ask("Organization", anything)
-            subject
+            execute_populate_and_save
           end
 
           it "sets the organization in the token file" do
-            subject
+            execute_populate_and_save
             expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
           end
 
           it "prints out that it is switching to that organization" do
-            subject
+            execute_populate_and_save
             expect(output).to say("Switching to organization #{organization.name}")
           end
 
@@ -80,7 +80,7 @@ module CF
             end
 
             it "removes the space from the token file" do
-              subject
+              execute_populate_and_save
               refreshed_tokens = YAML.load_file(File.expand_path(tokens_file_path))
               expect(refreshed_tokens["https://api.some-domain.com"][:space]).to be_nil
             end
@@ -93,7 +93,7 @@ module CF
             end
 
             it "does not remove the space from the token file" do
-              subject
+              execute_populate_and_save
               expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "should-not-be-removed"
             end
           end
@@ -106,11 +106,11 @@ module CF
           context "with an organization in the config file" do
             it "should not reprompt for organization" do
               dont_allow_ask("Organization", anything)
-              subject
+              execute_populate_and_save
             end
 
             it "sets the organization in the token file" do
-              subject
+              execute_populate_and_save
               expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
             end
 
@@ -119,7 +119,7 @@ module CF
 
               it "asks the user for an organization" do
                 should_ask("Organization", anything) { organization }
-                subject
+                execute_populate_and_save
               end
             end
           end
@@ -129,7 +129,7 @@ module CF
 
             it "prompts for the organization" do
               should_ask("Organization", anything) { organization }
-              subject
+              execute_populate_and_save
 
               expect(output).to say("Switching to organization #{organization.name}")
             end
@@ -137,7 +137,7 @@ module CF
             it "sets the organization in the token file" do
               should_ask("Organization", anything) { organization }
 
-              subject
+              execute_populate_and_save
               expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
             end
 
@@ -145,7 +145,7 @@ module CF
               let(:client) { fake_client :organizations => [] }
 
               it "tells the user to create one by raising a UserFriendlyError" do
-                expect { subject }.to raise_error(CF::UserFriendlyError, /There are no organizations/)
+                expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, /There are no organizations/)
               end
             end
           end
