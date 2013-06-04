@@ -35,7 +35,7 @@ module CF
 
           it "confirms deletion of the organization and deletes it" do
             organization.should_receive(:delete!).with(:recursive => false) { true }
-            mock_ask("Really delete #{organization.name}?", {:default => false}) { true }
+            should_ask("Really delete #{organization.name}?", {:default => false}) { true }
 
             subject
           end

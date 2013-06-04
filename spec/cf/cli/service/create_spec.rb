@@ -37,9 +37,9 @@ module CF
           let(:services) { [selected_service] }
 
           it "asks for the service" do
-            mock_ask("What kind?", anything) { selected_service }
-            mock_ask("Name?", anything) { selected_service.label }
-            mock_ask("Which plan?", anything) { service_plan }
+            should_ask("What kind?", anything) { selected_service }
+            should_ask("Name?", anything) { selected_service.label }
+            should_ask("Which plan?", anything) { service_plan }
             CFoundry::V2::ServiceInstance.any_instance.stub(:create!)
 
             capture_output { command }
@@ -50,9 +50,9 @@ module CF
           let(:services) { [selected_service, fake(:service), fake(:service)] }
 
           it "asks for the service" do
-            mock_ask("What kind?", anything) { selected_service }
-            mock_ask("Name?", anything) { selected_service.label }
-            mock_ask("Which plan?", anything) { service_plan }
+            should_ask("What kind?", anything) { selected_service }
+            should_ask("Name?", anything) { selected_service.label }
+            should_ask("Which plan?", anything) { service_plan }
             CFoundry::V2::ServiceInstance.any_instance.stub(:create!)
 
             capture_output { command }

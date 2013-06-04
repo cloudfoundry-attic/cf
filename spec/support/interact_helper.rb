@@ -3,7 +3,7 @@ module InteractHelper
     CF::CLI.any_instance.stub(:ask).with(*args, &block)
   end
 
-  def mock_ask(*args, &block)
+  def should_ask(*args, &block)
     CF::CLI.any_instance.should_receive(:ask).with(*args, &block)
   end
 

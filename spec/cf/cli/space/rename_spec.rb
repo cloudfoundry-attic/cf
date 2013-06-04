@@ -62,8 +62,8 @@ module CF
 
         context "when the defaults are used" do
           it "asks for the space and new name and renames" do
-            mock_ask("Rename which space?", anything) { renamed_space }
-            mock_ask("New name") { new_name }
+            should_ask("Rename which space?", anything) { renamed_space }
+            should_ask("New name") { new_name }
             renamed_space.should_receive(:name=).with(new_name)
             renamed_space.should_receive(:update!)
             subject
@@ -75,7 +75,7 @@ module CF
 
           it "asks for the new name and renames" do
             dont_allow_ask("Rename which space?", anything)
-            mock_ask("New name") { new_name }
+            should_ask("New name") { new_name }
             renamed_space.should_receive(:name=).with(new_name)
             renamed_space.should_receive(:update!)
             subject

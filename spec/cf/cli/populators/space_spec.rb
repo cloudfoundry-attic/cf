@@ -106,7 +106,7 @@ module CF
               before { space.stub(:developers).and_raise(CFoundry::APIError) }
 
               it "asks the user for an space" do
-                mock_ask("Space", anything) { space }
+                should_ask("Space", anything) { space }
                 subject
               end
             end
@@ -116,14 +116,14 @@ module CF
             before { write_token_file({}) }
 
             it "prompts for the space" do
-              mock_ask("Space", anything) { space }
+              should_ask("Space", anything) { space }
               subject
 
               expect(output).to say("Switching to space #{space.name}")
             end
 
             it "sets the space in the token file" do
-              mock_ask("Space", anything) { space }
+              should_ask("Space", anything) { space }
 
               subject
               expect(tokens_yaml["https://api.some-domain.com"][:space]).to be == "space-id-1"

@@ -118,7 +118,7 @@ module CF
               before { organization.stub(:users).and_raise(CFoundry::APIError) }
 
               it "asks the user for an organization" do
-                mock_ask("Organization", anything) { organization }
+                should_ask("Organization", anything) { organization }
                 subject
               end
             end
@@ -128,14 +128,14 @@ module CF
             before { write_token_file({}) }
 
             it "prompts for the organization" do
-              mock_ask("Organization", anything) { organization }
+              should_ask("Organization", anything) { organization }
               subject
 
               expect(output).to say("Switching to organization #{organization.name}")
             end
 
             it "sets the organization in the token file" do
-              mock_ask("Organization", anything) { organization }
+              should_ask("Organization", anything) { organization }
 
               subject
               expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"

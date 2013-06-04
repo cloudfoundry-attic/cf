@@ -66,8 +66,8 @@ module CF
 
         context "when the defaults are used" do
           it "asks for the organization and new name and renames" do
-            mock_ask("Rename which organization?", anything) { renamed_organization }
-            mock_ask("New name") { new_name }
+            should_ask("Rename which organization?", anything) { renamed_organization }
+            should_ask("New name") { new_name }
             renamed_organization.should_receive(:name=).with(new_name)
             renamed_organization.should_receive(:update!)
             subject
@@ -79,7 +79,7 @@ module CF
 
           it "asks for the new name and renames" do
             dont_allow_ask("Rename which organization?", anything)
-            mock_ask("New name") { new_name }
+            should_ask("New name") { new_name }
             renamed_organization.should_receive(:name=).with(new_name)
             renamed_organization.should_receive(:update!)
             subject

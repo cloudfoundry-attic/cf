@@ -24,7 +24,7 @@ module CF
         subject { cf %W[unmap-domain #{domain.name} --delete] }
 
         it "asks for a confirmation" do
-          mock_ask("Really delete #{domain.name}?", :default => false) { false }
+          should_ask("Really delete #{domain.name}?", :default => false) { false }
           domain.stub(:delete!)
           subject
         end

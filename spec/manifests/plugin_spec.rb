@@ -288,7 +288,7 @@ describe ManifestsPlugin do
       let(:manifest) { nil }
 
       it "asks to save the manifest when uploading the application" do
-        mock_ask("Save configuration?", :default => false)
+        should_ask("Save configuration?", :default => false)
         wrapped.stub(:call) { plugin.filter(:push_app, app) }
         subject
       end

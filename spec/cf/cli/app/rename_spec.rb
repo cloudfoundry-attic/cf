@@ -55,8 +55,8 @@ describe CF::App::Rename do
 
     context "when the defaults are used" do
       it "asks for the app and new name and renames" do
-        mock_ask("Rename which application?", anything) { renamed_app }
-        mock_ask("New name") { new_name }
+        should_ask("Rename which application?", anything) { renamed_app }
+        should_ask("New name") { new_name }
         renamed_app.should_receive(:name=).with(new_name)
         renamed_app.should_receive(:update!)
         subject
@@ -68,7 +68,7 @@ describe CF::App::Rename do
 
       it "asks for the new name and renames" do
         dont_allow_ask("Rename which application?", anything)
-        mock_ask("New name") { new_name }
+        should_ask("New name") { new_name }
         renamed_app.should_receive(:name=).with(new_name)
         renamed_app.should_receive(:update!)
         subject

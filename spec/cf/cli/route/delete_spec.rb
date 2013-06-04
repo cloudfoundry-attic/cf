@@ -36,7 +36,7 @@ describe CF::Route::Delete do
     let(:command) { cf %W[delete-route #{url}] }
 
     it "prompts the user are they sure?" do
-      mock_ask("Really delete #{url}?", {:default => false}) { true }
+      should_ask("Really delete #{url}?", {:default => false}) { true }
 
       command
     end

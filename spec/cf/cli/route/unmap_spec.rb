@@ -63,7 +63,7 @@ describe CF::Route::Unmap do
     subject { cf %W[unmap --app #{app.name}] }
 
     it "asks the user to select from the app's urls" do
-      mock_ask("Which URL?", anything) do |_, opts|
+      should_ask("Which URL?", anything) do |_, opts|
         expect(opts[:choices]).to eq [other_route, route]
         route
       end

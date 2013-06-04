@@ -133,9 +133,9 @@ module CF
           subject { cf %W[register --no-force --no-login] }
 
           it "asks for the email, password and confirm password" do
-            mock_ask("Email") { email }
-            mock_ask("Password", anything) { password }
-            mock_ask("Confirm Password", anything) { verify_password }
+            should_ask("Email") { email }
+            should_ask("Password", anything) { password }
+            should_ask("Confirm Password", anything) { verify_password }
             subject
           end
         end

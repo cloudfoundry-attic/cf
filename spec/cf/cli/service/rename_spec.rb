@@ -54,8 +54,8 @@ describe CF::Service::Rename do
 
     context "when the defaults are used" do
       it "asks for the service and new name and renames" do
-        mock_ask("Rename which service?", anything) { renamed_service }
-        mock_ask("New name") { new_name }
+        should_ask("Rename which service?", anything) { renamed_service }
+        should_ask("New name") { new_name }
         renamed_service.should_receive(:name=).with(new_name)
         renamed_service.should_receive(:update!)
         subject
@@ -67,7 +67,7 @@ describe CF::Service::Rename do
 
       it "asks for the new name and renames" do
         dont_allow_ask("Rename which service?", anything)
-        mock_ask("New name") { new_name }
+        should_ask("New name") { new_name }
         renamed_service.should_receive(:name=).with(new_name)
         renamed_service.should_receive(:update!)
         subject

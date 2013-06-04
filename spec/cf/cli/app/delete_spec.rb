@@ -70,7 +70,7 @@ describe CF::App::Delete do
 
     context 'and no app is given' do
       it 'asks for the app' do
-        mock_ask("Delete which application?", anything) { basic_app }
+        should_ask("Delete which application?", anything) { basic_app }
         stub_ask { true }
         basic_app.stub(:delete!)
         subject
@@ -84,7 +84,7 @@ describe CF::App::Delete do
       context 'and it asks for confirmation' do
         context 'and the user answers no' do
           it 'does not delete the application' do
-            mock_ask("Really delete #{deleted_app.name}?", anything) { false }
+            should_ask("Really delete #{deleted_app.name}?", anything) { false }
             deleted_app.should_not_receive(:delete!)
             subject
           end
@@ -92,7 +92,7 @@ describe CF::App::Delete do
 
         context 'and the user answers yes' do
           it 'deletes the application' do
-            mock_ask("Really delete #{deleted_app.name}?", anything) { true }
+            should_ask("Really delete #{deleted_app.name}?", anything) { true }
             deleted_app.should_receive(:delete!)
             subject
           end
@@ -122,7 +122,7 @@ describe CF::App::Delete do
 
             service_2.stub(:invalidate!)
 
-            mock_ask("Delete orphaned service #{service_2.name}?", anything) { true }
+            should_ask("Delete orphaned service #{service_2.name}?", anything) { true }
 
             CF::App::Delete.any_instance.should_receive(:invoke).with(:delete_service, :service => service_2, :really => true)
 

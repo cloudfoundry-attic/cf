@@ -100,7 +100,7 @@ module CF
           client.stub(:route).and_return(new_route)
           app.stub(:add_route)
           new_route.stub(:create!)
-          mock_ask("Which application?", anything) { app }
+          should_ask("Which application?", anything) { app }
           subject
         end
 

@@ -35,7 +35,7 @@ module CF
           context "when the user responds 'y'" do
             it "deletes the space, exits cleanly" do
               space.should_receive(:delete!)
-              mock_ask("Really delete #{space.name}?", {:default => false}) { true }
+              should_ask("Really delete #{space.name}?", {:default => false}) { true }
 
               subject
               @status.should == 0
@@ -45,7 +45,7 @@ module CF
           context "when the user responds 'n'" do
             it "exits cleanly without deleting the space" do
               space.should_not_receive(:delete!)
-              mock_ask("Really delete #{space.name}?", {:default => false}) { false }
+              should_ask("Really delete #{space.name}?", {:default => false}) { false }
 
               subject
               @status.should == 0

@@ -75,13 +75,13 @@ module CF
         context "when certain inputs are not given" do
           it "asks for the name" do
             given.delete(:name)
-            mock_ask("Name") { "some-name" }
+            should_ask("Name") { "some-name" }
             subject
           end
 
           it "asks for the total instances" do
             given.delete(:instances)
-            mock_ask("Instances", anything) { 1 }
+            should_ask("Instances", anything) { 1 }
             subject
           end
 
@@ -90,7 +90,7 @@ module CF
 
             shared_examples "an app that can have a custom start command" do
               it "asks for a start command with a default as 'none'" do
-                mock_ask("Custom startup command", :default => "none") do
+                should_ask("Custom startup command", :default => "none") do
                   "abcd"
                 end
 
@@ -136,7 +136,7 @@ module CF
 
               context "when there is no Procfile in the app's root" do
                 it "asks for a start command" do
-                  mock_ask("Custom startup command", :default => "none")
+                  should_ask("Custom startup command", :default => "none")
                   subject
                 end
               end
@@ -149,7 +149,7 @@ module CF
             memory_choices = %w(64M 128M 256M 512M 1G)
             create.stub(:memory_choices).and_return(memory_choices)
 
-            mock_ask("Memory Limit", anything) do |_, options|
+            should_ask("Memory Limit", anything) do |_, options|
               expect(options[:choices]).to eq memory_choices
               expect(options[:default]).to eq "256M"
               "1G"
@@ -217,7 +217,7 @@ module CF
         subject { create.map_route(app) }
 
         it "asks for a subdomain with 'none' as an option" do
-          mock_ask("Subdomain", anything) do |_, options|
+          should_ask("Subdomain", anything) do |_, options|
             expect(options[:choices]).to eq(hosts + %w(none))
             expect(options[:default]).to eq hosts.first
             hosts.first
@@ -233,7 +233,7 @@ module CF
         it "asks for a domain with 'none' as an option" do
           stub_ask("Subdomain", anything) { hosts.first }
 
-          mock_ask("Domain", anything) do |_, options|
+          should_ask("Domain", anything) do |_, options|
             expect(options[:choices]).to eq(domains + %w(none))
             expect(options[:default]).to eq domains.first
             domains.first
@@ -258,7 +258,7 @@ module CF
         context "when 'none' is given as the host" do
           context "and a domain is provided afterwards" do
             it "invokes 'map' with an empty host" do
-              mock_ask("Subdomain", anything) { "none" }
+              should_ask("Subdomain", anything) { "none" }
               stub_ask("Domain", anything) { domains.first }
 
               create.should_receive(:invoke).with(:map,
@@ -272,7 +272,7 @@ module CF
         context "when 'none' is given as the domain" do
           it "does not perform any mapping" do
             stub_ask("Subdomain", anything) { "foo" }
-            mock_ask("Domain", anything) { "none" }
+            should_ask("Domain", anything) { "none" }
 
             create.should_not_receive(:invoke).with(:map, anything)
 
@@ -282,8 +282,8 @@ module CF
 
         context "when mapping fails" do
           before do
-            mock_ask("Subdomain", anything) { "foo" }
-            mock_ask("Domain", anything) { domains.first }
+            should_ask("Subdomain", anything) { "foo" }
+            should_ask("Domain", anything) { domains.first }
 
             create.should_receive(:invoke).with(:map,
               :host => "foo", :domain => domains.first, :app => app) do
@@ -294,8 +294,8 @@ module CF
           it "asks again" do
             create.stub(:line)
 
-            mock_ask("Subdomain", anything) { hosts.first }
-            mock_ask("Domain", anything) { domains.first }
+            should_ask("Subdomain", anything) { hosts.first }
+            should_ask("Domain", anything) { domains.first }
 
             create.stub(:invoke)
 
@@ -338,23 +338,23 @@ module CF
           let(:inputs) { {:force => false} }
 
           it "does not create the service if asked not to" do
-            mock_ask("Create services for application?", anything) { false }
+            should_ask("Create services for application?", anything) { false }
             create.should_not_receive(:invoke).with(:create_service, anything)
 
             subject
           end
 
           it "asks again to create a service" do
-            mock_ask("Create services for application?", anything) { true }
+            should_ask("Create services for application?", anything) { true }
             create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
-            mock_ask("Create another service?", :default => false) { true }
+            should_ask("Create another service?", :default => false) { true }
             create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
-            mock_ask("Create another service?", :default => false) { true }
+            should_ask("Create another service?", :default => false) { true }
             create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
-            mock_ask("Create another service?", :default => false) { false }
+            should_ask("Create another service?", :default => false) { false }
             create.should_not_receive(:invoke).with(:create_service, anything).ordered
 
             subject
@@ -383,7 +383,7 @@ module CF
 
         context "when not forcing" do
           it "does not bind the service if asked not to" do
-            mock_ask("Bind other services to application?", anything) { false }
+            should_ask("Bind other services to application?", anything) { false }
             create.should_not_receive(:invoke).with(:bind_service, anything)
 
             subject
@@ -393,14 +393,14 @@ module CF
             bind_times = 3
             call_count = 0
 
-            mock_ask("Bind other services to application?", anything) { true }
+            should_ask("Bind other services to application?", anything) { true }
 
             create.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
               call_count += 1
               app.stub(:services).and_return(service_instances.first(call_count))
             end
 
-            mock_ask("Bind another service?", anything).exactly(bind_times).times do
+            should_ask("Bind another service?", anything).exactly(bind_times).times do
               call_count < bind_times
             end
 
@@ -411,14 +411,14 @@ module CF
             bind_times = service_instances.size
             call_count = 0
 
-            mock_ask("Bind other services to application?", anything) { true }
+            should_ask("Bind other services to application?", anything) { true }
 
             create.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
               call_count += 1
               app.stub(:services).and_return(service_instances.first(call_count))
             end
 
-            mock_ask("Bind another service?", anything).exactly(bind_times-1).times { true }
+            should_ask("Bind another service?", anything).exactly(bind_times-1).times { true }
 
             subject
           end
