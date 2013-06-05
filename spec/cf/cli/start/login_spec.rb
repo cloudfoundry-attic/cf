@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe CF::Start::Login do
-  let(:client) { fake_client }
+  let(:client) { build(:client) }
 
   describe "metadata" do
     before do

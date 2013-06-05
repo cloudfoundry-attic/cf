@@ -7,30 +7,32 @@ module CF
       let(:given) { {} }
       let(:global) { {:color => false, :quiet => true} }
 
-      let(:service_instances) { fake_list(:service_instance, 5) }
-      let(:lucid64) { fake :stack, :name => "lucid64" }
-
-      let(:client) do
-        fake_client(:service_instances => service_instances, :stacks => [lucid64])
-      end
+      let(:service_instances) { Array.new(5) { build(:service_instance) } }
+      let(:lucid64) { build(:stack, :name => "lucid64") }
+      let(:client) { build(:client) }
 
       before do
         CF::CLI.any_instance.stub(:client).and_return(client)
+        client.stub(:service_instances).and_return(service_instances)
+        client.stub(:stacks).and_return([lucid64])
       end
 
       let(:path) { "some-path" }
 
-      subject(:create) do
+
+      def setup_create
         command = Mothership.commands[:push]
-        create = CF::App::Push.new(command)
-        create.path = path
-        create.input = Mothership::Inputs.new(command, create, inputs, given, global)
-        create.extend CF::App::PushInteractions
-        create
+        push_command = CF::App::Push.new(command)
+        push_command.path = path
+        push_command.input = Mothership::Inputs.new(command, push_command, inputs, given, global)
+        push_command.extend CF::App::PushInteractions
+        push_command
       end
 
+      let(:push_command) { setup_create }
+
       describe "#get_inputs" do
-        subject { create.get_inputs }
+        subject { push_command.get_inputs }
 
         let(:given) do
           {:name => "some-name",
@@ -147,7 +149,7 @@ module CF
             given.delete(:memory)
 
             memory_choices = %w(64M 128M 256M 512M 1G)
-            create.stub(:memory_choices).and_return(memory_choices)
+            push_command.stub(:memory_choices).and_return(memory_choices)
 
             should_ask("Memory Limit", anything) do |_, options|
               expect(options[:choices]).to eq memory_choices
@@ -179,7 +181,7 @@ module CF
           client.stub(:current_space).and_return(space)
         end
 
-        subject { create.create_app(attributes) }
+        subject { push_command.create_app(attributes) }
 
         context "when the user does not have permission to create apps" do
           it "fails with a friendly message" do
@@ -201,7 +203,7 @@ module CF
           end
 
           it "fails and prints a pretty message" do
-            create.stub(:line).with(anything)
+            push_command.stub(:line).with(anything)
             expect { subject }.to raise_error(
               CF::UserError, "Buildpack must be a public git repository URI.")
           end
@@ -214,7 +216,7 @@ module CF
         let(:domains) { [double(:domain, :name => "foo.com")] }
         let(:hosts) { [app.name] }
 
-        subject { create.map_route(app) }
+        subject { push_command.map_route(app) }
 
         it "asks for a subdomain with 'none' as an option" do
           should_ask("Subdomain", anything) do |_, options|
@@ -225,7 +227,7 @@ module CF
 
           stub_ask("Domain", anything) { domains.first }
 
-          create.stub(:invoke)
+          push_command.stub(:invoke)
 
           subject
         end
@@ -239,7 +241,7 @@ module CF
             domains.first
           end
 
-          create.stub(:invoke)
+          push_command.stub(:invoke)
 
           subject
         end
@@ -248,7 +250,7 @@ module CF
           stub_ask("Subdomain", anything) { hosts.first }
           stub_ask("Domain", anything) { domains.first }
 
-          create.should_receive(:invoke).with(:map,
+          push_command.should_receive(:invoke).with(:map,
             :app => app, :host => hosts.first,
             :domain => domains.first)
 
@@ -261,7 +263,7 @@ module CF
               should_ask("Subdomain", anything) { "none" }
               stub_ask("Domain", anything) { domains.first }
 
-              create.should_receive(:invoke).with(:map,
+              push_command.should_receive(:invoke).with(:map,
                 :host => "", :domain => domains.first, :app => app)
 
               subject
@@ -274,7 +276,7 @@ module CF
             stub_ask("Subdomain", anything) { "foo" }
             should_ask("Domain", anything) { "none" }
 
-            create.should_not_receive(:invoke).with(:map, anything)
+            push_command.should_not_receive(:invoke).with(:map, anything)
 
             subject
           end
@@ -285,31 +287,31 @@ module CF
             should_ask("Subdomain", anything) { "foo" }
             should_ask("Domain", anything) { domains.first }
 
-            create.should_receive(:invoke).with(:map,
+            push_command.should_receive(:invoke).with(:map,
               :host => "foo", :domain => domains.first, :app => app) do
               raise CFoundry::RouteHostTaken.new("foo", 1234)
             end
           end
 
           it "asks again" do
-            create.stub(:line)
+            push_command.stub(:line)
 
             should_ask("Subdomain", anything) { hosts.first }
             should_ask("Domain", anything) { domains.first }
 
-            create.stub(:invoke)
+            push_command.stub(:invoke)
 
             subject
           end
 
           it "reports the failure message" do
-            create.should_receive(:line).with("foo")
-            create.should_receive(:line)
+            push_command.should_receive(:line).with("foo")
+            push_command.should_receive(:line)
 
             stub_ask("Subdomain", anything) { hosts.first }
             stub_ask("Domain", anything) { domains.first }
 
-            create.stub(:invoke)
+            push_command.stub(:invoke)
 
             subject
           end
@@ -317,8 +319,8 @@ module CF
       end
 
       describe "#create_services" do
-        let(:app) { fake(:app) }
-        subject { create.create_services(app) }
+        let(:app) { build(:app, :client => client) }
+        subject { push_command.create_services(app) }
 
         context "when forcing" do
           let(:inputs) { {:force => true} }
@@ -329,7 +331,7 @@ module CF
           end
 
           it "does not create any services" do
-            create.should_not_receive(:invoke).with(:create_service, anything)
+            push_command.should_not_receive(:invoke).with(:create_service, anything)
             subject
           end
         end
@@ -339,23 +341,23 @@ module CF
 
           it "does not create the service if asked not to" do
             should_ask("Create services for application?", anything) { false }
-            create.should_not_receive(:invoke).with(:create_service, anything)
+            push_command.should_not_receive(:invoke).with(:create_service, anything)
 
             subject
           end
 
           it "asks again to create a service" do
             should_ask("Create services for application?", anything) { true }
-            create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
+            push_command.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
             should_ask("Create another service?", :default => false) { true }
-            create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
+            push_command.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
             should_ask("Create another service?", :default => false) { true }
-            create.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
+            push_command.should_receive(:invoke).with(:create_service, {:app => app}, :plan => :interact).ordered
 
             should_ask("Create another service?", :default => false) { false }
-            create.should_not_receive(:invoke).with(:create_service, anything).ordered
+            push_command.should_not_receive(:invoke).with(:create_service, anything).ordered
 
             subject
           end
@@ -365,7 +367,7 @@ module CF
       describe "#bind_services" do
         let(:app) { double(:app).as_null_object }
 
-        subject { create.bind_services(app) }
+        subject { push_command.bind_services(app) }
 
         context "when forcing" do
           let(:global) { {:force => true, :color => false, :quiet => true} }
@@ -376,7 +378,7 @@ module CF
           end
 
           it "does not bind any services" do
-            create.should_not_receive(:invoke).with(:bind_service, anything)
+            push_command.should_not_receive(:invoke).with(:bind_service, anything)
             subject
           end
         end
@@ -384,7 +386,7 @@ module CF
         context "when not forcing" do
           it "does not bind the service if asked not to" do
             should_ask("Bind other services to application?", anything) { false }
-            create.should_not_receive(:invoke).with(:bind_service, anything)
+            push_command.should_not_receive(:invoke).with(:bind_service, anything)
 
             subject
           end
@@ -395,7 +397,7 @@ module CF
 
             should_ask("Bind other services to application?", anything) { true }
 
-            create.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
+            push_command.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
               call_count += 1
               app.stub(:services).and_return(service_instances.first(call_count))
             end
@@ -413,7 +415,7 @@ module CF
 
             should_ask("Bind other services to application?", anything) { true }
 
-            create.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
+            push_command.should_receive(:invoke).with(:bind_service, :app => app).exactly(bind_times).times do
               call_count += 1
               app.stub(:services).and_return(service_instances.first(call_count))
             end
@@ -435,14 +437,14 @@ module CF
       end
 
       describe "#start_app" do
-        let(:app) { fake(:app) }
-        subject { create.start_app(app) }
+        let(:app) { build(:app, :client => client) }
+        subject { push_command.start_app(app) }
 
         context "when the start flag is provided" do
           let(:inputs) { {:start => true} }
 
           it "invokes the start command" do
-            create.should_receive(:invoke).with(:start, :app => app)
+            push_command.should_receive(:invoke).with(:start, :app => app)
             subject
           end
         end
@@ -451,7 +453,7 @@ module CF
           let(:inputs) { {:start => false} }
 
           it "invokes the start command" do
-            create.should_not_receive(:invoke).with(:start, anything)
+            push_command.should_not_receive(:invoke).with(:start, anything)
             subject
           end
         end
@@ -472,7 +474,7 @@ module CF
           end
 
           it "asks for the memory with the ceiling taking the memory usage into account" do
-            expect(subject.memory_choices).to eq(%w[64M 128M 256M 512M 1G])
+            expect(push_command.memory_choices).to eq(%w[64M 128M 256M 512M 1G])
           end
         end
 
@@ -480,7 +482,7 @@ module CF
           let(:info) { {:limits => {:memory => 2048}} }
 
           it "asks for the memory with the ceiling as their overall limit" do
-            expect(subject.memory_choices).to eq(%w[64M 128M 256M 512M 1G 2G])
+            expect(push_command.memory_choices).to eq(%w[64M 128M 256M 512M 1G 2G])
           end
         end
       end

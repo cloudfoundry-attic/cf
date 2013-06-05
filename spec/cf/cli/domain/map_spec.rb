@@ -8,17 +8,18 @@ module CF
       end
 
       let(:client) do
-        fake_client(
-          :current_organization => organization,
-          :current_space => space,
-          :spaces => [space],
-          :organizations => [organization],
-          :domains => domains)
+        build(:client).tap do |client|
+          client.stub(
+            :current_organization => organization,
+            :current_space => space,
+            :spaces => [space],
+            :organizations => [organization],
+            :domains => domains)
+        end
       end
-
-      let(:organization) { fake(:organization) }
-      let(:space) { fake(:space, :organization => organization) }
-      let(:domain) { fake(:domain, :name => domain_name) }
+      let(:organization) { build(:organization) }
+      let(:space) { build(:space, :organization => organization) }
+      let(:domain) { build(:domain, :name => domain_name) }
       let(:domain_name) { "some.domain.com" }
       let(:domains) { [domain] }
 
@@ -76,6 +77,7 @@ module CF
 
       context "when a domain and a space are passed" do
         subject { cf %W[map-domain #{domain.name} --space #{space.name}] }
+        before { organization.stub(:spaces).and_return([space]) }
 
         include_examples "mapping a domain to a space"
       end
@@ -123,6 +125,7 @@ module CF
 
       context "when a domain, organization, and space is passed" do
         subject { cf %W[map-domain #{domain.name} --space #{space.name} --organization #{organization.name}] }
+        before { organization.stub(:spaces).and_return([space]) }
 
         include_examples "mapping a domain to a space"
       end

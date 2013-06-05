@@ -8,17 +8,17 @@ module CF
       end
 
       let(:client) do
-        fake_client(
-          :current_organization => organization,
-          :current_space => space,
-          :spaces => [space],
-          :organizations => [organization],
-          :domains => [domain])
+        build(:client).tap do |client|
+          client.stub(
+            :current_space => space,
+            :spaces => [space],
+            :organizations => [organization],
+            :domains => [domain])
+        end
       end
-
-      let(:organization) { fake(:organization, :spaces => [space]) }
-      let(:space) { fake(:space) }
-      let(:domain) { fake(:domain, :name => "some.domain.com") }
+      let(:organization) { build(:organization) }
+      let(:space) { build(:space, :organization => organization) }
+      let(:domain) { build(:domain, :name => "some.domain.com") }
 
       context "when the --delete flag is given" do
         subject { cf %W[unmap-domain #{domain.name} --delete] }

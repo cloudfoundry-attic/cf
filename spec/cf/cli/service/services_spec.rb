@@ -33,20 +33,27 @@ module CF
         let(:global) { {:color => false} }
         let(:inputs) { {} }
         let(:given) { {} }
-        let(:client) { fake_client(:current_space => current_space, :service_instances => service_instances) }
+        let(:client) do
+          build(:client).tap do |client|
+            client.stub(:current_space => current_space, :service_instances => service_instances)
+          end
+        end
+        let(:app) { build(:app) }
 
-        let(:service_plan) { fake(:service_plan, :service => fake(:service, :version => "service_version", :provider => "provider")) }
-        let(:service1) { fake(:service_instance, :service_plan => service_plan) }
+        let(:service_plan) { build(:service_plan, :service => build(:service, :version => "service_version", :provider => "provider")) }
+        let(:service_binding) { build(:service_binding, :app => app) }
+        let(:service1) { build(:service_instance, :service_plan => service_plan, :service_bindings => [service_binding]) }
 
         let(:service_instances) { [service1] }
-        let(:current_space) { fake(:space, :name => "the space") }
+        let(:current_space) { build(:space, :name => "the space") }
 
         subject do
           capture_output { Mothership.new.invoke(:services, inputs, given, global) }
         end
 
         before do
-          CF::CLI.any_instance.stub(:client).and_return(client)
+          stub_client_and_precondition
+          client.stub(:service_bindings).and_return([service_binding])
         end
 
         it "produces a table of services" do
@@ -57,12 +64,12 @@ module CF
           expect(output).to match /Getting services in the space.*OK/
 
           expect(output).to match /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-          expect(output).to match /service_instance-.+?\s+  # name
+          expect(output).to match /service-instance-.+?\s+  # name
         service-.*?\s+                                  # service
         provider.*?\s+                                  # provider
         service_version\s+                              # version
-        service_plan-.*?\s+                             # plan
-        none\s+                                         # bound apps
+        service-plan-.*?\s+                             # plan
+        app-name-\d+\s+                                         # bound apps
         /x
 
         end

@@ -1,8 +1,8 @@
-require 'spec_helper'
+require "spec_helper"
 require "cf/cli/app/base"
 
 describe CF::App::Base do
-  describe '#human_size' do
+  describe "#human_size" do
     let(:base) { CF::App::Base.new }
 
     it { base.human_size(1_023).should == "1023.0B" }

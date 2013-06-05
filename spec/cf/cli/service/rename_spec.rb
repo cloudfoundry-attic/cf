@@ -4,14 +4,17 @@ describe CF::Service::Rename do
   let(:global) { { :color => false, :quiet => true } }
   let(:inputs) { {} }
   let(:given) { {} }
-  let(:client) { fake_client }
+  let(:client) { build(:client) }
   let(:service) {}
+  let(:services) { [] }
   let(:new_name) { "some-new-name" }
 
   subject { Mothership.new.invoke(:rename_service, inputs, given, global) }
 
   before do
     CF::CLI.any_instance.stub(:client).and_return(client)
+    client.stub(:service_instances => services)
+    client.stub(:service_instances_by_name => services)
   end
 
   describe "metadata" do
@@ -48,8 +51,7 @@ describe CF::Service::Rename do
   end
 
   context "when there are services" do
-    let(:client) { fake_client(:service_instances => services) }
-    let(:services) { fake_list(:service_instance, 2) }
+    let(:services) { Array.new(2) { build(:service_instance) } }
     let(:renamed_service) { services.first }
 
     context "when the defaults are used" do

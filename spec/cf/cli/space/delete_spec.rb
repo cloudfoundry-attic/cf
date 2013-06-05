@@ -3,6 +3,9 @@ require "spec_helper"
 module CF
   module Space
     describe Delete do
+      let(:client) { build(:client) }
+      before { stub_client_and_precondition }
+
       describe "metadata" do
         let(:command) { Mothership.commands[:delete_space] }
 
@@ -16,22 +19,20 @@ module CF
       end
 
       describe "running the command" do
-        let(:space) { fake :space, :name => "some_space_name" }
-        let(:organization) { fake(:organization, :spaces => [space], :name => "MyOrg") }
-        let(:client) { fake_client(:current_organization => organization, :spaces => [space]) }
+        let(:space) { build :space, :name => "some_space_name" }
+        let(:organization) { build(:organization, :spaces => [space], :name => "MyOrg") }
 
         subject { capture_output { cf %W[delete-space some_space_name --quiet --force] } }
 
         before do
-          described_class.any_instance.stub(:client) { client }
-          described_class.any_instance.stub(:precondition)
           CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
+          organization.stub(:spaces_by_name).with("some_space_name").and_return([space])
           space.stub(:delete!)
         end
 
-
         context "without the force parameter when prompting" do
           subject { cf %W[delete-space some_space_name --quiet] }
+
           context "when the user responds 'y'" do
             it "deletes the space, exits cleanly" do
               space.should_receive(:delete!)

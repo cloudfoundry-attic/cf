@@ -5,11 +5,16 @@ describe CF::Route::Unmap do
     stub_client_and_precondition
   end
 
-  let(:client) { fake_client :apps => [app] }
+  let(:client) do
+    build(:client).tap do |client|
+      client.stub(:apps).and_return([app])
+      client.stub(:apps_by_name).and_return([app])
+    end
+  end
 
-  let(:app){ fake(:app, :space => space, :name => "app-name") }
-  let(:space) { fake(:space, :name => "space-name", :domains => space_domains) }
-  let(:domain) { fake(:domain, :name => domain_name ) }
+  let(:app){ build(:app, :space => space, :name => "app-name") }
+  let(:space) { build(:space, :name => "space-name", :domains => space_domains) }
+  let(:domain) { build(:domain, :name => domain_name ) }
   let(:domain_name) { "some-domain.com" }
   let(:host_name) { "some-host" }
   let(:url) { "#{host_name}.#{domain_name}" }
@@ -38,8 +43,8 @@ describe CF::Route::Unmap do
     subject { cf %W[unmap #{url} #{app.name}] }
 
     context "when the given route is mapped to the given app" do
-      let(:app) { fake(:app, :space => space, :name => "app-name", :routes => [route]) }
-      let(:route) { fake(:route, :space => space, :host => host_name, :domain => domain) }
+      let(:app) { build(:app, :space => space, :name => "app-name", :routes => [route]) }
+      let(:route) { build(:route, :space => space, :host => host_name, :domain => domain) }
 
       it "unmaps the url from the app" do
         app.should_receive(:remove_route).with(route)
@@ -49,6 +54,7 @@ describe CF::Route::Unmap do
 
     context "when the given route is NOT mapped to the given app" do
       it "displays an error" do
+        app.stub(:routes).and_return([])
         subject
         expect(error_output).to say("Unknown route")
       end
@@ -56,9 +62,9 @@ describe CF::Route::Unmap do
   end
 
   context "when only an app is specified" do
-    let(:other_route) { fake(:route, :host => "abcd", :domain => domain) }
-    let(:route) { fake(:route, :host => "efgh", :domain => domain) }
-    let(:app) { fake(:app, :space => space, :routes => [route, other_route] )}
+    let(:other_route) { build(:route, :host => "abcd", :domain => domain) }
+    let(:route) { build(:route, :host => "efgh", :domain => domain) }
+    let(:app) { build(:app, :space => space, :routes => [route, other_route] )}
 
     subject { cf %W[unmap --app #{app.name}] }
 
@@ -81,9 +87,9 @@ describe CF::Route::Unmap do
   end
 
   context "when an app is specified and the --all option is given" do
-    let(:other_route) { fake(:route, :host => "abcd", :domain => domain) }
-    let(:route) { fake(:route, :host => "efgh", :domain => domain) }
-    let(:app) { fake(:app, :routes => [route, other_route]) }
+    let(:other_route) { build(:route, :host => "abcd", :domain => domain) }
+    let(:route) { build(:route, :host => "efgh", :domain => domain) }
+    let(:app) { build(:app, :routes => [route, other_route]) }
 
     subject { cf %W[unmap --all --app #{app.name}] }
 
@@ -95,8 +101,8 @@ describe CF::Route::Unmap do
   end
 
   context "when only a url is passed" do
-    let(:route) { fake(:route, :host => host_name, :domain => domain) }
-    let(:client) { fake_client :routes => [route] }
+    let(:route) { build(:route, :host => host_name, :domain => domain) }
+    before { client.stub(:routes).and_return([route]) }
 
     subject { cf %W[unmap #{url}] }
 

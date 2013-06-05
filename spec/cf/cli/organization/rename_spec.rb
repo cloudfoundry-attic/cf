@@ -6,13 +6,15 @@ module CF
       let(:global) { {:color => false, :quiet => true} }
       let(:inputs) { {} }
       let(:given) { {} }
-      let(:organizations) { fake_list(:organization, 3) }
-      let(:client) { fake_client(:organizations => organizations) }
+
       let(:new_name) { "some-new-name" }
+      let(:organizations) { [build(:organization)] }
+      let(:client) { build(:client) }
 
       before do
         CF::CLI.any_instance.stub(:client).and_return(client)
         CF::CLI.any_instance.stub(:precondition).and_return(nil)
+        client.stub(:organizations).and_return(organizations)
       end
 
       subject { Mothership.new.invoke(:rename_org, inputs, given, global) }

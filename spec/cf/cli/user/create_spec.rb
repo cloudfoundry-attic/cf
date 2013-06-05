@@ -25,9 +25,9 @@ module CF
       end
 
       describe "running the command" do
-        let(:client) { fake_client }
-        let(:org) { fake(:organization) }
-        let(:user) { fake(:user) }
+        let(:client) { build(:client) }
+        let(:org) { build(:organization) }
+        let(:user) { build(:user) }
 
         before do
           stub_client
@@ -90,7 +90,6 @@ module CF
               user.managed_organizations.should == [org]
               user.audited_organizations.should == [org]
             end
-
           end
         end
       end

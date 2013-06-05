@@ -8,14 +8,14 @@ module CF
       describe "#populate_and_save!" do
         let(:tokens_file_path) { CF::TOKENS_FILE }
         let(:user) { build(:user) }
+        let(:client) { build(:client) }
         let(:organizations) do
           [
-            double(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user]),
-            double(:organization, :name => "Other Org", :guid => "organization-id-2")
+            build(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user]),
+            build(:organization, :name => "Other Org", :guid => "organization-id-2")
           ]
         end
         let(:organization) { organizations.first }
-        let(:client) { fake_client :organizations => organizations }
 
         let(:input) { {:organization => organization} }
         let(:tokens_yaml) { YAML.load_file(File.expand_path(tokens_file_path)) }
@@ -115,7 +115,10 @@ module CF
             end
 
             context "but that organization doesn't exist anymore (not valid)" do
-              before { organization.stub(:users).and_raise(CFoundry::APIError) }
+              before do
+                client.stub(:organizations).and_return(organizations)
+                organization.stub(:users).and_raise(CFoundry::APIError)
+              end
 
               it "asks the user for an organization" do
                 should_ask("Organization", anything) { organization }
@@ -125,24 +128,32 @@ module CF
           end
 
           context "without an organization in the config file" do
-            before { write_token_file({}) }
+            context "when the user has organizations" do
+              before do
+                client.stub(:organizations).and_return(organizations)
+                write_token_file({})
+              end
 
-            it "prompts for the organization" do
-              should_ask("Organization", anything) { organization }
-              execute_populate_and_save
+              it "prompts for the organization" do
+                should_ask("Organization", anything) { organization }
+                execute_populate_and_save
 
-              expect(output).to say("Switching to organization #{organization.name}")
-            end
+                expect(output).to say("Switching to organization #{organization.name}")
+              end
 
-            it "sets the organization in the token file" do
-              should_ask("Organization", anything) { organization }
+              it "sets the organization in the token file" do
+                should_ask("Organization", anything) { organization }
 
-              execute_populate_and_save
-              expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
+                execute_populate_and_save
+                expect(tokens_yaml["https://api.some-domain.com"][:organization]).to be == "organization-id-1"
+              end
             end
 
             context "when the user has no organizations" do
-              let(:client) { fake_client :organizations => [] }
+              before do
+                client.stub(:organizations).and_return([])
+                write_token_file({})
+              end
 
               it "tells the user to create one by raising a UserFriendlyError" do
                 expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, /There are no organizations/)

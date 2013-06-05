@@ -15,14 +15,14 @@ describe CFManifests do
 
   let(:target_base) { "some-cloud.com" }
 
-  let(:foo) { fake(:app, :name => "foo") }
-  let(:bar) { fake(:app, :name => "bar") }
-  let(:baz) { fake(:app, :name => "baz") }
-  let(:xxx) { fake(:app, :name => "xxx") }
-  let(:yyy) { fake(:app, :name => "yyy") }
+  let(:foo) { build(:app, :name => "foo") }
+  let(:bar) { build(:app, :name => "bar") }
+  let(:baz) { build(:app, :name => "baz") }
+  let(:xxx) { build(:app, :name => "xxx") }
+  let(:yyy) { build(:app, :name => "yyy") }
 
   let(:client) do
-    fake_client :apps => [foo, bar, baz, xxx, yyy]
+    build(:client).tap { |client| client.stub(:apps => [foo, bar, baz, xxx, yyy]) }
   end
 
   let(:manifest_file) { "/abc/manifest.yml" }
@@ -44,31 +44,31 @@ describe CFManifests do
   end
 
   describe "#create_manifest_for" do
-    let(:app) {
-      fake :app,
+    let(:app) do
+      build :app,
         :memory => 2048,
         :total_instances => 2,
         :command => "ruby main.rb",
         :buildpack => "git://example.com/foo.git",
         :routes => [
-          fake(:route,
-               :host => "some-app-name",
-               :domain => fake(:domain, :name => target_base))
+          build(:route,
+            :host => "some-app-name",
+            :domain => build(:domain, :name => target_base))
         ],
         :service_bindings => [
-          fake(
+          build(
             :service_binding,
             :service_instance =>
-              fake(
+              build(
                 :service_instance,
                 :name => "service-1",
                 :service_plan =>
-                  fake(
+                  build(
                     :service_plan,
                     :name => "P200",
-                    :service => fake(:service))))
+                    :service => build(:service))))
         ]
-    }
+    end
 
     subject { cmd.create_manifest_for(app, "some-path") }
 
@@ -105,73 +105,56 @@ describe CFManifests do
       end
     end
 
-    context "when there is no url" do
+    context "with only minimum configuration" do
       let(:app) {
-        fake :app,
+        build :app,
           :memory => 2048,
-          :total_instances => 2
+          :total_instances => 2,
+          :routes => [],
+          :service_bindings => []
       }
 
       its(["url"]) { should eq "none" }
-    end
-
-    context "when there is no command" do
-      let(:app) {
-        fake :app,
-          :memory => 2048,
-          :total_instances => 2
-      }
-
       it { should_not include "command" }
-    end
-
-    context "when there are no service bindings" do
-      let(:app) {
-        fake :app,
-          :memory => 2048,
-          :total_instances => 2
-      }
-
       it { should_not include "services" }
     end
   end
 
   describe "#setup_services" do
     let(:service_bindings) { [] }
-    let(:app) { fake :app, :service_bindings => service_bindings }
+    let(:app) { build :app, :service_bindings => service_bindings }
 
     before do
       dont_allow_ask(anything, anything)
     end
 
     context "when services are defined in the manifest" do
-      let(:info) {
-        { :services => { "service-1" => { :label => "mysql", :plan => "100" } } }
-      }
+      let(:info) do
+        {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}
+      end
 
-      let(:service_1) { fake(:service_instance, :name => "service-1") }
+      let(:service_1) { build(:service_instance, :name => "service-1") }
+      let(:plan_100) { build :service_plan, :name => "100" }
 
-      let(:plan_100) { fake :service_plan, :name => "100" }
-
-      let(:mysql) {
-        fake(
+      let(:mysql) do
+        build(
           :service,
           :label => "mysql",
           :provider => "core",
           :service_plans => [plan_100])
-      }
+      end
 
       let(:service_instances) { [] }
 
-      let(:client) {
-        fake_client :services => [mysql], :service_instances => service_instances
-      }
+      let(:client) do
+        build(:client).tap { |client| client.stub(:services => [mysql], :service_instances => service_instances) }
+      end
 
       context "and the services exist" do
         let(:service_instances) { [service_1] }
 
         context "and are already bound" do
-          let(:service_bindings) { [fake(:service_binding, :service_instance => service_1)] }
+          let(:service_bindings) { [build(:service_binding, :service_instance => service_1)] }
 
           it "does neither create nor bind the service again" do
             cmd.should_not_receive(:invoke).with(:create_service, anything)

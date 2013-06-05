@@ -24,7 +24,7 @@ describe CFTunnel do
     end
   end
 
-  let(:client) { fake_client }
+  let(:client) { build(:client) }
   let(:service) { NullObject.new }
 
   subject { CFTunnel.new(client, service) }
@@ -32,16 +32,16 @@ describe CFTunnel do
   describe "#open!" do
     describe "creating a route for caldecott" do
       let!(:app) { NullObject.new("app") }
-      let!(:domain) { fake(:domain, :owning_organization => nil) }
-      let!(:route) { fake(:route) }
-      let!(:space) { fake(:space) }
+      let!(:domain) { build(:domain, :owning_organization => nil) }
+      let!(:route) { build(:route) }
+      let!(:space) { build(:space) }
       let(:host) { "caldecott" }
 
       before do
        subject.stub(:random_helper_url) { "caldecott" }
        client.stub(:app) { app }
        client.stub(:current_space) { space }
-       client.stub(:domains) { [fake(:domain, :owning_organization => fake(:organization)), domain] }
+       client.stub(:domains) { [build(:domain, :owning_organization => build(:organization)), domain] }
       end
 
       it "adds a new route to caldecott app" do

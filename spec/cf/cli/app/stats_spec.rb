@@ -3,11 +3,10 @@ require "spec_helper"
 module CF
   module App
     describe Stats do
-      let(:global) { {:color => false} }
-      let(:inputs) { {:app => apps[0]} }
+      let(:global) { {} }
       let(:given) { {} }
-      let(:client) { fake_client(:apps => apps) }
-      let(:apps) { [fake(:app, :name => "basic_app")] }
+      let(:inputs) { {:app => apps[0]} }
+      let(:apps) { [build(:app)] }
 
       before do
         inputs[:app].stub(:stats) do
@@ -38,26 +37,26 @@ module CF
         capture_output { Mothership.new.invoke(:stats, inputs, given, global) }
       end
 
-      describe 'metadata' do
+      describe "metadata" do
         let(:command) { Mothership.commands[:stats] }
 
-        describe 'command' do
+        describe "command" do
           subject { command }
           its(:description) { should eq "Display application instance status" }
           it { expect(Mothership::Help.group(:apps, :info)).to include(subject) }
         end
 
-        include_examples 'inputs must have descriptions'
+        include_examples "inputs must have descriptions"
 
-        describe 'arguments' do
+        describe "arguments" do
           subject { command.arguments }
-          it 'has no arguments' do
+          it "has no arguments" do
             should eq([:name => :app, :type => :optional, :value => nil])
           end
         end
       end
 
-      it 'prints out the stats' do
+      it "prints out the stats" do
         subject
         stdout.rewind
         expect(stdout.readlines.last).to match /.*0\s+0\.0%\s+29\.9M of 288M\s+14\.9M of 256M.*/

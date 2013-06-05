@@ -5,7 +5,9 @@ describe CF::Start::Info do
   let(:all) { false }
 
   let(:client) do
-    fake_client :services => fake_list(:service, 3), :token => CFoundry::AuthToken.new("bearer some-access-token")
+    build(:client).tap do |client|
+      client.stub(:services => Array.new(3) { build(:service) })
+    end
   end
 
   let(:target_info) do

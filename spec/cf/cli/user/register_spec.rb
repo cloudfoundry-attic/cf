@@ -3,7 +3,7 @@ require "spec_helper"
 module CF
   module User
     describe Register do
-      let(:client) { fake_client }
+      let(:client) { build(:client) }
 
       before do
         stub_client_and_precondition

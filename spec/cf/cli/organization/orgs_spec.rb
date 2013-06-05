@@ -8,15 +8,19 @@ module CF
       let(:given) { {} }
       let(:output) { StringIO.new }
 
-      let(:client) { fake_client(:organizations => organizations) }
-      let!(:org_1) { fake(:organization, :name => "bb_second", :spaces => fake_list(:space, 2), :domains => [fake(:domain)]) }
-      let!(:org_2) { fake(:organization, :name => "aa_first", :spaces => [fake(:space)], :domains => fake_list(:domain, 3)) }
-      let!(:org_3) { fake(:organization, :name => "cc_last", :spaces => fake_list(:space, 2), :domains => fake_list(:domain, 2)) }
+      let(:client) { build(:client) }
+      let(:space) { build(:space) }
+      let(:domain) { build(:domain) }
+      let!(:org_1) { build(:organization, :name => "bb_second", :spaces => [space], :domains => [domain]) }
+      let!(:org_2) { build(:organization, :name => "aa_first", :spaces => [space], :domains => [domain]) }
+      let!(:org_3) { build(:organization, :name => "cc_last", :spaces => [space], :domains => [domain]) }
       let(:organizations) { [org_1, org_2, org_3] }
 
       before do
         CF::CLI.any_instance.stub(:client) { client }
         CF::CLI.any_instance.stub(:precondition) { nil }
+
+        client.stub(:organizations).and_return(organizations)
       end
 
       subject do
@@ -85,6 +89,13 @@ module CF
         end
 
         context "and the full flag is not given (default is false)" do
+
+          before do
+            org_1.stub(:spaces).and_return([space])
+            org_2.stub(:spaces).and_return([space])
+            org_3.stub(:spaces).and_return([space])
+          end
+
           it "displays tabular output with names, spaces and domains" do
             subject
 

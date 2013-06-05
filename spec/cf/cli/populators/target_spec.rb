@@ -8,14 +8,16 @@ module CF
         let(:organization) { double(:organization) }
         let(:space) { double(:space) }
 
-        subject { Target.new(input).populate_and_save! }
+        def execute_populate_and_save
+          Target.new(input).populate_and_save!
+        end
 
         it "uses a organization then a space populator" do
           organization.should_receive(:populate_and_save!).and_return(organization)
           space.should_receive(:populate_and_save!)
           Organization.should_receive(:new).with(input).and_return(organization)
           Space.should_receive(:new).with(input, organization).and_return(space)
-          subject
+          execute_populate_and_save
         end
       end
     end

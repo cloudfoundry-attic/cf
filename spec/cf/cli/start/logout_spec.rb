@@ -3,7 +3,7 @@ require "spec_helper"
 module CF
   module Start
     describe Logout do
-      let(:client) { fake_client }
+      let(:client) { build(:client) }
 
       before do
         described_class.any_instance.stub(:client) { client }

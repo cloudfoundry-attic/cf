@@ -7,8 +7,8 @@ module CF
         stub_client_and_precondition
       end
 
-      let(:client) { fake_client :apps => [app] }
-      let(:app) { fake :app }
+      let(:client) { build(:client).tap {|client| client.stub(:apps => [app]) } }
+      let(:app) { build(:app) }
 
       describe "metadata" do
         let(:command) { Mothership.commands[:target] }
@@ -41,12 +41,13 @@ module CF
         stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
         context "when the user is authenticated and has an organization" do
-          let(:user) { fake(:user) }
-          let(:organization) { fake(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space]) }
-          let(:space) { fake(:space, :name => "Staging", :guid => "space-id-2", :developers => [user]) }
-          let(:client) { fake_client :organizations => [organization], :token => CFoundry::AuthToken.new("bearer some-access-token") }
+          let(:user) { build(:user) }
+          let(:organization) { build(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space]) }
+          let(:space) { build(:space, :name => "Staging", :guid => "space-id-2", :developers => [user]) }
 
           before do
+            client.stub(:logged_in?) { true }
+            client.stub(:organizations) { [organization] }
             client.stub(:current_user) { user }
             client.stub(:organization) { organization }
             client.stub(:current_organization) { organization }

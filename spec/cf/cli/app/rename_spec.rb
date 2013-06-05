@@ -4,7 +4,7 @@ describe CF::App::Rename do
   let(:global) { { :color => false, :quiet => true } }
   let(:inputs) { {} }
   let(:given) { {} }
-  let(:client) { fake_client }
+  let(:client) { build(:client) }
   let(:app) {}
   let(:new_name) { "some-new-name" }
 
@@ -38,6 +38,10 @@ describe CF::App::Rename do
   end
 
   context "when there are no apps" do
+    before do
+      client.stub(:apps).and_return([])
+    end
+
     context "and an app is given" do
       let(:given) { { :app => "some-app" } }
       it { expect { subject }.to raise_error(CF::UserError, "Unknown app 'some-app'.") }
@@ -49,9 +53,12 @@ describe CF::App::Rename do
   end
 
   context "when there are apps" do
-    let(:client) { fake_client(:apps => apps) }
-    let(:apps) { fake_list(:app, 2) }
+    let(:apps) { [build(:app, :client => client), build(:app, :client => client)] }
     let(:renamed_app) { apps.first }
+
+    before do
+      client.stub(:apps).and_return(apps)
+    end
 
     context "when the defaults are used" do
       it "asks for the app and new name and renames" do

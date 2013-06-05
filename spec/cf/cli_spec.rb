@@ -152,7 +152,7 @@ module CF
 
     describe "#execute" do
       let(:inputs) { {} }
-      let(:client) { fake_client }
+      let(:client) { build(:client) }
 
       before do
         stub_client
@@ -178,8 +178,6 @@ module CF
 
           def precondition;
           end
-
-          desc "XXX"
 
           def refresh_token
             if client

@@ -3,6 +3,12 @@ require "spec_helper"
 module CF
   module Service
     describe Create do
+      let(:client) { build(:client) }
+
+      before do
+        stub_client_and_precondition
+      end
+
       describe "metadata" do
         let(:command) { Mothership.commands[:create_service] }
 
@@ -23,14 +29,13 @@ module CF
       end
 
       context "when there are services" do
-        let(:service_plan) { fake(:service_plan, :name => "F20") }
-        let(:selected_service) { fake(:service, :label => "Foo Service", :service_plans => [service_plan]) }
+        let(:service_plan) { build(:service_plan, :name => "F20") }
+        let(:selected_service) { build(:service, :label => "Foo Service", :service_plans => [service_plan]) }
         let(:command) { Mothership.new.invoke(:create_service, params, {}) }
-        let(:client) { fake_client(:services => services) }
         let(:params) { {} }
 
         before do
-          CF::CLI.any_instance.stub(:client).and_return(client)
+          client.stub(:services).and_return(services)
         end
 
         describe "when there is at least one service" do
@@ -47,7 +52,7 @@ module CF
         end
 
         describe "when there are more than one services" do
-          let(:services) { [selected_service, fake(:service), fake(:service)] }
+          let(:services) { [selected_service, build(:service), build(:service)] }
 
           it "asks for the service" do
             should_ask("What kind?", anything) { selected_service }
@@ -75,7 +80,7 @@ module CF
         end
 
         describe "when entering command line options" do
-          let(:service_plan) { fake(:service_plan, :name => "f20") }
+          let(:service_plan) { build(:service_plan, :name => "f20") }
           let(:params) { {
             :name => "my-service-name",
             :offering => selected_service,

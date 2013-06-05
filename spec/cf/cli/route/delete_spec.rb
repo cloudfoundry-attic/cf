@@ -6,9 +6,11 @@ describe CF::Route::Delete do
     route.stub(:delete!)
   end
 
-  let(:route) { fake(:route, :host => host_name, :domain => domain) }
-  let(:client) { fake_client :routes => [route] }
-  let(:domain) { fake(:domain, :name => domain_name) }
+  let(:client) do
+    build(:client).tap { |client| client.stub(:routes => [route]) }
+  end
+  let(:route) { build(:route, :host => host_name, :domain => domain) }
+  let(:domain) { build(:domain, :name => domain_name) }
   let(:domain_name) { "some-domain.com" }
   let(:host_name) { "some-host" }
   let(:url) { "#{host_name}.#{domain_name}" }

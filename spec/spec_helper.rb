@@ -36,7 +36,6 @@ Dir[File.expand_path('../support/**/*.rb', __FILE__)].each do |file|
 end
 
 RSpec.configure do |c|
-  c.include Fake::FakeMethods
   c.include BlueShell::Matchers
 
   if RUBY_VERSION =~ /^1\.8\.\d/

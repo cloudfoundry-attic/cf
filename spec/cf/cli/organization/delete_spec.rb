@@ -15,10 +15,10 @@ module CF
       end
 
       describe "running the command" do
-        let(:organization) { fake(:organization, :name => "MyOrg") }
+        let(:organization) { build(:organization, :name => "MyOrg") }
         let(:organizations) { [organization] }
 
-        let(:client) { fake_client(:current_organization => organization, :organizations => organizations) }
+        let(:client) { build(:client) }
 
         subject { capture_output { cf %W[delete-org MyOrg --quiet --force] } }
 
@@ -28,6 +28,7 @@ module CF
           described_class.any_instance.stub(:check_target)
           CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
           organization.stub(:delete!).and_return(true)
+          client.stub(:organizations).and_return(organizations)
         end
 
         context "without the force parameter" do
@@ -49,7 +50,12 @@ module CF
         end
 
         context "when deleting the current organization" do
-          let(:organizations) { [organization, fake(:organization)] }
+          let(:organizations) { [organization, build(:organization)] }
+
+          before do
+            client.stub(:current_organization).and_return(organization)
+          end
+
           it "invalidates the old target / client" do
             described_class.any_instance.should_receive(:invalidate_client)
             subject

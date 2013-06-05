@@ -10,7 +10,7 @@ describe ManifestsPlugin do
   let(:inputs) { Mothership::Inputs.new(Mothership.commands[:push], nil, inputs_hash, given_hash, global_hash) }
   let(:plugin) { ManifestsPlugin.new(command, inputs) }
 
-  let(:client) { fake_client }
+  let(:client) { build(:client) }
 
   before do
     plugin.stub(:manifest) { manifest }
@@ -199,10 +199,14 @@ describe ManifestsPlugin do
       context "and a name is given" do
         context "and the name is present in the manifest" do
           let(:given_hash) { { :name => "a" } }
+          let(:app) { build :app, :name => "a" }
+
+          before do
+            client.stub(:apps => [app])
+            client.stub(:app_by_name).with("a").and_return(app)
+          end
 
           context "and the app exists" do
-            let(:app) { fake :app, :name => "a" }
-            let(:client) { fake_client :apps => [app] }
 
             context "and --reset was given" do
               let(:inputs_hash) { { :reset => true } }
@@ -220,6 +224,8 @@ describe ManifestsPlugin do
           end
 
           context "and the app does NOT exist" do
+            let(:app) { nil }
+
             it "pushes a new app with the inputs from the manifest" do
               wrapped.should_receive(:call).with(anything) do |inputs|
                 expect(inputs.given).to eq(
@@ -243,6 +249,11 @@ describe ManifestsPlugin do
       # cf push ./abc
       context "and a path is given" do
         context "and there are apps matching that path in the manifest" do
+          before do
+            client.stub(:apps => [build(:app), build(:app)])
+            client.stub(:app_by_name)
+          end
+
           let(:manifest) do
             { :applications => [
               { :name => "a",
@@ -300,11 +311,11 @@ describe ManifestsPlugin do
       before do
         plugin.stub(:from_manifest) { "PATH" }
         app.changes.clear
+        client.stub(:apps => [app])
       end
 
-      let(:client) { fake_client(:apps => [app]) }
       let(:manifest_memory) { "256M" }
-      let(:app) { fake :app, :name => "a", :memory => 256 }
+      let(:app) { build(:app, :name => "a", :memory => 256) }
       let(:manifest) { { :name => "a", :memory => manifest_memory } }
 
       subject { plugin.send(:push_input_for, manifest, inputs) }

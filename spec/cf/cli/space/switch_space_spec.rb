@@ -4,13 +4,12 @@ module CF
   module Space
     describe Switch do
       let(:space_to_switch_to) { spaces.last }
-      let(:spaces) { fake_list(:space, 3) }
-      let(:organization) { fake(:organization, :spaces => spaces) }
-      let(:client) { fake_client(:current_organization => organization, :spaces => spaces) }
+      let(:spaces) { Array.new(3) { build(:space) } }
+      let(:organization) { build(:organization, :spaces => spaces) }
+      let(:client) { build(:client) }
 
       before do
-        CF::Space::Base.any_instance.stub(:client) { client }
-        CF::Space::Base.any_instance.stub(:precondition)
+        stub_client_and_precondition
         CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
       end
 
@@ -38,6 +37,7 @@ module CF
       context "when the space exists" do
         before do
           Mothership.any_instance.should_receive(:invoke).with(:target, {:space => space_to_switch_to})
+          client.stub(:spaces_by_name).with(space_to_switch_to.name).and_return([space_to_switch_to])
         end
 
         it "switches to that space" do
@@ -46,11 +46,11 @@ module CF
       end
 
       context "when the space does not exist" do
-        let(:space_to_switch_to) { fake(:space, :name => "unique-name") }
+        before { client.stub(:spaces_by_name).with(space_to_switch_to.name).and_return([]) }
 
         it_behaves_like "an error that gets passed through",
           :with_exception => CF::UserError,
-          :with_message => "The space unique-name does not exist, please create the space first."
+          :with_message => /The space .* does not exist, please create the space first/
       end
     end
   end

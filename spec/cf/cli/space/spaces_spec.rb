@@ -4,16 +4,22 @@ module CF
   module Space
     describe Spaces do
       let(:full) { false }
-      let!(:space_1) { fake(:space, :name => "bb_second", :apps => fake_list(:app, 2), :service_instances => [fake(:service_instance)]) }
-      let!(:space_2) { fake(:space, :name => "aa_first", :apps => [fake(:app)], :service_instances => fake_list(:service_instance, 3), :domains => [fake(:domain)]) }
-      let!(:space_3) { fake(:space, :name => "cc_last", :apps => fake_list(:app, 2), :service_instances => fake_list(:service_instance, 2), :domains => fake_list(:domain, 2)) }
+      let(:app) { build(:app) }
+      let!(:space_1) { build(:space, :name => "bb_second", :apps => [app], :service_instances => [build(:service_instance)]) }
+      let!(:space_2) { build(:space, :name => "aa_first", :apps => [app], :service_instances => [build(:service_instance)], :domains => [build(:domain)]) }
+      let!(:space_3) { build(:space, :name => "cc_last", :apps => [app], :service_instances => [build(:service_instance)], :domains => [build(:domain)]) }
       let(:spaces) { [space_1, space_2, space_3] }
-      let(:organization) { fake(:organization, :spaces => spaces, :name => "foo") }
-      let(:client) { fake_client(:spaces => spaces, :current_organization => organization) }
+      let(:organization) { build(:organization, :spaces => spaces, :name => "foo") }
+      let(:client) do
+        build(:client).tap do |client|
+          client.stub(:spaces => spaces, :current_organization => organization)
+        end
+      end
 
       before do
         stub_client_and_precondition
         CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
+        organization.stub(:spaces).and_return(spaces)
       end
 
       describe "metadata" do

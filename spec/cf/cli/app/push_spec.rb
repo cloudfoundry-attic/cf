@@ -7,7 +7,7 @@ module CF
       let(:inputs) { {} }
       let(:given) { {} }
       let(:path) { "somepath" }
-      let(:client) { fake_client }
+      let(:client) { build(:client) }
       let(:push) { CF::App::Push.new(Mothership.commands[:push]) }
 
       before do
@@ -15,27 +15,27 @@ module CF
         CF::CLI.any_instance.stub(:precondition) { nil }
       end
 
-      describe 'metadata' do
+      describe "metadata" do
         let(:command) { Mothership.commands[:push] }
 
-        describe 'command' do
+        describe "command" do
           subject { command }
           its(:description) { should eq "Push an application, syncing changes if it exists" }
           it { expect(Mothership::Help.group(:apps, :manage)).to include(subject) }
         end
 
-        include_examples 'inputs must have descriptions'
+        include_examples "inputs must have descriptions"
 
-        describe 'arguments' do
+        describe "arguments" do
           subject { command.arguments }
-          it 'has the correct argument order' do
+          it "has the correct argument order" do
             should eq([{:type => :optional, :value => nil, :name => :name}])
           end
         end
       end
 
-      describe '#sync_app' do
-        let(:app) { fake(:app) }
+      describe "#sync_app" do
+        let(:app) { build(:app, :client => client, :name => "app-name-1") }
 
         before do
           app.stub(:upload)
@@ -47,8 +47,8 @@ module CF
           push.sync_app(app, path)
         end
 
-        shared_examples 'common tests for inputs' do |*args|
-          context 'when the new input is the same as the old' do
+        shared_examples "common tests for inputs" do |*args|
+          context "when the new input is the same as the old" do
             type, input = args
             input ||= type
 
@@ -67,15 +67,15 @@ module CF
           subject
         end
 
-        it 'uploads the app' do
+        it "uploads the app" do
           app.should_receive(:upload).with(path)
           subject
         end
 
-        context 'when no inputs are given' do
+        context "when no inputs are given" do
           let(:inputs) { {} }
 
-          it 'should not update the app' do
+          it "should not update the app" do
             app.should_not_receive(:update!)
             subject
           end
@@ -86,90 +86,93 @@ module CF
           end
         end
 
-        context 'when memory is given' do
+        context "when memory is given" do
           let(:old) { 1024 }
           let(:new) { "2G" }
-          let(:app) { fake(:app, :memory => old) }
+          let(:app) { build(:app, :memory => old) }
           let(:inputs) { {:memory => new} }
 
-          it 'updates the app memory, converting to megabytes' do
+          it "updates the app memory, converting to megabytes" do
             push.stub(:line)
             app.should_receive(:update!)
             expect { subject }.to change { app.memory }.from(old).to(2048)
           end
 
-          it 'outputs the changed memory in human readable sizes' do
+          it "outputs the changed memory in human readable sizes" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("memory: 1G -> 2G")
             app.stub(:update!)
             subject
           end
 
-          include_examples 'common tests for inputs', :memory
+          include_examples "common tests for inputs", :memory
         end
 
-        context 'when instances is given' do
+        context "when instances is given" do
           let(:old) { 1 }
           let(:new) { 2 }
-          let(:app) { fake(:app, :total_instances => old) }
+          let(:app) { build(:app, :total_instances => old) }
           let(:inputs) { {:instances => new} }
 
-          it 'updates the app instances' do
+          it "updates the app instances" do
             push.stub(:line)
             app.stub(:update!)
             expect { subject }.to change { app.total_instances }.from(old).to(new)
           end
 
-          it 'outputs the changed instances' do
+          it "outputs the changed instances" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("total_instances: 1 -> 2")
             app.stub(:update!)
             subject
           end
 
-          include_examples 'common tests for inputs', :total_instances, :instances
+          include_examples "common tests for inputs", :total_instances, :instances
         end
 
-        context 'when command is given' do
+        context "when command is given" do
           let(:old) { "./start" }
           let(:new) { "./start foo " }
-          let(:app) { fake(:app, :command => old) }
+          let(:app) { build(:app, :command => old) }
           let(:inputs) { {:command => new} }
 
-          it 'updates the app command' do
+          it "updates the app command" do
             push.stub(:line)
             app.should_receive(:update!)
             expect { subject }.to change { app.command }.from("./start").to("./start foo ")
           end
 
-          it 'outputs the changed command in single quotes' do
+          it "outputs the changed command in single quotes" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("command: './start' -> './start foo '")
             app.stub(:update!)
             subject
           end
 
-          include_examples 'common tests for inputs', :command
+          include_examples "common tests for inputs", :command
         end
 
-        context 'when restart is given' do
+        context "when restart is given" do
           let(:inputs) { {:restart => true, :memory => 4096} }
 
+          before do
+            CF::App::Base.any_instance.stub(:human_mb).and_return(0)
+          end
 
-          context 'when the app is already started' do
-            let(:app) { fake(:app, :state => "STARTED") }
+          context "when the app is already started" do
+            let(:app) { build(:app, :state => "STARTED") }
 
-            it 'invokes the restart command' do
+            it "invokes the restart command" do
               push.stub(:line)
               app.should_receive(:update!)
               push.should_receive(:invoke).with(:restart, :app => app)
               subject
             end
 
-            context 'but there are no changes' do
+            context "but there are no changes" do
               let(:inputs) { {:restart => true} }
 
-              it 'invokes the restart command' do
+              it "invokes the restart command" do
                 push.stub(:line)
                 app.should_not_receive(:update!)
                 push.should_receive(:invoke).with(:restart, :app => app)
@@ -178,10 +181,10 @@ module CF
             end
           end
 
-          context 'when the app is not already started' do
-            let(:app) { fake(:app, :state => "STOPPED") }
+          context "when the app is not already started" do
+            let(:app) { build(:app, :state => "STOPPED") }
 
-            it 'does not invoke the restart command' do
+            it "does not invoke the restart command" do
               push.stub(:line)
               app.should_receive(:update!)
               push.should_not_receive(:invoke).with(:restart, :app => app)
@@ -192,7 +195,7 @@ module CF
 
         context "when buildpack is given" do
           let(:old) { nil }
-          let(:app) { fake(:app, :buildpack => old) }
+          let(:app) { build(:app, :buildpack => old) }
           let(:inputs) { {:buildpack => new} }
 
           context "and it's an invalid URL" do
@@ -229,15 +232,15 @@ module CF
               subject
             end
 
-            include_examples 'common tests for inputs', :buildpack
+            include_examples "common tests for inputs", :buildpack
           end
         end
       end
 
-      describe '#setup_new_app (integration spec!!)' do
-        let(:app) { fake(:app, :guid => nil) }
+      describe "#setup_new_app (integration spec!!)" do
+        let(:app) { build(:app) }
         let(:host) { "" }
-        let(:domain) { fake(:domain, :name => "example.com") }
+        let(:domain) { build(:domain) }
         let(:inputs) do
           {:name => "some-app",
             :instances => 2,
@@ -257,7 +260,7 @@ module CF
           push.setup_new_app(path)
         end
 
-        it 'creates the app' do
+        it "creates the app" do
           app.should_receive(:create!)
           app.should_receive(:upload).with(path)
           push.should_receive(:filter).with(:create_app, app) { app }

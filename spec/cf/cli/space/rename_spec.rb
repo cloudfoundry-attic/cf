@@ -3,14 +3,13 @@ require "spec_helper"
 module CF
   module Space
     describe Rename do
-      let(:spaces) { fake_list(:space, 3) }
-      let(:organization) { fake(:organization, :spaces => spaces) }
-      let(:client) { fake_client(:current_organization => organization, :spaces => spaces) }
+      let(:client) { build(:client) }
+      let(:spaces) { Array.new(3){ build(:space) } }
+      let(:organization) { build(:organization, :spaces => spaces) }
       let(:new_name) { "some-new-name" }
 
       before do
-        described_class.any_instance.stub(:client) { client }
-        described_class.any_instance.stub(:precondition)
+        stub_client_and_precondition
         CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
       end
 
@@ -39,6 +38,10 @@ module CF
       context "when there are no spaces" do
         let(:spaces) { [] }
 
+        before do
+          client.stub(:spaces_by_name).with("some-invalid-space").and_return(spaces)
+        end
+
         context "and a space is given" do
           subject { cf %W[rename-space --space some-invalid-space --no-force --no-quiet] }
           it "prints out an error message" do
@@ -59,6 +62,10 @@ module CF
       context "when there are spaces" do
         let(:renamed_space) { spaces.first }
         subject { cf %W[rename-space --no-force --no-quiet] }
+
+        before do
+          client.stub(:spaces_by_name).with(renamed_space.name).and_return(spaces)
+        end
 
         context "when the defaults are used" do
           it "asks for the space and new name and renames" do

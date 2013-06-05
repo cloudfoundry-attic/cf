@@ -16,15 +16,13 @@ module CF
       end
 
       describe "#passwd" do
-        let(:client) { fake_client }
+        let(:client) { build(:client) }
         let(:old_password) { "old" }
         let(:new_password) { "password" }
         let(:verify_password) { new_password }
         let(:score) { :strong }
         let(:guid) { random_string("my-object-guid") }
-        let(:user_model) { fake_model { attribute :password, :object } }
-        let(:user_object) { user_model.new(guid, client) }
-        let(:user) { user_object.fake(:password => "foo") }
+        let(:user) { build(:user) }
 
         before do
           stub_client_and_precondition

@@ -3,25 +3,28 @@ require "spec_helper"
 module CF
   module App
     describe Start do
+      let(:client) { build(:client) }
+      let(:app) { build(:app, :client => client, :name => "app-name", :guid => "app-id-1") }
+
       before do
         stub_client_and_precondition
+        client.stub(:apps).and_return([app])
       end
 
-      let(:client) { fake_client :apps => [app] }
-      let(:app) { fake :app }
-
-      subject { cf %W[start #{app.name}] }
+      def execute_start_app
+        cf %W[start #{app.name}]
+      end
 
       context "with an app that's already started" do
-        let(:app) { fake :app, :state => "STARTED" }
+        let(:app) { build(:app, :state => "STARTED") }
 
         it "skips starting the application" do
           app.should_not_receive(:start!)
-          subject
+          execute_start_app
         end
 
         it "says the app is already started" do
-          subject
+          execute_start_app
           expect(error_output).to say("Application #{app.name} is already started.")
         end
       end
@@ -29,28 +32,28 @@ module CF
       context "with an app that's NOT already started" do
         def self.it_says_application_is_starting
           it "says that it's starting the application" do
-            subject
+            execute_start_app
             expect(output).to say("Starting #{app.name}... OK")
           end
         end
 
         def self.it_prints_log_progress
           it "prints out the log progress" do
-            subject
+            execute_start_app
             expect(output).to say(log_text)
           end
         end
 
         def self.it_does_not_print_log_progress
           it "does not print the log progress" do
-            subject
+            execute_start_app
             expect(output).to_not say(log_text)
           end
         end
 
         def self.it_waits_for_application_to_become_healthy
           describe "waits for application to become healthy" do
-            let(:app) { fake :app, :total_instances => 2 }
+            let(:app) { build(:app, :total_instances => 2) }
 
             def after_sleep
               described_class.any_instance.stub(:sleep) { yield }
@@ -76,7 +79,7 @@ module CF
               end
 
               it "says app is started" do
-                subject
+                execute_start_app
                 expect(output).to say("Checking #{app.name}...")
                 expect(output).to say("1 running, 1 down")
                 expect(output).to say("2 running")
@@ -89,7 +92,7 @@ module CF
               end
 
               it "says the app failed to stage" do
-                subject
+                execute_start_app
                 expect(output).to say("Checking #{app.name}...")
                 expect(error_output).to say("Application failed to stage")
                 expect(output).to_not say(/\d (running|down|flapping)/)
@@ -108,7 +111,7 @@ module CF
               end
 
               it "keeps polling" do
-                subject
+                execute_start_app
                 expect(output).to say("Checking #{app.name}...")
                 expect(output).to say("Staging in progress...")
                 expect(output).to say("2 running")
@@ -123,7 +126,7 @@ module CF
               end
 
               it "says app failed to start" do
-                subject
+                execute_start_app
                 expect(output).to say("Checking #{app.name}...")
                 expect(output).to say("1 running, 1 down")
                 expect(output).to say("1 starting, 1 flapping")
@@ -203,31 +206,33 @@ module CF
         end
 
         context "when a debug mode is given" do
-          let(:mode) { "foo" }
+          let(:mode) { "some_mode" }
 
-          subject { cf %W[start #{app.name} -d #{mode}] }
+          def execute_start_app_with_mode
+            cf %W[start #{app.name} -d #{mode}]
+          end
 
           context "and the debug mode is different from the one already set" do
             it "starts the app with the given debug mode" do
-              expect { subject }.to change { app.debug }.from(nil).to("foo")
+              expect { execute_start_app_with_mode }.to change { app.debug }.from(nil).to("some_mode")
             end
           end
 
           context "and the debug mode is the same as the one already set" do
-            let(:app) { fake :app, :debug => "foo" }
+            let(:app) { build(:app, :debug => "in_debug") }
 
             it "does not set the debug mode to anything different" do
               app.should_not_receive(:debug).with(anything)
-              subject
+              execute_start_app_with_mode
             end
           end
 
           context "and the mode is given as 'none'" do
-            let(:app) { fake :app, :debug => "foo" }
+            let(:app) { build(:app, :debug => "in_debug") }
             let(:mode) { "none" }
 
             it "removes the debug mode" do
-              expect { subject }.to change { app.debug }.from("foo").to(nil)
+              expect { execute_start_app_with_mode }.to change { app.debug }.from("in_debug").to(nil)
             end
           end
 
@@ -235,7 +240,7 @@ module CF
             let(:mode) { "" }
 
             it "sets debug to 'run'" do
-              expect { subject }.to change { app.debug }.from(nil).to("run")
+              expect { execute_start_app_with_mode }.to change { app.debug }.from(nil).to("run")
             end
           end
         end

@@ -3,6 +3,9 @@ require "spec_helper"
 module CF
   module Space
     describe Create do
+      let(:client) { build(:client) }
+      before { stub_client_and_precondition }
+
       describe "metadata" do
         let(:command) { Mothership.commands[:create_space] }
 
@@ -26,13 +29,8 @@ module CF
       end
 
       describe "running the command" do
-        let(:new_space) { fake(:space, :name => new_name) }
-        let(:new_name) { "some-new-name" }
-
-        let(:spaces) { [new_space] }
-        let(:organization) { fake(:organization, :spaces => spaces) }
-
-        let(:client) { fake_client(:current_organization => organization, :spaces => spaces) }
+        let(:new_space) { build(:space) }
+        let(:organization) { build(:organization, :spaces => [new_space]) }
 
         before do
           client.stub(:space).and_return(new_space)
@@ -40,8 +38,6 @@ module CF
           new_space.stub(:add_manager)
           new_space.stub(:add_developer)
           new_space.stub(:add_auditor)
-          described_class.any_instance.stub(:client).and_return(client)
-          described_class.any_instance.stub(:precondition).and_return(nil)
           CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
           CF::Populators::Organization.any_instance.stub(:choices).and_return([organization])
         end

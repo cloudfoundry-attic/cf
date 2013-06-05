@@ -7,11 +7,16 @@ module CF
         stub_client_and_precondition
       end
 
-      let(:client) { fake_client :apps => [app] }
+      let(:client) { build(:client) }
+      let(:app) { }
+
+      before do
+        client.stub(:apps).and_return([app])
+      end
 
       context "when the --disk flag is given" do
         let(:before_value) { 512 }
-        let(:app) { fake :app, :disk_quota => before_value }
+        let(:app) { build(:app, :disk_quota => before_value) }
 
         subject { cf %W[scale #{app.name} --disk 1G] }
 
@@ -23,7 +28,7 @@ module CF
 
       context "when the --memory flag is given" do
         let(:before_value) { 512 }
-        let(:app) { fake :app, :memory => before_value }
+        let(:app) { build(:app, :memory => before_value) }
 
         subject { cf %W[scale #{app.name} --memory 1G] }
 
@@ -44,7 +49,7 @@ module CF
 
       context "when the --instances flag is given" do
         let(:before_value) { 3 }
-        let(:app) { fake :app, :total_instances => before_value }
+        let(:app) { build(:app, :total_instances => before_value) }
 
         subject { cf %W[scale #{app.name} --instances 5] }
 
