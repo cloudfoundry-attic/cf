@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ -z "$INTEGRATE_WITH" ]; then
-  INTEGRATE_WITH="default";
-fi;
-
-if [ "$INTEGRATE_WITH" != "default" ]; then
-  rvm $INTEGRATE_WITH@cf --create do bundle install;
-fi;

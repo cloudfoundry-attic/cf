@@ -1,61 +1,51 @@
 language: ruby
 
 rvm:
-  - "1.8.7"
   - "1.9.2"
   - "1.9.3"
 env:
   matrix:
     - INTEGRATE_WITH=default
-    - INTEGRATE_WITH=1.8.7
   global:
     #CF_V2_TEST_TARGET
     - secure: "K8FHk9DwCiiswJugmqaXNPuD0t0rHADmwqaMoDOn419so2njaVj58vCOnjBNF1jCHPPbHx5UsK8YiZgjwUvExPkZU8Q4iI/SvHCe61p6vR+x7tWIafMOgmtLN1JwehaK25/trIYG+fZVZVObBwkX+HhWKZ5efx0WDMfB/wINmEQ="
-    
+
     #CF_V2_TEST_USER
     - secure: "kXJtmL63In9x7Vo93xc9KOYhi3sqijCqkU7AzIEBf52pbxdeYXZJQgaNYcLZLfZ7MIF2inW+cI8lvOqYJV01B5wo5AyLAIUWIGHv0h0QQhqNWtyXliAt3YDNEeQ3OpXU62qSkVVTDZB+ieP1OpKb5XI7cm/d1X0KSEvMXuWpmM0="
-    
+
     #CF_V2_TEST_ORGANIZATION
     - secure: "eL5SDFeoAsKtK2jh8wLdDOHvwDhsv0bE4GSgsFoQZXD+Z75m++i6L1TEAUVGPs3R1zTVx+KQfALGDLNEXA9db2tiSQZRlnDaJkdTwETXRZz2zNJwTEfAQUvPxC0SPPJ5g6So13V4vA158DU/2o4iVyLRFfgL5lEyMIEZpKse058="
-    
+
     #CF_V2_TEST_ORGANIZATION_TWO
     - secure: "l/X8cykIQUtsw2T7nPgGTD5O63kwICEIJ9QZjGlbSDMOf0ndhWa8kwkH2YWJRGvO5LdYauz3GPFsx1LQNXB2Ue66n72Gow6letVrkiQuWkI2+JMufBsm6rL7zve4MmssdMM/weIcC0Mzb9jCiUFTmKToIsvlISYgYIx4/6Wx0oE="
-    
+
     #CF_V2_TEST_SPACE
     - secure: "d8KlWCiJMD7rU7Qp4oK+l0kihV0KCh+zD5u4N6WqImUlidlkrlWssW5IuftzIdoNavVHH7mrMTztcyAAh/cofXeAr0EwYSsnwry0/1ozSyzI0FNsv8pOMpy9xH3t4hlkpsQElCugcB69So/Kn6R3yXYzkjcYnT4QPqyTpopW0Rg="
-    
+
     #CF_V2_TEST_PASSWORD
     - secure: "aN6TN3uXoH1A8GTxrIrNo98HQtrSWyIwiV5K43z4+hgOBK5fk5NYx5zNcc/ulDgVDs+Kunkb7uUWBNcgE/m/adOX6FP9akhD4SX8kY54Qle3+iH+boy9bakmssL+jy5A7vQHU3/8N+FuFBMLklfuSfkuTAqJk1TB0+2SCiJQrvo="
-    
+
     #CF_V2_OTHER_TEST_USER
     - secure: "gDSX17hhDCFpiVKJOhsMSI8ilI5JMpGUWhWGO6iwFIaDD18OU1HBPHU1D522eiWXqxh4z50zKpnemjWz7JpdS0NZrm5tdIJOghDRShE9OZQcKauLwLv3AgVwW8bHtehp1BzGVBkdBYUGZgv6MrjeMzk4XuUBZOoDP8R24BJWPKg="
-    
+
     #CF_V2_OTHER_TEST_PASSWORD
     - secure: "PR+pc38gDIzPG3SGnZjQfUk5hOiSuu6+YKw0Okacqrh/mm6C32VfTPkgxFI87/hQVSV/Ev2Iwt2BCgPmDPZIEtAfqDxLAFyvqapQeWUxMG9MqU5ky8clqiXjpwvwbX3g4I7WBJl5EnLkBv8hbu6S+v56x946/69oaM0K8mXgLyY="
-    
+
     #CF_V2_OTHER_TEST_SPACE
     - secure: "IKS/I/Ty/0+pUDWv7VFx0+oTE8Kw5Y10qNd3kD/ydg31fInNtEEMQyFipsMWOpNt8fBiKw7Ps2lI5avuB1K+VEbxoLUDcPzYnsz5gLXGSGoGRI8WBzMmB2HsgPI4SS0mFw7JsETzWqOSqi0ptUflY6wHkFfMZrXnpSIOvBwWsg4="
-    
+
     #CF_V2_OTHER_TEST_ORGANIZATION
     - secure: "HyDorjR5mgjbuW9zCc1qPyFJdvsfW3CLfvrfWkNygbcIBs/OKY/Ak9d6E+wi9aWe6jH4kypCxRGk1NtMyNuAlzBwk/G4owRvg89YDgBZRj72grB1Z8QGnkZwpU0MkbxRiw6V/7fjtKptdmjGyAf4pLboK4h5xbRxu9jmeyXpYmI="
-    
+
     #CF_V2_OTHER_TEST_ORGANIZATION_TWO
     - secure: "a57VoF+bGxxEId+nKIVTMBsikeEqkelKK85h/QKyrERbyyjzKmT/hR1eYEXJ4RD8KpT4icqyNa+ABzLvvnn90J+sMf5prYgVlXjIHG6ZsQA7XJj0Yg4SuLd0Gek5fwyCNdEyjb5631IEOxMa70/vjMe12Zbj1GccPC0eGF6Uezc="
-    
+
     #CF_V2_RUN_INTEGRATION
     - secure: "KY4CkK6E3JQYgVPvUspjlPo4QJYPR6pvC20ryBJRGW+thZnvI5uyN6hiIR4BlwLNQunyGffQWXh6TN21ifcdA18PEIq8YSX3kgwtMrF/beFJefdr0mmQg1FrGtZP1MJcQelEA7FAG6WHrk7n3ibVhhHQa90cwzM19C1qowLDKB4="
-    
+
     #CF_V2_ADMIN_USERNAME
     - secure: "L40g5rPzPee1WwHE+I+CsHwtKlNStLD4FegfU7C9SIR+i6QxgFgy14XOWql3U7Ls+PlCZTFeb1fERs6mMi1TR08wPOGrGrugjU7wHusiNkmPH/jkn9HFooLyWuy9AMV5mFSPZ5tYxSoRXGU1jzn1N/caFrSedXOm+Ql4WCzgPAo="
-    
+
     #CF_V2_ADMIN_PW
     - secure: "HswFWg/EW3Kvu579kIRkUmP2HwK2VIbaufkwwOMr5DeIOoQ/dMd+mL8Py43jW+7bhIX2HRUzTa0VZOrFHw4CPEjAXVWgfkfE4h3ggDpOM2Cz5BxETKjmY9odwJXf6jsJkS9ah9eVffj1128eKcpUpmbj7FGSViTIT1raTMz1MYg="
 
-before_script: ./script/setup_187
-
-matrix:
-  exclude:
-    - rvm: 1.8.7
-      env: INTEGRATE_WITH=1.8.7
-    - rvm: 1.9.2
-      env: INTEGRATE_WITH=1.8.7
