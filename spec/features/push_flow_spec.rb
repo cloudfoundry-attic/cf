@@ -12,7 +12,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
-    let(:service_name) { "rds-mysql-#{run_id}" }
+    let(:service_name) { "dummy-service-#{run_id}" }
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
@@ -65,13 +65,13 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           # create a service here
           expect(runner).to say "What kind?>"
-          runner.send_keys "rds-mysql"
+          runner.send_keys "dummy n/a"
 
           expect(runner).to say "Name?>"
           runner.send_keys service_name
 
           expect(runner).to say "Which plan?>"
-          runner.send_keys "10mb"
+          runner.send_keys "small"
 
           expect(runner).to say /Creating service #{service_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
@@ -97,17 +97,17 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       BlueShell::Runner.run("#{cf_bin} services") do |runner|
         expect(runner).to say /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-        expect(runner).to say /rds-mysql-.+?\s+ # name
-            rds-mysql\s+                        # service
-            aws\s+                              # provider
+        expect(runner).to say /dummy-service-.+?\s+ # name
+            dummy\s+                        # service
+            dummy\s+                              # provider
             n\/a\s+                             # version
-            10mb\s+                             # plan
+            small\s+                             # plan
             #{app}                              # bound apps
           /x
       end
 
       BlueShell::Runner.run("#{cf_bin} unbind-service #{service_name} #{app}") do |runner|
-        runner.wait_for_exit(20)
+        expect(runner).to say "OK", 20
       end
 
       BlueShell::Runner.run("#{cf_bin} delete #{app}") do |runner|
