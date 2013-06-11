@@ -4,12 +4,9 @@ if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2 production', :ruby19 => true do
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
-    let(:username) { ENV['CF_V2_TEST_USER'] }
-    let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
     let(:space) { ENV['CF_V2_TEST_SPACE'] }
-    let(:space2) { "#{ENV['CF_V2_TEST_SPACE']}-2"}
-    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
-    let(:organization_two) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
+    let(:space_2) { "#{ENV['CF_V2_TEST_SPACE']}-2"}
+    let(:organization_2) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
 
     let(:created_space_1) { "space-#{rand(10000)}"}
     let(:created_space_2) { "space-#{rand(10000)}"}
@@ -17,7 +14,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
     before do
       Interact::Progress::Dots.start!
     end
-
     after do
       logout
       Interact::Progress::Dots.stop!
@@ -40,12 +36,12 @@ if ENV['CF_V2_RUN_INTEGRATION']
       it "can switch organizations and spaces" do
         login
 
-        BlueShell::Runner.run("#{cf_bin} target -o #{organization_two}") do |runner|
-          expect(runner).to say("Switching to organization #{organization_two}")
+        BlueShell::Runner.run("#{cf_bin} target -o #{organization_2}") do |runner|
+          expect(runner).to say("Switching to organization #{organization_2}")
           expect(runner).to say("Space>")
-          runner.send_keys space2
+          runner.send_keys space_2
 
-          expect(runner).to say(/Switching to space #{space2}/)
+          expect(runner).to say(/Switching to space #{space_2}/)
 
           runner.wait_for_exit
         end
@@ -55,8 +51,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
           runner.wait_for_exit(15)
         end
 
-        BlueShell::Runner.run("#{cf_bin} target -s #{space2}") do |runner|
-          expect(runner).to say("Switching to space #{space2}")
+        BlueShell::Runner.run("#{cf_bin} target -s #{space_2}") do |runner|
+          expect(runner).to say("Switching to space #{space_2}")
           runner.wait_for_exit(15)
         end
       end

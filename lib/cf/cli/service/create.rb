@@ -94,12 +94,11 @@ module CF::Service
       ask "Name?", :default => "#{offering.label}-#{random}"
     end
 
-    def ask_plan(plans, default_plan = nil)
+    def ask_plan(plans)
       ask "Which plan?",
         :choices => plans.sort_by(&:name),
         :indexed => true,
         :display => proc { |p| "#{p.name}: #{p.description || 'No description'}" },
-        :default => default_plan,
         :complete => proc(&:name)
     end
   end

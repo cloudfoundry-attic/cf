@@ -10,20 +10,8 @@ if ENV["CF_V2_RUN_INTEGRATION"]
       WebMock.disable_net_connect!
     end
 
-    let(:target) { ENV["CF_V2_TEST_TARGET"] }
-    let(:organization) { ENV["CF_V2_TEST_ORGANIZATION"] }
-    let(:space) { ENV["CF_V2_TEST_SPACE"] }
-    let(:username) { ENV["CF_V2_ADMIN_USERNAME"] }
-    let(:password) { ENV["CF_V2_ADMIN_PW"] }
-
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:new_org_name) { "new-org-#{run_id}" }
-
-    let(:client) do
-      client = CFoundry::V2::Client.new("https://#{target}")
-      client.login(username, password)
-      client
-    end
 
     before do
       Interact::Progress::Dots.start!

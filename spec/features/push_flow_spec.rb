@@ -5,11 +5,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
   describe 'A new user tries to use CF against v2', :ruby19 => true do
     include CF::Interactive
 
-    let(:target) { ENV['CF_V2_TEST_TARGET'] }
-    let(:username) { ENV['CF_V2_TEST_USER'] }
-    let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
-    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION_TWO'] }
-
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
     let(:service_name) { "dummy-service-#{run_id}" }

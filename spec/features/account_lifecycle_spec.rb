@@ -15,15 +15,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:username) { ENV['CF_V2_TEST_USER'] }
     let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
-    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
-    let(:space) { ENV['CF_V2_TEST_SPACE'] }
-
-
-    let(:client) do
-      client = CFoundry::V2::Client.new("https://#{target}")
-      client.login(username, password)
-      client
-    end
 
     before do
       Interact::Progress::Dots.start!
@@ -46,8 +37,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
         expect(runner).to say "Authenticating... OK"
       end
 
-      login
-
       # TODO: do this when cf delete-user is implemented
       #BlueShell::Runner.run("#{cf_bin} delete-user #{email}") do |runner|
       #  expect(runner).to say "Really delete user #{email}?>"
@@ -56,6 +45,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       #end
 
       # TODO: not this.
+      client = CFoundry::V2::Client.new("https://#{target}")
       client.login(email, password)
       user = client.current_user
       guid = user.guid
