@@ -35,8 +35,11 @@ module CF::Start
       authenticated = false
       failed = false
       remaining_attempts = 3
+
       until authenticated || remaining_attempts <= 0
         remaining_attempts -= 1
+        failed = false
+
         unless force?
           ask_prompts(credentials, prompts)
         end
