@@ -11,7 +11,6 @@ require "ostruct"
 require "fakefs/safe"
 require "blue-shell"
 
-INTEGRATE_WITH = ENV["INTEGRATE_WITH"] || "default"
 TRAVIS_BUILD_ID = ENV["TRAVIS_BUILD_ID"]
 
 OriginalFile = File
@@ -23,12 +22,7 @@ class FakeFS::File
 end
 
 def cf_bin
-  cf = File.expand_path("#{SPEC_ROOT}/../bin/cf.dev")
-  if INTEGRATE_WITH != 'default'
-    "rvm #{INTEGRATE_WITH}@cf do #{cf}"
-  else
-    cf
-  end
+  File.expand_path("#{SPEC_ROOT}/../bin/cf.dev")
 end
 
 Dir[File.expand_path('../support/**/*.rb', __FILE__)].each do |file|

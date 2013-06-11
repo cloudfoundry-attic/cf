@@ -3,9 +3,13 @@ language: ruby
 rvm:
   - "1.9.2"
   - "1.9.3"
+  - "2.0.0"
+
+matrix:
+  allow_failures:
+    - rvm: "2.0.0"
+
 env:
-  matrix:
-    - INTEGRATE_WITH=default
   global:
     #CF_V2_TEST_TARGET
     - secure: "K8FHk9DwCiiswJugmqaXNPuD0t0rHADmwqaMoDOn419so2njaVj58vCOnjBNF1jCHPPbHx5UsK8YiZgjwUvExPkZU8Q4iI/SvHCe61p6vR+x7tWIafMOgmtLN1JwehaK25/trIYG+fZVZVObBwkX+HhWKZ5efx0WDMfB/wINmEQ="
