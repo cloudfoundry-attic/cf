@@ -37,9 +37,6 @@ module FeaturesHelper
         expect(runner).to say "Instances> 1", 15
         runner.send_return
 
-        expect(runner).to say "Custom startup command> "
-        runner.send_return
-
         expect(runner).to say "Memory Limit>"
         runner.send_keys "128M"
 

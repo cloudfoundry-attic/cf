@@ -90,27 +90,9 @@ module CF
           context "when the command is not given" do
             before { given.delete(:command) }
 
-            shared_examples "an app that can have a custom start command" do
-              it "asks for a start command with a default as 'none'" do
-                should_ask("Custom startup command", :default => "none") do
-                  "abcd"
-                end
-
-                expect(subject[:command]).to eq "abcd"
-              end
-
-              context "when the user enters 'none'" do
-                it "has the command as nil" do
-                  stub_ask("Custom startup command", :default => "none") do
-                    "none"
-                  end
-
-                  expect(subject[:command]).to be_nil
-                end
-              end
+            it "defaults to nil" do
+              expect(subject[:command]).to be_nil
             end
-
-            include_examples "an app that can have a custom start command"
 
             describe "getting the start command" do
               before do
@@ -137,9 +119,8 @@ module CF
               end
 
               context "when there is no Procfile in the app's root" do
-                it "asks for a start command" do
-                  should_ask("Custom startup command", :default => "none")
-                  subject
+                it "is nil" do
+                  expect(subject[:command]).to be_nil
                 end
               end
             end

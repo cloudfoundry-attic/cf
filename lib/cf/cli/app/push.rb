@@ -24,7 +24,7 @@ module CF::App
                       }
     input :memory,    :desc => "Memory limit"
     input :instances, :desc => "Number of instances to run", :type => :integer
-    input :command,   :desc => "Startup command"
+    input :command,   :desc => "Startup command", :default => nil
     input :plan,      :desc => "Application plan"
     input :start,     :desc => "Start app after pushing?", :default => true
     input :restart,   :desc => "Restart app after updating?", :default => true

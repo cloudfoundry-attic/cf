@@ -242,7 +242,7 @@ module CF
         let(:host) { "" }
         let(:domain) { build(:domain) }
         let(:inputs) do
-          {:name => "some-app",
+          { :name => "some-app",
             :instances => 2,
             :memory => 1024,
             :host => host,

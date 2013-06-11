@@ -37,8 +37,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "Instances> 1"
           runner.send_return
 
-          expect(runner).to say "Custom startup command> "
-          runner.send_return
+          expect(runner).to_not say "Custom startup command> "
 
           expect(runner).to say "Memory Limit>"
           runner.send_keys "128M"
