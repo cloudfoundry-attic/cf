@@ -156,7 +156,7 @@ module CF
               end
 
               it "tells the user to create one by raising a UserFriendlyError" do
-                expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, /There are no organizations/)
+                expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, "There are no organizations. You may want to create one with create-org.")
               end
             end
           end

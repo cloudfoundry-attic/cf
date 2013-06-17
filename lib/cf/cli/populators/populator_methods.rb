@@ -49,7 +49,7 @@ module CF
 
         if object_choices.empty?
           raise CF::UserFriendlyError.new(
-            "There are no #{type}s. You may want to create one with #{c("create-#{type}", :good)}."
+            "There are no #{type}s. You may want to create one with #{c("create-#{type == :organization ? "org" : type}", :good)}."
           )
         elsif object_choices.size == 1 && !input.interactive?(type)
           object_choices.first
