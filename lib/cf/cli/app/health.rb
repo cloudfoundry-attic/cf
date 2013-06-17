@@ -4,7 +4,7 @@ module CF::App
   class Health < Base
     desc "Get application health"
     group :apps, :info, :hidden => true
-    input :apps, :desc => "Applications to start", :argument => :splat,
+    input :apps, :desc => "Show the health information for one or more applications", :argument => :splat,
           :singular => :app, :from_given => by_name(:app)
     def health
       apps = input[:apps]
