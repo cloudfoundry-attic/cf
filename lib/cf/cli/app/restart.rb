@@ -8,10 +8,19 @@ module CF::App
           :singular => :app, :from_given => by_name(:app)
     input :debug_mode, :desc => "Debug mode to start in", :aliases => "-d"
     input :all, :desc => "Restart all applications", :default => false
+    input :command, :desc => "Command to restart application", :default => nil
+
     def restart
       invoke :stop, :all => input[:all], :apps => input[:apps]
 
       line unless quiet?
+
+      input[:apps].each do |app|
+        unless input[:command].nil?
+          app.command = input[:command]
+        end
+        app.update!
+      end
 
       invoke :start, :all => input[:all], :apps => input[:apps],
         :debug_mode => input[:debug_mode]
