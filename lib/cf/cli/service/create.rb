@@ -44,8 +44,10 @@ module CF::Service
           end
         end
       end
+      finalize
 
       selected_offerings = offerings.any? ? Array(input[:offering, offerings.sort_by(&:label)]) : []
+      finalize
 
       if selected_offerings.empty?
         fail "Cannot find services matching the given criteria."
@@ -55,8 +57,9 @@ module CF::Service
 
       service = client.service_instance
       service.name = input[:name, offering]
-
+      finalize
       plan = input[:plan, offering.service_plans]
+      finalize
       service.service_plan = if plan.is_a?(String)
                                offering.service_plans.find { |p| p.name.casecmp(plan) == 0 }
                              else
@@ -68,10 +71,12 @@ module CF::Service
         service.create!
       end
 
-      if app = input[:app]
+      app = input[:app]
+      finalize
+
+      if app
         invoke :bind_service, :service => service, :app => app
       end
-
       service
     end
 

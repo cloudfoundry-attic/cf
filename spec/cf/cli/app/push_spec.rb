@@ -263,6 +263,7 @@ module CF
         it "creates the app" do
           app.should_receive(:create!)
           app.should_receive(:upload).with(path)
+
           push.should_receive(:filter).with(:create_app, app) { app }
           push.should_receive(:filter).with(:push_app, app) { app }
           push.should_receive(:invoke).with(:map, :app => app, :host => host, :domain => domain)

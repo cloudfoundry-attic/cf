@@ -11,6 +11,7 @@ module CF::Service
     def bind_service
       app = input[:app]
       service = input[:service, app]
+      finalize
 
       with_progress(
           "Binding #{c(service.name, :name)} to #{c(app.name, :name)}") do |s|

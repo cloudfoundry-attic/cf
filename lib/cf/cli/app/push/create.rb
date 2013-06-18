@@ -22,6 +22,7 @@ module CF::App
       app = client.app
 
       inputs.each { |key, value| app.send(:"#{key}=", value) }
+      finalize
 
       app = filter(:create_app, app)
 
@@ -42,7 +43,9 @@ module CF::App
       line unless quiet?
 
       host = input[:host, app.name]
+      finalize
       domain = input[:domain, app]
+      finalize
 
       mapped_url = false
       until domain == "none" || !domain || mapped_url
@@ -67,7 +70,7 @@ module CF::App
 
     def create_services(app)
       return unless input[:create_services]
-
+      finalize
       while true
         invoke :create_service, { :app => app }, :plan => :interact
         break unless ask("Create another service?", :default => false)
