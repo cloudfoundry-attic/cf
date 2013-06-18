@@ -284,8 +284,8 @@ module CF
       context "when no target file exists" do
         let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/no_config" }
 
-        it "returns nil" do
-          expect(subject).to eq nil
+        it "returns the default production API url" do
+          expect(subject).to eq "https://api.run.pivotal.io"
         end
       end
     end
@@ -388,14 +388,6 @@ module CF
       describe "the client's version" do
         it "uses the version stored in the yml file" do
           expect(context.client.version).to eq(2)
-        end
-      end
-
-      context "when there is no target" do
-        let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/no_config" }
-
-        it "returns nil" do
-          expect(context.client).to eq(nil)
         end
       end
 

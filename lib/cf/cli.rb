@@ -305,9 +305,8 @@ module CF
     end
 
     def client_target
-      if File.exists?(target_file)
-        File.read(target_file).chomp
-      end
+      return File.read(target_file).chomp if File.exists?(target_file)
+      sane_target_url(CF::DEFAULT_API_URL)
     end
 
     def ensure_config_dir
