@@ -43,13 +43,14 @@ module CF
           :with_message => "user friendly"
       end
 
-      context "with a UserFriendlyErrorWithDetails" do
-        let(:original) { double(:backtrace => []) }
-        let(:action) { proc { raise CF::UserFriendlyErrorWithDetails.new("user friendly", original) } }
+      context "with a CFoundry::StagingError" do
+        let(:exception) { CFoundry::StagingError.new("whatever", 170001, nil, nil) }
+        let(:action) { proc { raise exception } }
+        before { exception.should_receive(:backtrace).at_least(1).times.and_return([]) }
 
         it "prints the message" do
           subject
-          expect(stderr.string).to include "user friendly"
+          expect(stderr.string).to include "Application failed to stage"
         end
 
         it "sets the exit code to 1" do
@@ -63,7 +64,7 @@ module CF
         end
 
         it "logs the error" do
-          context.should_receive(:log_error).with(original)
+          context.should_receive(:log_error).with(anything)
           subject
         end
       end

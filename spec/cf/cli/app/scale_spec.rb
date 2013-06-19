@@ -58,20 +58,6 @@ module CF
           expect { subject }.to change(app, :total_instances).from(before_value).to(5)
         end
       end
-
-      context "with an app that failed staging" do
-        let(:app) { build(:app) }
-
-        before do
-          app.stub(:update!) { raise CFoundry::StagingError.new("Failed to stage", 170001, nil, nil) }
-        end
-
-        subject { cf %W[scale #{app.name} --instances 5] }
-
-        it "says the app failed to stage" do
-          expect {subject}.to raise_error(CF::UserFriendlyErrorWithDetails)
-        end
-      end
     end
   end
 end

@@ -132,9 +132,9 @@ module CF
       log_error(e)
 
       err "Denied: #{e.description}"
-
-    rescue UserFriendlyErrorWithDetails => e
-      formatted_exception_output(e.original, e.to_s)
+    rescue CFoundry::StagingError => e
+      message = "Application failed to stage"
+      formatted_exception_output(e, message)
 
     rescue Exception => e
       formatted_exception_output(e, add_exception_name_to_msg(e))

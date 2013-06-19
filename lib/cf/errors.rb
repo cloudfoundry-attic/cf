@@ -9,19 +9,6 @@ module CF
     end
   end
 
-  class UserFriendlyErrorWithDetails < RuntimeError
-    attr_reader :original
-
-    def initialize(msg, original)
-      @message = msg
-      @original = original
-    end
-
-    def to_s
-      @message
-    end
-  end
-
   class UserError < UserFriendlyError; end
 
   class NotAuthorized < UserError
