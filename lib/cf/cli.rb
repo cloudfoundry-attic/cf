@@ -133,6 +133,15 @@ module CF
 
       err "Denied: #{e.description}"
 
+    rescue UserFriendlyErrorWithDetails => e
+      log_error(e.original)
+
+      msg = e.to_s
+      msg << "\ncat #{CF::CRASH_FILE} # for more details"
+      err msg
+
+      raise if debug?
+
     rescue Exception => e
       log_error(e)
 

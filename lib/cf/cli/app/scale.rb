@@ -39,7 +39,11 @@ module CF::App
       fail "No changes!" unless app.changed?
 
       with_progress("Scaling #{c(app.name, :name)}") do
-        app.update!
+        begin
+          app.update!
+        rescue CFoundry::StagingError => e
+          raise CF::UserFriendlyErrorWithDetails.new "Application failed to stage", e
+        end
       end
 
       needs_restart = app.changes.key?(:memory) || app.changes.key?(:disk_quota)

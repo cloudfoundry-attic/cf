@@ -43,6 +43,31 @@ module CF
           :with_message => "user friendly"
       end
 
+      context "with a UserFriendlyErrorWithDetails" do
+        let(:original) { double(:backtrace => []) }
+        let(:action) { proc { raise CF::UserFriendlyErrorWithDetails.new("user friendly", original) } }
+
+        it "prints the message" do
+          subject
+          expect(stderr.string).to include "user friendly"
+        end
+
+        it "sets the exit code to 1" do
+          context.should_receive(:exit_status).with(1)
+          subject
+        end
+
+        it "does mention ~/.cf/crash" do
+          subject
+          expect(stderr.string).to include CF::CRASH_FILE
+        end
+
+        it "logs the error" do
+          context.should_receive(:log_error).with(original)
+          subject
+        end
+      end
+
       context "with a SystemExit" do
         let(:action) { proc { exit 1 } }
 
