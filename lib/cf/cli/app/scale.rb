@@ -56,7 +56,7 @@ module CF::App
     end
 
     def ask_memory(default)
-      ask("Memory Limit", :choices => memory_choices(default),
+      ask("Memory Limit", :choices => memory_choices,
           :default => human_mb(default), :allow_other => true)
     end
   end

@@ -28,7 +28,7 @@ module CF::App
       ask("Memory Limit",
           :choices => memory_choices,
           :allow_other => true,
-          :default => default || "64M")
+          :default => default || "128M")
     end
 
     def ask_instances
