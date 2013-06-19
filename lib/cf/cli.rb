@@ -134,23 +134,24 @@ module CF
       err "Denied: #{e.description}"
 
     rescue UserFriendlyErrorWithDetails => e
-      log_error(e.original)
+      formatted_exception_output(e.original, e.to_s)
 
-      msg = e.to_s
+    rescue Exception => e
+      formatted_exception_output(e, add_exception_name_to_msg(e))
+    end
+
+    def formatted_exception_output(e, msg)
+      log_error(e)
       msg << "\ncat #{CF::CRASH_FILE} # for more details"
       err msg
 
       raise if debug?
+    end
 
-    rescue Exception => e
-      log_error(e)
-
+    def add_exception_name_to_msg(e)
       msg = e.class.name
       msg << ": #{e}" unless e.to_s.empty?
-      msg << "\nFor more information, see #{CF::CRASH_FILE}"
-      err msg
-
-      raise if debug?
+      msg
     end
 
     def execute(cmd, argv, global = {})
