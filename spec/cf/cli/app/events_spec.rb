@@ -56,11 +56,11 @@ module CF
         expect(stdout.readlines[2]).to match /time\s+instance\s+index\s+description\s+exit\s+status/
       end
 
-      # it "prints out the events" do
-        # subject
-        # stdout.rewind
-        # expect(stdout.readlines.last).to match /.*2013-05-15 18:52:12 UTC\s+0\.0%\s+29\.9M of 288M\s+14\.9M of 256M.*/
-      # end
+      it "prints out the events" do
+        subject
+        stdout.rewind
+        expect(stdout.readlines.last).to match /.*2013-05-15 18:52:15 \+0000\s+1\s+Something very interesting\s+Failure \(-1\).*/
+      end
     end
   end
 end

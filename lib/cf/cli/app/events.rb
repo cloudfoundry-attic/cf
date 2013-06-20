@@ -11,51 +11,28 @@ module CF::App
 
       events =
         with_progress("Getting events for #{c(app.name, :name)}") do
-            # app.events
+          format_events(app.events)
         end
 
       line unless quiet?
 
       table(
-        %w{time instance\ index description exit\ status}, []
-        # stats.sort_by { |idx, _| idx.to_i }.collect { |idx, info|
-          # idx = c("\##{idx}", :instance)
-
-          # if info[:state] == "DOWN"
-            # [idx, c("down", :bad)]
-          # else
-            # stats = info[:stats]
-            # usage = stats[:usage]
-
-            # if usage
-              # [ idx,
-                # "#{percentage(usage[:cpu])}",
-                # "#{usage(usage[:mem], stats[:mem_quota])}",
-                # "#{usage(usage[:disk], stats[:disk_quota])}"
-              # ]
-            # else
-              # [idx, c("n/a", :neutral)]
-            # end
-          # end
-        # }
+        %w{time instance\ index description exit\ status},
+        events
         )
     end
 
-    # def percentage(num, low = 50, mid = 70)
-      # color =
-        # if num <= low
-          # :good
-        # elsif num <= mid
-          # :warning
-        # else
-          # :bad
-        # end
+    private
 
-      # c(format("%.1f\%", num), color)
-    # end
+    def format_events(events)
+      events.map do |e|
+        e = e[1]
+        [e[:timestamp],
+         e[:instance_index].to_s,
+         e[:exit_description],
+         (e[:exit_status] ? "Failure (" : "Success (") + e[:exit_status].to_s + ")"]
+      end
+    end
 
-    # def usage(used, limit)
-      # "#{b(human_size(used))} of #{b(human_size(limit, 0))}"
-    # end
   end
 end
