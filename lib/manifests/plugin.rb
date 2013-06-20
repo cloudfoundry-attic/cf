@@ -10,7 +10,7 @@ class ManifestsPlugin < CF::App::Base
 
 
   [ :start, :restart, :instances, :logs, :env, :health, :stats,
-    :scale, :app, :stop, :delete
+    :scale, :app, :stop, :delete, :events
   ].each do |wrap|
     name_made_optional = change_argument(wrap, :app, :optional)
 
