@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "addressable", "~> 2.2"
   s.add_runtime_dependency "caldecott-client", "~> 0.0.2"
-  s.add_runtime_dependency "cfoundry", ">= 2.1.0", "< 3.0"
+  s.add_runtime_dependency "cfoundry", ">= 2.1.2.rc1", "< 3.0"
   s.add_runtime_dependency "interact", "~> 0.5"
   s.add_runtime_dependency "json_pure", "~> 1.6"
   s.add_runtime_dependency "mothership", ">= 0.5.1", "< 1.0"
