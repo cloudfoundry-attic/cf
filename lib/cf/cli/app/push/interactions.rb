@@ -15,11 +15,11 @@ module CF::App
 
       options = {
         :choices => choices + ["none"],
-        :display => proc { |d| d.is_a?(String) ? d : d.name },
+        :display => proc { |choice| choice.is_a?(String) ? choice : choice.name },
         :allow_other => true
       }
 
-      options[:default] = choices.first if choices.size == 1
+      options[:default] = choices.first
 
       ask "Domain", options
     end
