@@ -10,14 +10,18 @@ module CF
 
       before do
         inputs[:app].stub(:events) do
-          { "0" => {
+          [double("AppEvent", {
             :instance_guid => "some_guid",
             :instance_index => 1,
             :exit_status => -1,
             :exit_description => "Something very interesting",
-            :timestamp => "2013-05-15 18:52:15 +0000"
-          }
-          }
+            :timestamp => "2013-05-15 18:52:17 +0000" }),
+          double("AppEvent", {
+            :instance_guid => "some_other_guid",
+            :instance_index => 0,
+            :exit_status => 0,
+            :exit_description => "Something less interesting",
+            :timestamp => "2013-05-15 18:52:15 +0000" })]
         end
       end
 
@@ -56,10 +60,12 @@ module CF
         expect(stdout.readlines[2]).to match /time\s+instance\s+index\s+description\s+exit\s+status/
       end
 
-      it "prints out the events" do
+      it "prints out the events in order" do
         subject
         stdout.rewind
-        expect(stdout.readlines.last).to match /.*2013-05-15 18:52:15 \+0000\s+1\s+Something very interesting\s+Failure \(-1\).*/
+        expect(stdout.readlines[3]).to match /.*2013-05-15 18:52:15 \+0000\s+0\s+Something less interesting\s+Success \(0\).*/
+        stdout.rewind
+        expect(stdout.readlines[4]).to match /.*2013-05-15 18:52:17 \+0000\s+1\s+Something very interesting\s+Failure \(-1\).*/
       end
     end
   end

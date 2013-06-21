@@ -15,24 +15,31 @@ module CF::App
         end
 
       line unless quiet?
+      table(%w{time instance\ index description exit\ status}, events)
 
-      table(
-        %w{time instance\ index description exit\ status},
-        events
-        )
     end
 
     private
 
+    def sort_events(events)
+      events.sort_by { |event| DateTime.parse(event.timestamp) }
+    end
+
     def format_events(events)
-      events.map do |e|
-        e = e[1]
-        [e[:timestamp],
-         e[:instance_index].to_s,
-         e[:exit_description],
-         (e[:exit_status] ? "Failure (" : "Success (") + e[:exit_status].to_s + ")"]
+      sort_events(events).map do |event|
+        [event.timestamp,
+         c(event.instance_index.to_s, :warning),
+         event.exit_description,
+         format_status(event)]
       end
     end
 
+    def format_status(event)
+      if event.exit_status == 0
+        c("Success (#{event.exit_status})", :good)
+      else
+        c("Failure (#{event.exit_status})", :bad)
+      end
+    end
   end
 end
