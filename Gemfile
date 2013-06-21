@@ -6,7 +6,6 @@ source "http://rubygems.org"
 
 gemspec
 
-gem "cfoundry", :git => "git://github.com/cloudfoundry/cfoundry.git", :submodules => true
 #gem "cfoundry", :path => "../cfoundry"
 
 gem "admin-cf-plugin", :git => "git://github.com/cloudfoundry/admin-cf-plugin.git"
