@@ -439,34 +439,6 @@ module CF
           end
         end
       end
-
-      describe "#memory_choices" do
-        let(:info) { {} }
-
-        before do
-          client.stub(:info).and_return(info)
-        end
-
-        context "when the user has usage information" do
-          let(:info) do
-            {:usage => {:memory => 512},
-              :limits => {:memory => 2048}
-            }
-          end
-
-          it "asks for the memory with the ceiling taking the memory usage into account" do
-            expect(push_command.memory_choices).to eq(%w[64M 128M 256M 512M 1G])
-          end
-        end
-
-        context "when the user does not have usage information" do
-          let(:info) { {:limits => {:memory => 2048}} }
-
-          it "asks for the memory with the ceiling as their overall limit" do
-            expect(push_command.memory_choices).to eq(%w[64M 128M 256M 512M 1G 2G])
-          end
-        end
-      end
     end
   end
 end

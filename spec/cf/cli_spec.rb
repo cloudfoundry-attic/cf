@@ -43,6 +43,32 @@ module CF
           :with_message => "user friendly"
       end
 
+      context "with a CFoundry::StagingError" do
+        let(:exception) { CFoundry::StagingError.new("whatever", 170001, nil, nil) }
+        let(:action) { proc { raise exception } }
+        before { exception.should_receive(:backtrace).at_least(1).times.and_return([]) }
+
+        it "prints the message" do
+          subject
+          expect(stderr.string).to include "Application failed to stage"
+        end
+
+        it "sets the exit code to 1" do
+          context.should_receive(:exit_status).with(1)
+          subject
+        end
+
+        it "does mention ~/.cf/crash" do
+          subject
+          expect(stderr.string).to include CF::CRASH_FILE
+        end
+
+        it "logs the error" do
+          context.should_receive(:log_error).with(anything)
+          subject
+        end
+      end
+
       context "with a SystemExit" do
         let(:action) { proc { exit 1 } }
 

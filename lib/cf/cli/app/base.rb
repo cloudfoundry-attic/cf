@@ -31,28 +31,8 @@ module CF
         end
       end
 
-      def memory_choices(exclude = 0)
-        info = client.info
-
-        usage = info[:usage]
-        limit = info[:limits][:memory]
-
-        ceiling =
-          if usage
-            used = usage[:memory]
-            limit - used + exclude
-          else
-            limit
-          end
-
-        mem = 64
-        choices = []
-        until mem > ceiling
-          choices << human_mb(mem)
-          mem *= 2
-        end
-
-        choices
+      def memory_choices
+        [128, 256, 512, 1024].map{|n| human_mb(n)}
       end
 
       def human_mb(num)

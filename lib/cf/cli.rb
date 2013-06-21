@@ -132,16 +132,26 @@ module CF
       log_error(e)
 
       err "Denied: #{e.description}"
+    rescue CFoundry::StagingError => e
+      message = "Application failed to stage"
+      formatted_exception_output(e, message)
 
     rescue Exception => e
-      log_error(e)
+      formatted_exception_output(e, add_exception_name_to_msg(e))
+    end
 
-      msg = e.class.name
-      msg << ": #{e}" unless e.to_s.empty?
-      msg << "\nFor more information, see #{CF::CRASH_FILE}"
+    def formatted_exception_output(e, msg)
+      log_error(e)
+      msg << "\ncat #{CF::CRASH_FILE} # for more details"
       err msg
 
       raise if debug?
+    end
+
+    def add_exception_name_to_msg(e)
+      msg = e.class.name
+      msg << ": #{e}" unless e.to_s.empty?
+      msg
     end
 
     def execute(cmd, argv, global = {})

@@ -15,11 +15,11 @@ module CF::App
 
       options = {
         :choices => choices + ["none"],
-        :display => proc { |d| d.is_a?(String) ? d : d.name },
+        :display => proc { |choice| choice.is_a?(String) ? choice : choice.name },
         :allow_other => true
       }
 
-      options[:default] = choices.first if choices.size == 1
+      options[:default] = choices.first
 
       ask "Domain", options
     end
@@ -28,7 +28,7 @@ module CF::App
       ask("Memory Limit",
           :choices => memory_choices,
           :allow_other => true,
-          :default => default || "64M")
+          :default => default || "128M")
     end
 
     def ask_instances
