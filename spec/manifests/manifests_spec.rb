@@ -76,7 +76,8 @@ describe CFManifests do
     its(["memory"]) { should eq "2G" }
     its(["instances"]) { should eq 2 }
     its(["path"]) { should eq "some-path" }
-    its(["url"]) { should eq "some-app-name.${target-base}" }
+    its(["host"]) { should eq "some-app-name" }
+    its(["domain"]) { should eq "${target-base}" }
     its(["command"]) { should eq "ruby main.rb" }
     its(["buildpack"]) { should eq "git://example.com/foo.git" }
 
@@ -114,7 +115,8 @@ describe CFManifests do
           :service_bindings => []
       }
 
-      its(["url"]) { should eq "none" }
+      its(["host"]) { should eq "none" }
+      its(["domain"]) { should eq "none" }
       it { should_not include "command" }
       it { should_not include "services" }
     end

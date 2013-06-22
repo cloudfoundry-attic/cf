@@ -149,7 +149,8 @@ module CFManifests
       "name" => app.name,
       "memory" => human_size(app.memory * 1024 * 1024, 0),
       "instances" => app.total_instances,
-      "url" => app.url ? app.url.sub(target_base, '${target-base}') : "none",
+      "host" => app.host || "none",
+      "domain" => app.domain ? "${target-base}" : "none",
       "path" => path
     }
 

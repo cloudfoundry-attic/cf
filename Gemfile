@@ -7,6 +7,5 @@ source "http://rubygems.org"
 gemspec
 
 #gem "cfoundry", :path => "../cfoundry"
-
 gem "admin-cf-plugin", :git => "git://github.com/cloudfoundry/admin-cf-plugin.git"
 gem "micro-cf-plugin", :git => "git://github.com/cloudfoundry/micro-cf-plugin.git"
