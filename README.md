@@ -49,7 +49,6 @@ Applications
     console APP        	Open a console connected to your app
 
   Information
-    crashes APPS...         	List an app's crashed instances
     env [APP]               	Show all environment variables set for an app
     set-env APP NAME [VALUE]	Set an environment variable
     unset-env APP NAME      	Remove an environment variable
