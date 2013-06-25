@@ -1,10 +1,10 @@
-# cf - CLI for Cloud Foundry
+# cf - Cloud Foundry Command Line Interface
 
 [![Build Status](https://travis-ci.org/cloudfoundry/cf.png)](https://travis-ci.org/cloudfoundry/cf)
 [![Gem Version](https://badge.fury.io/rb/cf.png)](http://badge.fury.io/rb/cf) 
 [![Code Climate](https://codeclimate.com/github/cloudfoundry/cf.png)](https://codeclimate.com/github/cloudfoundry/cf)
 
-The CLI for Cloud Foundry has been completely rewritten. Installation, usage & contribution instructions are below.
+The Cloud Foundry CLI has been completely rewritten. Installation, usage & contribution instructions are below.
 
 This tool requires cloud_controller_ng. It is not compatible with cloud_controller v1.
 
