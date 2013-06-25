@@ -289,4 +289,21 @@ describe CFManifests do
       expect(subject).to eq [{ :name => "foo", :path => "/abc"}, { :name => "bar", :path => "/abc" }]
     end
   end
+
+  describe "#check_manifest!" do 
+    
+    it "raise if there is some unknown attribute" do
+      wrong_manifest_hash = {:applications => [ {:bad_attr => 'boom'}]}
+      msg = "bad_attr is not a valid attribute, please visit the Manifest " + 
+            "Documentation for a list of valid attributes." 
+      expect{cmd.check_manifest!(wrong_manifest_hash)}.to raise_error(CFManifests::BadManifestError, msg)
+    end 
+    
+    it "not raise if there are no unknown attributes" do 
+      good_manifest_hash = {:path => '/here', :name => 'good_manifest', :memory => '256M', 
+                            :instances => 1, :host => 'good-manifest', :domain => 'testing', 
+                            :buildpack => 'buildy', :services => {} }
+      expect{cmd.check_manifest!(good_manifest_hash)}.to_not raise_error(CFManifests::BadManifestError)
+    end
+  end
 end

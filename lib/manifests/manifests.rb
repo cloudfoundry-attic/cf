@@ -7,6 +7,18 @@ module CFManifests
   MANIFEST_FILE = "manifest.yml"
 
   @@showed_manifest_usage = false
+  
+  class BadManifestError < StandardError
+
+    def initialize(attr)
+      @attr = attr
+    end
+
+    def to_s
+      "#{@attr} is not a valid attribute, please visit the Manifest " + 
+      "Documentation for a list of valid attributes." 
+    end
+  end
 
   def manifest
     return @manifest if @manifest
@@ -50,7 +62,24 @@ module CFManifests
 
   # load and resolve a given manifest file
   def load_manifest(file)
-    Loader.new(file, self).manifest
+    check_manifest! Loader.new(file, self).manifest
+  end
+  
+  def check_manifest!(manifest_hash)
+    manifest_hash[:applications].each{|app| check_attributes! app} 
+    manifest_hash
+  end
+  
+  def check_attributes!(app)
+    app.each do |k, v|
+      raise BadManifestError.new(k) unless known_manifest_attributes.include? k 
+    end  
+  end
+
+  def known_manifest_attributes
+    [:path, :name, :memory, :instances, :host, :domain, 
+     :command, :buildpack, :services, :env, :properties, 
+     :inherit, :mem, :disk, :runtime, :applications]
   end
 
   # dynamic symbol resolution
