@@ -59,9 +59,6 @@ module CFManifests
     when "target-url"
       client_target
 
-    when "target-base"
-      target_base
-
     when "random-word"
       sprintf("%04x", rand(0x0100000))
 
@@ -150,7 +147,7 @@ module CFManifests
       "memory" => human_size(app.memory * 1024 * 1024, 0),
       "instances" => app.total_instances,
       "host" => app.host || "none",
-      "domain" => app.domain ? "${target-base}" : "none",
+      "domain" => app.domain ? app.domain : "none",
       "path" => path
     }
 

@@ -28,8 +28,6 @@ describe CFManifests do
   let(:manifest_file) { "/abc/manifest.yml" }
 
   before do
-    cmd.stub(:target_base) { target_base }
-
     cmd.stub(:manifest) { manifest }
     cmd.stub(:manifest_file) { manifest_file }
   end
@@ -77,7 +75,7 @@ describe CFManifests do
     its(["instances"]) { should eq 2 }
     its(["path"]) { should eq "some-path" }
     its(["host"]) { should eq "some-app-name" }
-    its(["domain"]) { should eq "${target-base}" }
+    its(["domain"]) { should eq app.domain }
     its(["command"]) { should eq "ruby main.rb" }
     its(["buildpack"]) { should eq "git://example.com/foo.git" }
 
