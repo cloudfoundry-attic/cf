@@ -8,3 +8,5 @@ gemspec
 
 #gem "cfoundry", :path => "../cfoundry"
 gem "micro-cf-plugin", :git => "git://github.com/cloudfoundry/micro-cf-plugin.git"
+
+gem "anchorman"
