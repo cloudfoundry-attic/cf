@@ -1,0 +1,6 @@
+---
+https://api.some-target-for-cf-curl.com:
+  :version: 2
+api.some-target-for-cf-curl.com:
+  :version: 2
+  :token: bearer some-access-token
