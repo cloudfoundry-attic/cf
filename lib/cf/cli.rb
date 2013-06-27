@@ -14,6 +14,7 @@ require "cf/spacing"
 
 require "cf/cli/help"
 require "cf/cli/interactive"
+require "cf/cli/login_requirements"
 
 
 $cf_asked_auth = false
@@ -72,6 +73,7 @@ module CF
     end
 
     def check_logged_in
+      check_target
       unless client.logged_in?
         if force?
           fail "Please log in with 'cf login'."
@@ -81,19 +83,6 @@ module CF
           invoke :login
           invalidate_client
         end
-      end
-    end
-
-    def precondition
-      check_target
-      check_logged_in
-
-      unless client.current_organization
-        fail "Please select an organization with 'cf target --organization ORGANIZATION_NAME'. (Get organization names from 'cf orgs'.)"
-      end
-
-      unless client.current_space
-        fail "Please select a space with 'cf target --space SPACE_NAME'. (Get space names from 'cf spaces'.)"
       end
     end
 
@@ -198,7 +187,7 @@ EOS
       else
         wrap_errors do
           @command = cmd
-          precondition
+          precondition if respond_to? :precondition
 
           save_token_if_it_changes do
             super

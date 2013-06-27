@@ -2,8 +2,6 @@ require "cf/cli/route/base"
 
 module CF::Route
   class Map < Base
-    def precondition; end
-
     desc "Add a URL mapping"
     group :apps, :info, :hidden => true
     input :app, :desc => "Application to add the URL to",

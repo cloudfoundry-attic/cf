@@ -3,6 +3,8 @@ require "cf/cli"
 module CF
   module Populators
     class Base < CF::CLI
+      include LoginRequirements
+
       attr_reader :input, :info
 
       def initialize(input)

@@ -1,26 +1,19 @@
 require "spec_helper"
 
 module CF
-  module App
+  module Route
     describe "Help"  do
       let(:global) { {} }
       let(:given) { {} }
 
       subject do
-        capture_output { Mothership.new.invoke(:help, :command => "app") }
+        capture_output { Mothership.new.invoke(:help, :command => "routes") }
       end
 
       it "describes the command" do
         subject
         stdout.rewind
-        expect(stdout.readlines.first).to match /Show app information/
-      end
-
-      it "prints the options" do
-        subject
-        stdout.rewind
-        expect(stdout.readlines.any? {|line| line =~ /Options:/ }).to be_true
-
+        expect(stdout.readlines.first).to match /List routes in a space/
       end
 
       context "when the user is not logged in" do

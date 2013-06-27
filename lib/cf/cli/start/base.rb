@@ -3,16 +3,13 @@ require "cf/cli"
 module CF
   module Start
     class Base < CLI
+      include LoginRequirements
+
       # Make sure we only show the target once
       @@displayed_target = false
 
       def displayed_target?
         @@displayed_target
-      end
-
-
-      # These commands don't require authentication.
-      def precondition;
       end
 
       private

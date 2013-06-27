@@ -3,6 +3,8 @@ require "cf/cli"
 module CF
   module App
     class Base < CLI
+      include LoginRequirements
+
       # choose the right color for app/instance state
       def state_color(s)
         case s

@@ -1,19 +1,19 @@
 require "spec_helper"
 
 module CF
-  module App
+  module Service
     describe "Help"  do
       let(:global) { {} }
       let(:given) { {} }
 
       subject do
-        capture_output { Mothership.new.invoke(:help, :command => "app") }
+        capture_output { Mothership.new.invoke(:help, :command => "service") }
       end
 
       it "describes the command" do
         subject
         stdout.rewind
-        expect(stdout.readlines.first).to match /Show app information/
+        expect(stdout.readlines.first).to match /Show service information/
       end
 
       it "prints the options" do
