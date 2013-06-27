@@ -97,6 +97,44 @@ module CF
       end
     end
 
+    desc "Help!"
+    input :command, :argument => :optional
+    input :all, :type => :boolean
+    def help
+      if name = input[:command]
+        if cmd = @@commands[name.gsub("-", "_").to_sym]
+          Mothership::Help.command_help(cmd)
+        else
+          unknown_command(name)
+        end
+      elsif Help.has_groups?
+        unless input[:all]
+          puts "#{help_header}"
+        end
+
+        Mothership::Help.print_help_groups(@@global, input[:all])
+      else
+        Mothership::Help.basic_help(@@commands, @@global)
+      end
+    end
+
+    def help_header
+    <<EOS
+Cloud Foundry Command Line Interface, version [#{CF::VERSION}]
+Showing basic commands. Use 'cf help --all' to list all commands, or
+'cf help [command]' for help detailed help on a command.
+
+For docs and support visit http://support.cloudfoundry.com
+
+USAGE EXAMPLES
+  $ cf target api.run.pivotal.io    <-- sets target API endpoint (the CF instance where you want to push apps) to 'api.run.pivotal.io'
+  $ cf login                        <-- logs into currently targeted CF instance, will also prompt for target org and app space
+  $ cf push                         <-- deploys app to current target
+  $ cf target -s staging            <-- changes currently targeted app space to 'staging'
+
+EOS
+    end
+
     def wrap_errors
       yield
     rescue CFoundry::Timeout => e
