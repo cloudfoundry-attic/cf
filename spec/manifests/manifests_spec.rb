@@ -93,7 +93,7 @@ describe CFManifests do
         plan = service.service_plan
         offering = plan.service
 
-        { "plan" => plan.name,
+        {"plan" => plan.name,
           "label" => offering.label,
           "provider" => offering.provider,
           "version" => offering.version
@@ -197,11 +197,11 @@ describe CFManifests do
   end
 
   describe "#apps_in_manifest" do
-    let(:foo_hash) { { :name => "foo", :path => "/abc/foo" } }
-    let(:bar_hash) { { :name => "bar", :path => "/abc/bar" } }
-    let(:baz_hash) { { :name => "baz", :path => "/abc/baz" } }
+    let(:foo_hash) { {:name => "foo", :path => "/abc/foo"} }
+    let(:bar_hash) { {:name => "bar", :path => "/abc/bar"} }
+    let(:baz_hash) { {:name => "baz", :path => "/abc/baz"} }
 
-    let(:manifest) { { :applications => [foo_hash, bar_hash, baz_hash] } }
+    let(:manifest) { {:applications => [foo_hash, bar_hash, baz_hash]} }
 
     subject { cmd.apps_in_manifest(inputs) }
 
@@ -214,21 +214,21 @@ describe CFManifests do
 
     context "when app names are passed" do
       context "and all of them are in the manifest" do
-        let(:given_hash) { { :apps => ["foo", "bar"] } }
+        let(:given_hash) { {:apps => ["foo", "bar"]} }
 
         its(:first) { should eq [foo_hash, bar_hash] }
         its(:last) { should eq [] }
       end
 
       context "and one of them is in the manifest" do
-        let(:given_hash) { { :apps => ["foo", "xxx"] } }
+        let(:given_hash) { {:apps => ["foo", "xxx"]} }
 
         its(:first) { should eq [foo_hash] }
         its(:last) { should eq ["xxx"] }
       end
 
       context "and none of them are in the manifest" do
-        let(:given_hash) { { :apps => ["xxx", "yyy"] } }
+        let(:given_hash) { {:apps => ["xxx", "yyy"]} }
 
         its(:first) { should eq [] }
         its(:last) { should eq ["xxx", "yyy"] }
@@ -237,14 +237,14 @@ describe CFManifests do
 
     context "when apps are passed as paths" do
       context "and the paths are in the manifest" do
-        let(:given_hash) { { :apps => ["/abc/foo"] } }
+        let(:given_hash) { {:apps => ["/abc/foo"]} }
 
         its(:first) { should eq [foo_hash] }
         its(:last) { should eq [] }
       end
 
       context "and any path is not in the manifest" do
-        let(:given_hash) { { :apps => ["/abc/xxx"] } }
+        let(:given_hash) { {:apps => ["/abc/xxx"]} }
 
         it "fails with a manifest-specific method (i.e. path not in manifest)" do
           expect { subject }.to raise_error(CF::UserError, /Path .+ is not present in manifest/)
@@ -263,7 +263,7 @@ describe CFManifests do
     end
 
     let(:manifest) do
-      { :applications => applications }
+      {:applications => applications}
     end
 
     subject { cmd.all_apps }
@@ -286,24 +286,22 @@ describe CFManifests do
 
     it "returns the applications with the cwd as their path" do
       Dir.stub(:pwd) { "/abc" }
-      expect(subject).to eq [{ :name => "foo", :path => "/abc"}, { :name => "bar", :path => "/abc" }]
+      expect(subject).to eq [{:name => "foo", :path => "/abc"}, {:name => "bar", :path => "/abc"}]
     end
   end
 
-  describe "#check_manifest!" do 
-    
-    it "raise if there is some unknown attribute" do
-      wrong_manifest_hash = {:applications => [ {:bad_attr => 'boom'}]}
-      msg = "bad_attr is not a valid attribute, please visit the Manifest " + 
-            "Documentation for a list of valid attributes." 
-      expect{cmd.check_manifest!(wrong_manifest_hash)}.to raise_error(CFManifests::BadManifestError, msg)
-    end 
-    
-    it "not raise if there are no unknown attributes" do 
-      good_manifest_hash = {:path => '/here', :name => 'good_manifest', :memory => '256M', 
-                            :instances => 1, :host => 'good-manifest', :domain => 'testing', 
-                            :buildpack => 'buildy', :services => {} }
-      expect{cmd.check_manifest!(good_manifest_hash)}.to_not raise_error(CFManifests::BadManifestError)
+  describe "#check_manifest!" do
+
+    it "prints a warning if there is some unknown attribute" do
+      wrong_manifest_hash = {:applications => [{:bad_attr => 'boom'}]}
+      output = double('output')
+
+      msg = "\033[31mWarning: bad_attr is not a valid manifest attribute. "+
+        "Please remove this attribute from your manifest to get rid of this"+
+        " warning\033[0m"
+
+      output.should_receive(:puts).with(msg)
+      cmd.check_manifest!(wrong_manifest_hash, output)
     end
   end
 end

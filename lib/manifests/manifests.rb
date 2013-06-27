@@ -7,32 +7,21 @@ module CFManifests
   MANIFEST_FILE = "manifest.yml"
 
   @@showed_manifest_usage = false
-  
-  class BadManifestError < StandardError
-
-    def initialize(attr)
-      @attr = attr
-    end
-
-    def to_s
-      "#{@attr} is not a valid attribute, please visit the Manifest " + 
-      "Documentation for a list of valid attributes." 
-    end
-  end
+  @@manifest = nil
 
   def manifest
-    return @manifest if @manifest
+    return @@manifest if @@manifest
 
     if manifest_file && File.exists?(manifest_file)
-      @manifest = load_manifest(manifest_file)
+      @@manifest = load_manifest(manifest_file)
     end
   end
 
   def save_manifest(save_to = manifest_file)
-    fail "No manifest to save!" unless @manifest
+    fail "No manifest to save!" unless @@manifest
 
     File.open(save_to, "w") do |io|
-      YAML.dump(@manifest, io)
+      YAML.dump(@@manifest, io)
     end
   end
 
@@ -64,21 +53,26 @@ module CFManifests
   def load_manifest(file)
     check_manifest! Loader.new(file, self).manifest
   end
-  
-  def check_manifest!(manifest_hash)
-    manifest_hash[:applications].each{|app| check_attributes! app} 
+
+  def check_manifest!(manifest_hash, output = $stdout)
+    manifest_hash[:applications].each{ |app| check_attributes!(app, output) }
     manifest_hash
   end
-  
-  def check_attributes!(app)
+
+  def check_attributes!(app, output = $stdout)
     app.each do |k, v|
-      raise BadManifestError.new(k) unless known_manifest_attributes.include? k 
-    end  
+      output.puts error_message_for_attribute(k) unless known_manifest_attributes.include? k
+    end
+  end
+
+  def error_message_for_attribute(attribute)
+    "\e[31mWarning: #{attribute} is not a valid manifest attribute. Please " +
+    "remove this attribute from your manifest to get rid of this warning\e[0m"
   end
 
   def known_manifest_attributes
-    [:path, :name, :memory, :instances, :host, :domain, 
-     :command, :buildpack, :services, :env, :properties, 
+    [:path, :name, :memory, :instances, :host, :domain,
+     :command, :buildpack, :services, :env, :properties,
      :inherit, :mem, :disk, :runtime, :applications]
   end
 
