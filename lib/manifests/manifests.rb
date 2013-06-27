@@ -71,9 +71,9 @@ module CFManifests
   end
 
   def known_manifest_attributes
-    [:path, :name, :memory, :instances, :host, :domain,
-     :command, :buildpack, :services, :env, :properties,
-     :inherit, :mem, :disk, :runtime, :applications]
+    [:applications, :buildpack, :command, :disk, :domain, :env,
+     :host, :inherit, :instances, :mem, :memory, :name,
+     :path, :properties, :runtime, :services, :stack]
   end
 
   # dynamic symbol resolution
