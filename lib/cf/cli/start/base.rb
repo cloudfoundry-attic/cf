@@ -3,7 +3,6 @@ require "cf/cli"
 module CF
   module Start
     class Base < CLI
-      include LoginRequirements
 
       # Make sure we only show the target once
       @@displayed_target = false
