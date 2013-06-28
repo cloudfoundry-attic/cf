@@ -4,6 +4,11 @@
 
 ## Changes
 
+* SHA: [1793878e5d3a3f99b5f7cf0ddf54db4baad27e7b](git@github.com:cloudfoundry/cf/commit/1793878e5d3a3f99b5f7cf0ddf54db4baad27e7b)
+    * Bumping to version 4.0.1.rc2.
+    * Ryan Spore and Will Read, pair+ryan+will@pivotallabs.com
+
+
 * SHA: [620b9f27dcf0407c88f4a98fab483d1c8fbb7548](git@github.com:cloudfoundry/cf/commit/620b9f27dcf0407c88f4a98fab483d1c8fbb7548)
     * Help commands do not require login [fixes #52493417](http://www.pivotaltracker.com/story/52493417)
     * David Sabeti & Gaston Ramos, pair+dsabeti+gramos@pivotallabs.com
