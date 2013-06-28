@@ -22,13 +22,13 @@ $ cd cf
 $ bundle install
 ```
 
-Then you can run the specs:
+To run the specs:
 
 ```
 $ bundle exec rake
 ```
 
-To run the checked out code run the cf.dev script:
+To run the checked out code use the cf.dev script:
 
 ```
 ./bin/cf.dev 
