@@ -20,15 +20,27 @@ $ gem install cf
 $ git clone git@github.com:cloudfoundry/cf.git
 $ cd cf
 $ bundle install
-$ rake gem:install
+```
+
+Then you can run the specs:
+
+```
+$ bundle exec rake
+```
+
+To run the checked out code run the cf.dev script:
+
+```
+./bin/cf.dev 
 ```
 
 ## Usage
 
 ```
 $ cf help --all
+
 Getting Started
-  colors       	Show color configuration
+  colors	Show color configuration
   info         	Display information on the current target, user, etc.
   login [EMAIL]	Authenticate with the target
   logout       	Log out from the target
@@ -40,7 +52,7 @@ Applications
   apps     	List your applications
 
   Management
-    delete APPS...     	Delete an application
+    delete APPS...	Delete an application
     push [NAME]        	Push an application, syncing changes if it exists
     rename [APP] [NAME]	Rename an application
     restart APPS...    	Stop and start an application
@@ -49,9 +61,10 @@ Applications
     console APP        	Open a console connected to your app
 
   Information
-    env [APP]               	Show all environment variables set for an app
+    env [APP]			Show all environment variables set for an app
     set-env APP NAME [VALUE]	Set an environment variable
     unset-env APP NAME      	Remove an environment variable
+    events [APP]            	Display application events
     file APP [PATH]         	Print out an app's file contents
     files APP [PATH]        	Examine an app's files
     tail APP [PATH]         	Stream an app's file contents
@@ -69,7 +82,7 @@ Services
   services       	List your services
 
   Management
-    bind-service [SERVICE] [APP]    	Bind a service to an application
+    bind-service [SERVICE] [APP]	Bind a service to an application
     create-service [OFFERING] [NAME]	Create a service
     delete-service [SERVICE]        	Delete a service
     rename-service [SERVICE] [NAME] 	Rename a service
@@ -77,7 +90,7 @@ Services
     tunnel [INSTANCE] [CLIENT]      	Create a local tunnel to a service.
 
 Organizations
-  create-org [NAME]               	Create an organization
+  create-org [NAME]			Create an organization
   delete-org [ORGANIZATION]       	Delete an organization
   org [ORGANIZATION]              	Show organization information
   orgs                            	List available organizations
@@ -85,24 +98,26 @@ Organizations
 
 Spaces
   create-space [NAME] [ORGANIZATION]	Create a space in an organization
-  delete-space SPACES...            	Delete a space and its contents
+  delete-space SPACE                	Delete a space and its contents
   rename-space [SPACE] [NAME]       	Rename a space
   space [SPACE]                     	Show space information
   spaces [ORGANIZATION]             	List spaces in an organization
   switch-space NAME                 	Switch to a space
 
 Routes
-  routes	List routes in a space
+  delete-route ROUTE	Delete a route
+  routes            	List routes in a space
 
 Domains
-  domains [SPACE]    	List domains in a space
+  domains [SPACE]	List domains in a space
   map-domain NAME    	Map a domain to an organization or space
   unmap-domain DOMAIN	Unmap a domain from an organization or space
 
 Administration
-  users                                         	List all users
+  users							List all users
   curl MODE PATH HEADERS...                     	Execute a raw request
   guid TYPE [NAME]                              	Obtain guid of an object(s)
+  set-quota [QUOTA_DEFINITION] [ORGANIZATION]   	Change the quota definition for the given (or current) organization.
   service-auth-tokens                           	List service auth tokens
   create-service-auth-token [LABEL] [PROVIDER]  	Create a service auth token
   update-service-auth-token [SERVICE_AUTH_TOKEN]	Update a service auth token
@@ -114,7 +129,7 @@ Administration
     register [EMAIL]   	Create a user and log in
 
 Micro Cloud Foundry
-  micro-status VMX [PASSWORD] 	Display Micro Cloud Foundry VM status
+  micro-status VMX [PASSWORD]	Display Micro Cloud Foundry VM status
   micro-offline VMX [PASSWORD]	Micro Cloud Foundry offline mode
   micro-online VMX [PASSWORD] 	Micro Cloud Foundry online mode
 
@@ -131,6 +146,7 @@ Options:
   -q, --[no-]quiet                 Simplify output format
   -t, --trace                      Show API traffic
   -v, --version                    Print version number
+
 ```
 
 # Cloud Foundry Resources #
