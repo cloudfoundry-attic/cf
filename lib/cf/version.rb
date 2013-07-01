@@ -1,3 +1,3 @@
 module CF
-  VERSION = "6.0.0".freeze
+  VERSION = "4.0.1rc2".freeze
 end
