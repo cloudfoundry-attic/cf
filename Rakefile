@@ -1,5 +1,6 @@
 require "rake"
 require "rspec/core/rake_task"
+Dir.glob("lib/tasks/**/*").sort.each { |ext| load(ext) }
 
 specfile, _ = Dir["*.gemspec"]
 SPEC = Gem::Specification.load(specfile)

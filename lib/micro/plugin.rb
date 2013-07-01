@@ -1,21 +1,18 @@
 require "yaml"
 require "multi_json"
 require "cf/cli"
-
-require "micro-cf-plugin/help"
-require "micro-cf-plugin/micro/micro"
-require "micro-cf-plugin/micro/vmrun"
-require "micro-cf-plugin/micro/switcher/base"
-require "micro-cf-plugin/micro/switcher/darwin"
-require "micro-cf-plugin/micro/switcher/linux"
-require "micro-cf-plugin/micro/switcher/windows"
+require "micro/micro"
+require "micro/vmrun"
+require "micro/switcher/base"
+require "micro/switcher/darwin"
+require "micro/switcher/linux"
+require "micro/switcher/windows"
 
 module CFMicro
   class McfCommand < CF::CLI
     MICRO_FILE = '~/.cf/micro.yml'
 
     desc "Display Micro Cloud Foundry VM status"
-    group :micro
     input :vmx, :argument => :required,
       :desc => "Path to micro.vmx"
     input :password, :argument => :optional,
@@ -24,14 +21,12 @@ module CFMicro
       mode = runner.offline? ? 'offline' : 'online'
 
       line "Micro Cloud Foundry VM currently in #{b(mode)} mode"
-      # should the VMX path be unescaped?
       line "VMX Path: #{c(runner.vmx, :good)}"
       line "Domain: #{c(runner.domain, :good)}"
       line "IP Address: #{c(runner.ip, :good)}"
     end
 
     desc "Micro Cloud Foundry offline mode"
-    group :micro
     input :vmx, :argument => :required,
       :desc => "Path to micro.vmx"
     input :password, :argument => :optional,
@@ -57,7 +52,6 @@ module CFMicro
     end
 
     desc "Micro Cloud Foundry online mode"
-    group :micro
     input :vmx, :argument => :required,
       :desc => "Path to micro.vmx"
     input :password, :argument => :optional,
