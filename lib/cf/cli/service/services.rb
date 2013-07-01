@@ -15,17 +15,11 @@ module CF::Service
     input :app, :desc => "Limit to application's service bindings",
           :from_given => by_name(:app)
     input :full, :desc => "Verbose output format", :default => false
+    input :marketplace, :desc => "List supported services", :default => false, :alias => "-m"
 
     def services
-      msg =
-        if space = input[:space]
-          "Getting services in #{c(space.name, :name)}"
-        else
-          "Getting services"
-        end
-
       services =
-        with_progress(msg) do
+        with_progress(services_msg) do
           client.service_instances(:depth => 2)
         end
 
@@ -65,6 +59,18 @@ module CF::Service
             ]
           })
       end
+    end
+
+    def services_msg
+      if space = input[:space]
+        "Getting services in #{c(space.name, :name)}"
+      else
+        "Getting services"
+      end
+    end
+
+    def marketplace
+
     end
 
     private

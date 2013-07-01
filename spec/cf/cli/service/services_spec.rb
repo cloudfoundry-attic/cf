@@ -24,7 +24,7 @@ module CF
         describe "inputs" do
           subject { command.inputs }
           it "has the expected inputs" do
-            subject.keys.should =~ [:name, :service, :plan, :provider, :version, :app, :full, :space]
+            subject.keys.should =~ [:name, :service, :marketplace, :plan, :provider, :version, :app, :full, :space]
           end
         end
       end
@@ -72,6 +72,17 @@ module CF
         app-name-\d+\s+                                         # bound apps
         /x
 
+        end
+
+        context 'when given --marketplace argument' do
+          it 'lists services on the target' do
+            pending
+            cf %W[services --marketplace]
+            expected_output = "Getting services... OK
+
+service           version   provider       plans                                                    description"
+            expect(output).to say(expected_output)
+          end
         end
       end
     end
