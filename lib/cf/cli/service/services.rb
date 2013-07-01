@@ -18,6 +18,18 @@ module CF::Service
     input :marketplace, :desc => "List supported services", :default => false, :alias => "-m"
 
     def services
+      set_services
+
+      if input[:full]
+        show_full
+      else
+        show_services_table
+      end
+    end
+
+    private
+
+    def set_services
       @services =
         with_progress(services_msg) do
           client.service_instances(:depth => 2)
@@ -33,18 +45,13 @@ module CF::Service
       @services.reject! do |i|
         !service_matches(i, input)
       end
-
-      if input[:full]
-        spaced(@services) do |s|
-          invoke :service, :service => s
-        end
-      else
-        show_services_table
-      end
     end
 
-
-    private
+    def show_full
+      spaced(@services) do |s|
+        invoke :service, :service => s
+      end
+    end
 
     def show_services_table
       table(
