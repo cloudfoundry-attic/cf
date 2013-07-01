@@ -18,47 +18,55 @@ module CF::Service
     input :marketplace, :desc => "List supported services", :default => false, :alias => "-m"
 
     def services
-      services =
+      @services =
         with_progress(services_msg) do
           client.service_instances(:depth => 2)
         end
 
       line unless quiet?
 
-      if services.empty? and !quiet?
+      if @services.empty? and !quiet?
         line "No services."
         return
       end
 
-      services.reject! do |i|
+      @services.reject! do |i|
         !service_matches(i, input)
       end
 
       if input[:full]
-        spaced(services) do |s|
+        spaced(@services) do |s|
           invoke :service, :service => s
         end
       else
-        table(
-          ["name", "service", "provider", "version", "plan", "bound apps"],
-          services.collect { |i|
-            plan = i.service_plan
-            service = plan.service
-
-            label = service.label
-            version = service.version
-            apps = name_list(i.service_bindings.collect(&:app))
-            provider = service.provider
-
-            [ c(i.name, :name),
-              label,
-              provider,
-              version,
-              plan.name,
-              apps
-            ]
-          })
+        show_services_table
       end
+    end
+
+
+    private
+
+    def show_services_table
+      table(
+        ["name", "service", "provider", "version", "plan", "bound apps"],
+        @services.collect { |i|
+          plan = i.service_plan
+          service = plan.service
+
+          label = service.label
+          version = service.version
+          apps = name_list(i.service_bindings.collect(&:app))
+          provider = service.provider
+
+          [ c(i.name, :name),
+            label,
+            provider,
+            version,
+            plan.name,
+            apps
+          ]
+        })
+
     end
 
     def services_msg
@@ -68,12 +76,6 @@ module CF::Service
         "Getting services"
       end
     end
-
-    def marketplace
-
-    end
-
-    private
 
     def service_matches(i, options)
       if app = options[:app]
