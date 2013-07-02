@@ -19,21 +19,8 @@ module CF::Start
         return
       end
 
-      if input.has?(:url)
-        target = sane_target_url(input[:url])
-        with_progress("Setting target to #{c(target, :name)}") do
-          begin
-            CFoundry::Client.new(target) # check that it's valid before setting
-          rescue CFoundry::TargetRefused
-            fail "Target refused connection."
-          rescue CFoundry::InvalidTarget
-            fail "Invalid target URI."
-          end
-
-          set_target(target)
-        end
-      end
-
+      set_target_url if input.has?(:url)
+     
       return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
@@ -50,6 +37,21 @@ module CF::Start
     end
 
     private
+    
+    def set_target_url
+      target = sane_target_url(input[:url])
+      with_progress("Setting target to #{c(target, :name)}") do
+        begin
+          CFoundry::Client.new(target) # check that it's valid before setting
+        rescue CFoundry::TargetRefused
+          fail "Target refused connection."
+        rescue CFoundry::InvalidTarget
+          fail "Invalid target URI."
+        end
+
+        set_target(target)
+      end
+    end
 
     def display_org_and_space
       if (org = client.current_organization)
