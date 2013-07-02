@@ -35,6 +35,7 @@ To run the checked out code use the cf.dev script:
 ```
 
 ## Usage
+See the 'cf help' command for up-to-date usage info:
 
 ```
 $ cf help --all
