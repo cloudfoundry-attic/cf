@@ -76,12 +76,10 @@ module CF
 
         context 'when given --marketplace argument' do
           it 'lists services on the target' do
-            pending
+            client.stub(:services => Array.new(3) { build(:service) })
             cf %W[services --marketplace]
-            expected_output = "Getting services... OK
-
-service           version   provider       plans                                                    description"
-            expect(output).to say(expected_output)
+            expect(output).to say("Getting services... OK")
+            expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
           end
         end
       end

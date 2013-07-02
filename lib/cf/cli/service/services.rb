@@ -18,13 +18,11 @@ module CF::Service
     input :marketplace, :desc => "List supported services", :default => false, :alias => "-m"
 
     def services
-      set_services
+      return show_marketplace if input[:marketplace]
 
-      if input[:full]
-        show_full
-      else
-        show_services_table
-      end
+      set_services
+      return show_full if input[:full]
+      return show_services_table
     end
 
     private
@@ -47,6 +45,23 @@ module CF::Service
       end
     end
 
+    def show_marketplace
+      services = with_progress("Getting services") { client.services }
+
+      line unless quiet?
+
+      table(
+        ["service", "version", "provider", "plans", "description"],
+        services.sort_by(&:label).collect { |s|
+          [c(s.label, :name),
+            s.version,
+            s.provider,
+            s.service_plans.collect(&:name).join(", "),
+            s.description
+          ]
+        })
+    end
+
     def show_full
       spaced(@services) do |s|
         invoke :service, :service => s
@@ -60,9 +75,9 @@ module CF::Service
           plan = i.service_plan
           service = plan.service
 
-          label = service.label
-          version = service.version
-          apps = name_list(i.service_bindings.collect(&:app))
+          label    = service.label
+          version  = service.version
+          apps     = name_list(i.service_bindings.collect(&:app))
           provider = service.provider
 
           [ c(i.name, :name),
