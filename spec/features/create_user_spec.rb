@@ -44,7 +44,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
       guid = user.guid
       client.login(username, password)
       user.delete!
-      client.base.uaa.delete_user(guid)
 
       logout
       Interact::Progress::Dots.stop!

@@ -51,7 +51,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
       guid = user.guid
       client.login(username, password)
       user.delete!
-      client.base.uaa.delete_user(guid)
 
       BlueShell::Runner.run("#{cf_bin} login #{email} --password #{password}") do |runner|
         expect(runner).to say "Authenticating... FAILED"
