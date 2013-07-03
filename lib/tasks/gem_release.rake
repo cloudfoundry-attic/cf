@@ -7,6 +7,7 @@ namespace :gem do
     old_version = gem_version
 
     sh! "gem bump --version #{version} --no-commit"
+    sh! "git add lib/cf/version.rb"
 
     print_with_purpose "Bumping to version #{gem_version}"
     generate_release_notes(old_version)
