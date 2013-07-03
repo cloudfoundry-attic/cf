@@ -110,15 +110,12 @@ module CF
     def help_header
     <<EOS
 Cloud Foundry Command Line Interface, version [#{CF::VERSION}]
-Showing basic commands. Use 'cf help --all' to list all commands, or
-'cf help [command]' for help detailed help on a command.
-
-For docs and support visit http://support.cloudfoundry.com
+  Use 'cf help' for basic help, 'cf help --all' for all commands, 'cf help [command]' for command details.
+  For docs and support visit http://support.cloudfoundry.com
 
 USAGE EXAMPLES
-  $ cf target api.run.pivotal.io    <-- sets target API endpoint (the CF instance where you want to push apps) to 'api.run.pivotal.io'
-  $ cf login                        <-- logs into currently targeted CF instance, will also prompt for target org and app space
-  $ cf push                         <-- deploys app to current target
+  $ cf target api.run.pivotal.io    <-- sets the CF instance target where your app will be pushed
+  $ cf push                         <-- deploys app to current app space on current target
   $ cf target -s staging            <-- changes currently targeted app space to 'staging'
 
 EOS
