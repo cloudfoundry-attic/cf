@@ -1,10 +1,11 @@
 require "spec_helper"
+require "cfoundry"
 
 module CF
   module Start
     describe Target do
       before do
-        stub_client_and_precondition
+        stub_client
       end
 
       let(:client) { build(:client).tap {|client| client.stub(:apps => [app]) } }
@@ -42,16 +43,29 @@ module CF
 
         context "when the user is authenticated and has an organization" do
           let(:user) { build(:user) }
-          let(:organization) { build(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space]) }
+          let(:organization) do
+            org = build(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space, space])
+            org.manifest[:metadata] = { :guid => org.guid }
+            org
+          end
+
+          let(:other_organization) do
+            org = build(:organization, :name => "My Other Org", :guid => "organization-id-2", :users => [user], :spaces => [space, space])
+            org.manifest[:metadata] = {:guid => org.guid }
+            org
+          end
+
           let(:space) { build(:space, :name => "Staging", :guid => "space-id-2", :developers => [user]) }
+          let(:spaces) { [space] }
 
           before do
+            CF::Populators::Target.stub(:client).and_return(client)
             client.stub(:logged_in?) { true }
-            client.stub(:organizations) { [organization] }
+            client.base.stub(:organizations) { [organization.manifest, other_organization.manifest] }
             client.stub(:current_user) { user }
-            client.stub(:organization) { organization }
-            client.stub(:current_organization) { organization }
-            described_class.any_instance.stub(:client) { client }
+            client.current_organization = organization
+            client.current_space = space
+            CF::Populators::Space.any_instance.stub(:choices).and_return(spaces)
           end
 
           describe "switching the target" do
@@ -82,6 +96,37 @@ module CF
                 subject
                 expect(error_output).to say("Invalid target URI.")
               end
+            end
+          end
+
+          describe "switching the organization" do
+
+            # context "When invalid argument is provided" do
+            #   before do
+            #     cf %W[target -o invalid_org_name]
+            #   end
+
+            #   it "reports error"
+            # end
+
+            context "when valid argument is provided" do
+
+              it "switches organization" do
+                cf %W[target]
+                expect(output).to say("organization: #{organization.name}")
+                clear_output
+
+                cf %W[target -o #{other_organization.name}]
+                expect(output).to say("Switching to organization #{other_organization.name}")
+                expect(output).to say("organization: #{other_organization.name}")
+              end
+
+              it "asks to select new space" do
+                pending
+                expect(output).to say("Space>")
+              end
+
+              it "prints new organization and space when 'cf target' is run"
             end
           end
 

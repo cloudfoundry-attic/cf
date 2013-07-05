@@ -13,31 +13,33 @@ module CF::Start
 
     def target
       unless input.has?(:url) || input.has?(:organization) || \
-              input.has?(:space)
-        display_target
-        display_org_and_space unless quiet?
-        return
+               input.has?(:space)
+         display_target
+         display_org_and_space unless quiet?
+         return
       end
 
       set_target_url if input.has?(:url)
-     
-      return unless client.logged_in?
+
+      #return unless client.logged_in?
 
       if input.has?(:organization) || input.has?(:space)
         CF::Populators::Target.new(input).populate_and_save!
       end
 
+      line
+      display_target
+
       return if quiet?
 
       invalidate_client
+      # ^^^write test for this
 
-      line
-      display_target
       display_org_and_space
     end
 
     private
-    
+
     def set_target_url
       target = sane_target_url(input[:url])
       with_progress("Setting target to #{c(target, :name)}") do

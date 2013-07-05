@@ -6,4 +6,4 @@ source "http://rubygems.org"
 
 gemspec
 
-#gem "cfoundry", :path => "../cfoundry"
+gem "cfoundry", :path => "../cfoundry"

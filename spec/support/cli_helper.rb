@@ -47,6 +47,10 @@ module CliHelper
     $stdin = $real_stdin
   end
 
+  def clear_output
+    @output = nil
+  end
+
   def output
     @output ||= BlueShell::BufferedReaderExpector.new(stdout)
   end
