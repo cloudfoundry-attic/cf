@@ -32,6 +32,13 @@ describe CFManifests do
     cmd.stub(:manifest_file) { manifest_file }
   end
 
+  describe "#resolve_symbol" do
+    it "resolves target-base for old manifest files" do
+      cmd.stub(:target_base) { 'the_really_great_target_base' }
+      cmd.resolve_symbol("target-base").should == 'the_really_great_target_base'
+    end
+  end
+
   describe "#find_apps" do
     subject { cmd.find_apps(nil) }
 

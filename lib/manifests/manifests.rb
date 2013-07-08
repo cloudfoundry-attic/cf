@@ -82,6 +82,9 @@ module CFManifests
     when "target-url"
       client_target
 
+    when "target-base"
+      target_base
+
     when "random-word"
       sprintf("%04x", rand(0x0100000))
 
