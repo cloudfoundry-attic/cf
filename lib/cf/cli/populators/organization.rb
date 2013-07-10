@@ -13,7 +13,12 @@ module CF
       private
 
       def choices
-        client.organizations(:depth => 0)
+        organization_response = client.organizations_first_page(:depth => 0)
+        if organization_response[:next_page]
+          "Login successful. Too many organizations (>50) to list. Remember to set your target organization using 'target -o [ORGANIZATION]'."
+        else
+          organization_response[:results]
+        end
       end
 
       def valid?(organization)

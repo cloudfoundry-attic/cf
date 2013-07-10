@@ -116,7 +116,7 @@ module CF
 
             context "but that organization doesn't exist anymore (not valid)" do
               before do
-                client.stub(:organizations).and_return(organizations)
+                client.stub(:organizations_first_page).and_return({:results => organizations})
                 organization.stub(:users).and_raise(CFoundry::APIError)
               end
 
@@ -130,7 +130,7 @@ module CF
           context "without an organization in the config file" do
             context "when the user has organizations" do
               before do
-                client.stub(:organizations).and_return(organizations)
+                client.stub(:organizations_first_page).and_return({:results => organizations})
                 write_token_file({})
               end
 
@@ -151,12 +151,23 @@ module CF
 
             context "when the user has no organizations" do
               before do
-                client.stub(:organizations).and_return([])
+                client.stub(:organizations_first_page).and_return({:results => []})
                 write_token_file({})
               end
 
               it "tells the user to create one by raising a UserFriendlyError" do
                 expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, "There are no organizations. You may want to create one with create-org.")
+              end
+            end
+
+            context "when the user has too many organizations" do
+              before do
+                client.stub(:organizations_first_page).and_return({:results => organizations, :next_page => true})
+                write_token_file({})
+              end
+
+              it "tells the user to set their target" do
+                expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, "Login successful. Too many organizations (>50) to list. Remember to set your target organization using 'target -o [ORGANIZATION]'.")
               end
             end
           end
