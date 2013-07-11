@@ -1,17 +1,18 @@
 require "spec_helper"
 
 if ENV['CF_V2_RUN_INTEGRATION']
-  describe 'A user logs in and switches spaces, after a different user has logged in', :ruby19 => true do
+  describe "A user logs in", :ruby19 => true do
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
-    let(:username) { ENV['CF_V2_TEST_USER'] }
-    let(:password) { ENV['CF_V2_TEST_PASSWORD'] }
-    let(:organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
+    let(:second_username) { ENV['CF_V2_TEST_USER'] }
+    let(:second_password) { ENV['CF_V2_TEST_PASSWORD'] }
+    let(:second_organization) { ENV['CF_V2_TEST_ORGANIZATION'] }
+    let(:second_space) {ENV['CF_V2_TEST_SPACE']}
 
-    let(:second_username) { ENV['CF_V2_OTHER_TEST_USER'] }
-    let(:second_organization) { ENV['CF_V2_OTHER_TEST_ORGANIZATION'] }
-    let(:second_space) { ENV['CF_V2_OTHER_TEST_SPACE'] }
-    let(:second_password) { ENV['CF_V2_OTHER_TEST_PASSWORD'] || ENV['CF_V2_TEST_PASSWORD'] }
+    let(:username) { ENV['CF_V2_OTHER_TEST_USER'] }
+    let(:organization) { ENV['CF_V2_OTHER_TEST_ORGANIZATION'] }
+    let(:space) { ENV['CF_V2_OTHER_TEST_SPACE'] }
+    let(:password) { ENV['CF_V2_OTHER_TEST_PASSWORD'] || ENV['CF_V2_TEST_PASSWORD'] }
 
     before do
       Interact::Progress::Dots.start!
