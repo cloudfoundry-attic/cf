@@ -9,7 +9,7 @@ module CF::Organization
     def orgs
       orgs =
         with_progress("Getting organizations") do
-          client.organizations.sort_by(&:name)
+          client.organizations(:depth => 0).sort_by(&:name)
         end
 
       return if orgs.empty?
@@ -22,13 +22,8 @@ module CF::Organization
         end
       else
         table(
-          %w{name spaces domains},
-          orgs.collect { |o|
-            [ c(o.name, :name),
-              name_list(o.spaces),
-              name_list(o.domains)
-            ]
-          })
+          %w{name},
+          orgs.collect { |o| [c(o.name, :name)] })
       end
     end
   end

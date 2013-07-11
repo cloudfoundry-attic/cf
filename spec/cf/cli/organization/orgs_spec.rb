@@ -103,9 +103,9 @@ module CF
             stdout.readline
             stdout.readline
 
-            expect(stdout.readline).to match /name\s+spaces\s+domains/
+            expect(stdout.readline).to match /name/
             organizations.sort_by(&:name).each do |org|
-              expect(stdout.readline).to match /#{org.name}\s+#{name_list(org.spaces)}\s+#{name_list(org.domains)}/
+              expect(stdout.readline).to match /#{org.name}/
             end
             expect(stdout).to be_eof
           end
