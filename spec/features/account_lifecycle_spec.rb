@@ -46,10 +46,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       # TODO: not this.
       client = CFoundry::V2::Client.new("https://#{target}")
-      client.login(email, password)
+      client.login(:username => email, :password => password)
       user = client.current_user
       guid = user.guid
-      client.login(username, password)
+      client.login(:username => username, :password => password)
       user.delete!
 
       BlueShell::Runner.run("#{cf_bin} login #{email} --password #{password}") do |runner|

@@ -47,12 +47,14 @@ describe CF::Start::Login do
     let(:tokens_file_path) { "~/.cf/tokens.yml" }
 
     before do
-      client.stub(:login).with("my-username", "my-password") { auth_token }
+      client
+        .stub(:login)
+        .with(:username => "my-username", :password => "my-password") { auth_token }
+
       client.stub(:login_prompts).and_return(
-      {
         :username => ["text", "Username"],
         :password => ["password", "8-digit PIN"]
-      })
+      )
 
       stub_ask("Username", {}) { "my-username" }
       stub_ask("8-digit PIN", {:echo => "*", :forget => true}) { "my-password" }
@@ -80,7 +82,10 @@ describe CF::Start::Login do
 
       context "when the user logs in with invalid credentials" do
         before do
-          client.should_receive(:login).with("my-username", "my-password").and_raise(CFoundry::Denied)
+          client
+            .should_receive(:login)
+            .with(:username => "my-username", :password => "my-password")
+            .and_raise(CFoundry::Denied)
         end
 
         it "informs the user gracefully" do

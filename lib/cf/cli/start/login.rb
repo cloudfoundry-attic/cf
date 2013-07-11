@@ -49,7 +49,7 @@ module CF::Start
 
         with_progress("Authenticating") do |s|
           begin
-            auth_token = client.login(credentials[:username], credentials[:password])
+            auth_token = client.login(credentials)
             authenticated = true
           rescue CFoundry::Denied
             return if force?
