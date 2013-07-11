@@ -18,14 +18,13 @@ module CF::Organization
       return unless input[:really, org]
 
       is_current = org == client.current_organization
-      remote_organizations = client.organizations(:depth => 0)
-
+      @orgs ||= client.organizations(:depth => 0)
       with_progress("Deleting organization #{c(org.name, :name)}") do
         deleted = org.delete!(:recursive => !!input[:recursive])
-        remote_organizations.delete(org) if deleted
+        @orgs.delete(org) if deleted
       end
 
-      if remote_organizations.empty?
+      if @orgs.empty?
         return unless input[:warn]
 
         line
@@ -45,10 +44,10 @@ module CF::Organization
     private
 
     def ask_organization
-      orgs = client.organizations(:depth => 0)
-      fail "No organizations." if orgs.empty?
+      @orgs = client.organizations(:depth => 0)
+      fail "No organizations." if @orgs.empty?
 
-      ask("Which organization", :choices => orgs.sort_by(&:name),
+      ask("Which organization", :choices => @orgs.sort_by(&:name),
           :display => proc(&:name))
     end
 
