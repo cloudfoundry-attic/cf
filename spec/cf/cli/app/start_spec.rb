@@ -9,6 +9,9 @@ module CF
       before do
         stub_client_and_precondition
         client.stub(:apps).and_return([app])
+
+        app.stub(:host).and_return("some_host")
+        app.stub(:domain).and_return("some_domain")
       end
 
       def execute_start_app
@@ -80,7 +83,7 @@ module CF
 
               it "says app is started" do
                 execute_start_app
-                expect(output).to say("Checking #{app.name}...")
+                expect(output).to say("Checking status of app '#{app.name}'...")
                 expect(output).to say("1 running, 1 down")
                 expect(output).to say("2 running")
               end
@@ -93,7 +96,7 @@ module CF
 
               it "says the app failed to stage" do
                 execute_start_app
-                expect(output).to say("Checking #{app.name}...")
+                expect(output).to say("Checking status of app '#{app.name}'...")
                 expect(error_output).to say("Application failed to stage")
                 expect(output).to_not say(/\d (running|down|flapping)/)
               end
@@ -112,8 +115,7 @@ module CF
 
               it "keeps polling" do
                 execute_start_app
-                expect(output).to say("Checking #{app.name}...")
-                expect(output).to say("Staging in progress...")
+                expect(output).to say("Checking status of app '#{app.name}'...")
                 expect(output).to say("2 running")
               end
             end
@@ -127,10 +129,10 @@ module CF
 
               it "says app failed to start" do
                 execute_start_app
-                expect(output).to say("Checking #{app.name}...")
+                expect(output).to say("Checking status of app '#{app.name}'...")
                 expect(output).to say("1 running, 1 down")
                 expect(output).to say("1 starting, 1 flapping")
-                expect(error_output).to say("Application failed to start")
+                expect(error_output).to say("Push unsuccessful.")
               end
             end
           end

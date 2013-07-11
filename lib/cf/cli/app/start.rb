@@ -91,15 +91,16 @@ module CF::App
         return
       end
 
-      line "Checking #{c(app.name, :name)}..."
+      print("Checking status of app '#{c(app.name, :name)}'...")
 
       seconds = 0
+      @first_time_after_staging_succeeded = true
 
       begin
         instances = []
         while true
           if any_instance_flapping?(instances) || seconds == APP_CHECK_LIMIT
-            err "Application failed to start."
+            err "Push unsuccessful."
             return
           end
 
@@ -109,11 +110,11 @@ module CF::App
             indented { print_instances_summary(instances) }
 
             if all_instances_running?(instances)
-              line "#{c("OK", :good)}"
+              line "#{c("Push successful! App '#{app.name}' available at #{app.name}.#{app.domain}", :good)}"
               return
             end
           rescue CFoundry::NotStaged
-            line "Staging in progress..."
+            print (".")
           end
 
           sleep 1
@@ -133,6 +134,12 @@ module CF::App
     end
 
     def print_instances_summary(instances)
+
+      if @first_time_after_staging_succeeded
+        line
+        @first_time_after_staging_succeeded = false
+      end
+
       counts = Hash.new { 0 }
       instances.each do |i|
         counts[i.state] += 1
@@ -148,8 +155,8 @@ module CF::App
       total = instances.count
       running = counts["RUNNING"].to_s.rjust(total.to_s.size)
 
-      ratio = "#{running}#{d("/")}#{total} instances:"
-      line "#{ratio} #{states.join(", ")}"
+      ratio = "#{running}#{d(" of ")}#{total} instances running"
+      line "#{ratio} (#{states.join(", ")})"
     end
   end
 end
