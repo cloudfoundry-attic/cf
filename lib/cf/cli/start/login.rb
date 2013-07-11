@@ -19,13 +19,16 @@ module CF::Start
     def login
       show_context
 
-      credentials = { :username => input[:username], :password => input[:password] }
+      credentials = {
+        :username => input[:username],
+        :password => input[:password]
+      }
 
       prompts = client.login_prompts
 
       # ask username first
-      if prompts.key? :username
-        type, label = prompts.delete :username
+      if prompts.key?(:username)
+        type, label = prompts.delete(:username)
         credentials[:username] ||= ask_prompt(type, label)
       end
 
