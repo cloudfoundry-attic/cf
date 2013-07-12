@@ -74,6 +74,37 @@ module CF
 
         end
 
+        context "when one of the services does not have a service plan" do
+          let(:service_instances) { [service1, service2]}
+          let(:service2) { build(:service_instance, :service_plan => nil, :service_bindings => [service_binding]) }
+          it 'still produces a table of service' do
+            subject
+            stdout.rewind
+            output = stdout.read
+
+            expect(output).to match /Getting services in the space.*OK/
+
+            expect(output).to match /name\s+service\s+provider\s+version\s+plan\s+bound apps/
+
+            expect(output).to match /service-instance-.+?\s+  # name
+        service-.*?\s+                                  # service
+        provider.*?\s+                                  # provider
+        service_version\s+                              # version
+        service-plan-.*?\s+                             # plan
+        app-name-\d+\s+                                         # bound apps
+        /x
+
+            expect(output).to match /service-instance-.+?\s+  # name
+        none\s+                                  # service
+        none\s+                                  # provider
+        none\s+                              # version
+        none\s+                             # plan
+        app-name-\d+\s+                                         # bound apps
+        /x
+          end
+        end
+
+
         context 'when given --marketplace argument' do
           it 'lists services on the target' do
             client.stub(:services => Array.new(3) { build(:service) })
