@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "ffaker", "= 1.15"
   s.add_development_dependency "gem-release"
   s.add_development_dependency "rake", "~> 0.9"
-  s.add_development_dependency "rspec", "~> 2.11"
+  s.add_development_dependency "rspec", "~> 2.14"
   s.add_development_dependency "rspec-instafail", "~> 0.2.4"
   s.add_development_dependency "webmock", "~> 1.9"
 end
