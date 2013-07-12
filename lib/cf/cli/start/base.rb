@@ -24,11 +24,6 @@ module CF
       end
 
       def display_target
-        if client.nil?
-          fail "No target has been specified."
-          return
-        end
-
         if quiet?
           line client.target
         else

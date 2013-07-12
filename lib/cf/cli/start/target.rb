@@ -12,10 +12,8 @@ module CF::Start
           :from_given => by_name(:space)
 
     def target
-      unless input.has?(:url) || input.has?(:organization) || \
-              input.has?(:space)
-        display_target
-        display_org_and_space unless quiet?
+      unless input.has?(:url) || input.has?(:organization) || input.has?(:space)
+        TargetPrettifier.prettify(client, self)
         return
       end
 
@@ -23,7 +21,7 @@ module CF::Start
         target = sane_target_url(input[:url])
         with_progress("Setting target to #{c(target, :name)}") do
           begin
-            CFoundry::Client.new(target) # check that it's valid before setting
+            CFoundry::Client.get(target) # check that it's valid before setting
           rescue CFoundry::TargetRefused
             fail "Target refused connection."
           rescue CFoundry::InvalidTarget
@@ -35,7 +33,6 @@ module CF::Start
       end
 
       return unless client.logged_in?
-
       if input.has?(:organization) || input.has?(:space)
         CF::Populators::Target.new(input).populate_and_save!
       end
@@ -45,21 +42,9 @@ module CF::Start
       invalidate_client
 
       line
-      display_target
-      display_org_and_space
+      TargetPrettifier.prettify(client, self)
     end
 
-    private
-
-    def display_org_and_space
-      if (org = client.current_organization)
-        line "organization: #{c(org.name, :name)}"
-      end
-
-      if (space = client.current_space)
-        line "space: #{c(space.name, :name)}"
-      end
-    rescue CFoundry::APIError
-    end
+    public :c
   end
 end

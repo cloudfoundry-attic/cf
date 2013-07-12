@@ -41,7 +41,7 @@ module CF
         stub_home_dir_with { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
         context "when the user is authenticated and has an organization" do
-          let(:user) { build(:user) }
+          let(:user) { build(:user).tap{ |u| u.stub(:email => "user@example.com") } }
           let(:organization) { build(:organization, :name => "My Org", :guid => "organization-id-1", :users => [user], :spaces => [space]) }
           let(:space) { build(:space, :name => "Staging", :guid => "space-id-2", :developers => [user]) }
 
@@ -103,15 +103,18 @@ module CF
               expect(output).to say("space: #{space.name}")
             end
           end
-        end
 
-        context "when client is nil" do
-          let(:client) { nil }
-          subject { cf ["target"] }
-
-          it 'prints an error' do
-            subject
-            expect(error_output).to say("No target has been specified.")
+          describe "displaying the target (no args)" do
+            it "prints things nicely" do
+              client.stub(:current_space) { space }
+              cf %W{target}
+              expect(output).to say(<<-STR)
+Target Information (where will apps be pushed):
+  CF instance: #{client.target} (API version: 2)
+  user: #{user.email}
+  target app space: #{space.name} (org: #{organization.name})
+              STR
+            end
           end
         end
       end
