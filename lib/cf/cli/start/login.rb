@@ -16,16 +16,27 @@ module CF::Start
           :from_given => by_name(:organization)
     input :space, :desc => "Space", :alias => "-s",
           :from_given => by_name(:space)
+    input :sso, :desc => "Log in via SSO",
+          :alias => "--sso", :default => false
     def login
       show_context
 
-      credentials = { :username => input[:username], :password => input[:password] }
+      expected_prompts = if input[:sso]
+        [:username, :passcode]
+      else
+        [:username, :password]
+      end
+
+      credentials = {
+        :username => input[:username],
+        :password => input[:password]
+      }
 
       prompts = client.login_prompts
 
       # ask username first
-      if prompts.key? :username
-        type, label = prompts.delete :username
+      if prompts.key?(:username)
+        type, label = prompts.delete(:username)
         credentials[:username] ||= ask_prompt(type, label)
       end
 
@@ -41,19 +52,18 @@ module CF::Start
         failed = false
 
         unless force?
-          ask_prompts(credentials, prompts)
+          ask_prompts(credentials, prompts.slice(*expected_prompts))
         end
 
         with_progress("Authenticating") do |s|
           begin
-            auth_token = client.login(credentials[:username], credentials[:password])
+            auth_token = client.login(credentials.slice(*expected_prompts))
             authenticated = true
           rescue CFoundry::Denied
             return if force?
-
             s.fail do
               failed = true
-              credentials.delete(:password)
+              credentials = credentials.slice(:username)
             end
           end
         end

@@ -19,7 +19,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     let(:client) do
       client = CFoundry::V2::Client.new("https://#{target}")
-      client.login(username, password)
+      client.login(:username => username, :password => password)
       client
     end
 
@@ -39,10 +39,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
       #end
 
       # TODO: not this.
-      client.login(new_user, password)
+      client.login(:username => new_user, :password => password)
       user = client.current_user
       guid = user.guid
-      client.login(username, password)
+      client.login(:username => username, :password => password)
       user.delete!
 
       logout
