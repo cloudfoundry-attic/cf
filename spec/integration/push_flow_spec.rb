@@ -7,6 +7,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
 
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
+    let(:subdomain) { "hello-sinatra-subdomain-#{run_id}" }
     let(:service_name) { "dummy-service-#{run_id}" }
 
     before do
@@ -52,14 +53,14 @@ if ENV["CF_V2_RUN_INTEGRATION"]
 
           runner.send_up_arrow
           expect(runner).not_to say "Memory Limit>"
-          runner.send_return
+          runner.send_keys subdomain
 
           expect(runner).to say "1:"
           expect(runner).to say "Domain>"
           runner.send_keys "1"
 
-          expect(runner).to say(/Creating route #{app}\..*\.\.\. OK/)
-          expect(runner).to say(/Binding #{app}\..* to #{app}\.\.\. OK/)
+          expect(runner).to say(/Creating route #{subdomain}\..*\.\.\. OK/)
+          expect(runner).to say(/Binding #{subdomain}\..* to #{app}\.\.\. OK/)
 
           expect(runner).to say "Create services for application?> n"
           runner.send_up_arrow
@@ -94,11 +95,11 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           runner.send_return
 
           expect(runner).to say "Uploading #{app}... OK", 180
-          expect(runner).to say "Starting #{app}... OK", 180
+          expect(runner).to say "Preparing to start #{app}... OK", 180
           expect(runner).to say "Checking status of app '#{app}'...", 180
           expect(runner).to say "0 of 1 instances running (1 starting)"
           expect(runner).to say "1 of 1 instances running"
-          expect(runner).to say "Push successful! App '#{app}' available at http://#{app}.a1-app.cf-app.com", 30
+          expect(runner).to say "Push successful! App '#{app}' available at http://#{subdomain}.a1-app.cf-app.com", 30
         end
       end
 

@@ -12,6 +12,7 @@ module CF
 
         app.stub(:host).and_return("some_host")
         app.stub(:domain).and_return("some_domain")
+        app.stub(:subdomain).and_return("some_subdomain")
       end
 
       def execute_start_app
