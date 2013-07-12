@@ -98,7 +98,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           expect(runner).to say "Checking status of app '#{app}'...", 180
           expect(runner).to say "0 of 1 instances running (1 starting)"
           expect(runner).to say "1 of 1 instances running"
-          expect(runner).to say "Push successful! App '#{app}' available at #{app}.a1-app.cf-app.com", 30
+          expect(runner).to say "Push successful! App '#{app}' available at http://#{app}.a1-app.cf-app.com", 30
         end
       end
 
