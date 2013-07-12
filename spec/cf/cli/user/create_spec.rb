@@ -59,7 +59,7 @@ module CF
             stub_ask("Password", anything) { "password1" }
             stub_ask("Verify Password", anything) { confirmation }
 
-            CF::Populators::Organization.stub(:new) { stub(:organization, :populate_and_save! => org) }
+            CF::Populators::Organization.stub(:new) { double(:organization, :populate_and_save! => org) }
             client.stub(:register).with("some-angry-dude@example.com", "password1") { user }
             user.stub(:update!)
           end
