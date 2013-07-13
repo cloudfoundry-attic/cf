@@ -37,7 +37,7 @@ module CF
         def self.it_says_application_is_starting
           it "says that it's starting the application" do
             execute_start_app
-            expect(output).to say("Starting #{app.name}... OK")
+            expect(output).to say("Preparing to start #{app.name}... OK")
           end
         end
 
