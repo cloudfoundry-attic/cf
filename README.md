@@ -8,6 +8,10 @@ The Cloud Foundry CLI has been completely rewritten. Installation, usage & contr
 
 This tool requires cloud_controller_ng. It is not compatible with cloud_controller v1.
 
+## Requirements
+
+cf should work with Ruby 1.9.x and newer.
+
 ## Installation
 
 ```
