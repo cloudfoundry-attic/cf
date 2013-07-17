@@ -18,11 +18,27 @@ describe ManifestsPlugin do
     plugin.stub(:client) { client }
   end
 
+  describe ".use_manifest_for_app_input" do
+    it "makes the app argument optional and wraps it in an around that gets the app from the manifest" do
+      command = described_class.commands[:app]
+      command.instance_variable_set(:@arguments, [{:name => :app, :type => :required, :value => nil}])
+
+      expect(command.arguments).to eq [{:name => :app, :type => :required, :value => nil}]
+      expect(command.around.size).to eq 1
+
+      described_class.default_to_app_from_manifest :app, false
+
+      expect(command.arguments).to eq [{:name => :app, :type => :optional, :value => nil}]
+      expect(command.around.size).to eq 2
+    end
+  end
+
   describe "#wrap_with_optional_name" do
     let(:name_made_optional) { true }
+    let(:fail_without_app) { true }
     let(:wrapped) { double(:wrapped).as_null_object }
 
-    subject { plugin.send(:wrap_with_optional_name, name_made_optional, wrapped, inputs) }
+    subject { plugin.send(:wrap_with_optional_name, name_made_optional, wrapped, inputs, fail_without_app) }
 
     context "when --all is given" do
       let(:inputs_hash) { { :all => true } }
@@ -54,6 +70,14 @@ describe ManifestsPlugin do
           it "fails manually" do
             plugin.should_receive(:no_apps)
             subject
+          end
+
+          context "when it is not supposed to fail" do
+            let(:fail_without_app) { false }
+            it "doesnt fail" do
+              plugin.should_not_receive(:no_apps)
+              subject
+            end
           end
         end
 

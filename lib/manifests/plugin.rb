@@ -5,23 +5,21 @@ require "manifests/manifests"
 class ManifestsPlugin < CF::App::Base
   include CFManifests
 
-  option :manifest, :aliases => "-m", :value => :file,
-    :desc => "Path to manifest file to use"
-
-
-  [ :start, :restart, :instances, :logs, :env, :health, :stats,
-    :scale, :app, :stop, :delete, :events
-  ].each do |wrap|
-    name_made_optional = change_argument(wrap, :app, :optional)
-
-    around(wrap) do |cmd, input|
-      wrap_with_optional_name(name_made_optional, cmd, input)
+  def self.default_to_app_from_manifest(command, fail_without_app)
+    name_made_optional = change_argument(command, :app, :optional)
+    around(command) do |cmd, input|
+      wrap_with_optional_name(name_made_optional, cmd, input, fail_without_app)
     end
   end
 
+  option :manifest, :aliases => "-m", :value => :file, :desc => "Path to manifest file to use"
 
-  add_input :push, :reset, :desc => "Reset to values in the manifest",
-            :default => false
+
+  [:start, :restart, :instances, :logs, :env, :health, :stats, :scale, :app, :stop, :delete, :events].each do |command|
+    ::ManifestsPlugin.default_to_app_from_manifest command, true
+  end
+
+  add_input :push, :reset, :desc => "Reset to values in the manifest", :default => false
 
   around(:push) do |push, input|
     wrap_push(push, input)
@@ -29,12 +27,12 @@ class ManifestsPlugin < CF::App::Base
 
   private
 
-  def wrap_with_optional_name(name_made_optional, cmd, input)
+  def wrap_with_optional_name(name_made_optional, cmd, input, fail_without_app)
     return cmd.call if input[:all]
 
     unless manifest
       # if the command knows how to handle this
-      if input.has?(:app) || !name_made_optional
+      if input.has?(:app) || !name_made_optional || !fail_without_app
         return cmd.call
       else
         return no_apps
@@ -55,7 +53,7 @@ class ManifestsPlugin < CF::App::Base
     internal = internal.collect { |app| app[:name] }
 
     apps = internal + external
-    return no_apps if apps.empty?
+    return no_apps if fail_without_app && apps.empty?
 
     apps.each.with_index do |app, num|
       line unless quiet? || num == 0
