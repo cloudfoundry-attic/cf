@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "cf"
 
   s.files         = %w(LICENSE Rakefile) + Dir["lib/**/*"]
+  s.license       = "Apache 2.0"
   s.test_files    = Dir["spec/**/*"]
   s.require_paths = %w(lib)
 
