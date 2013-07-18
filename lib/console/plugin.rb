@@ -22,6 +22,8 @@ module CFConsolePlugin
       console.start_console
     end
 
+    ::ManifestsPlugin.default_to_app_from_manifest :console, true
+
     filter(:start, :start_app) do |app|
       app.console = true
       app
