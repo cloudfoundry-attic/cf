@@ -11,6 +11,19 @@ describe "try" do
     }.to raise_error(NoMethodError)
   end
 
+  it "yields to a provided block" do
+    hash = {key: "value"}
+    retrieved_key = nil
+    retrieved_value = nil
+    hash.try(:each) do |k, v|
+      retrieved_key = k
+      retrieved_value = v
+    end
+
+    retrieved_key.should == :key
+    retrieved_value.should == "value"
+  end
+
   it "returns nil for nil" do
     nil.try(:sub, 'i', 'o').should == nil
   end
