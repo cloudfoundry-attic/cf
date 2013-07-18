@@ -40,7 +40,7 @@ module CF::App
     def start_app(app)
       log = nil
       with_progress("Preparing to start #{c(app.name, :name)}") do
-        app.start!(true) do |url|
+        app.start! do |url|
           log = url
         end
       end

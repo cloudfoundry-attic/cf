@@ -147,7 +147,7 @@ module CF
             [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")]
           end
 
-          app.should_receive(:start!).with(true) do |_, &blk|
+          app.should_receive(:start!) do |_, &blk|
             app.state = "STARTED"
             blk.call(log_url)
           end
