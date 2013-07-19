@@ -56,7 +56,7 @@ module CF
 
           it "tells the user how they can switch to the new space" do
             subject
-            expect(output).to say("Space created! Use `cf switch-space #{new_space.name}` to target it.")
+            expect(output).to say("Space created!\n\ncf switch-space #{new_space.name}    # targets new space")
           end
         end
       end

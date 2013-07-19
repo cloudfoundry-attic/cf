@@ -8,6 +8,10 @@ The Cloud Foundry CLI has been completely rewritten. Installation, usage & contr
 
 This tool requires cloud_controller_ng. It is not compatible with cloud_controller v1.
 
+## Requirements
+
+cf should work with Ruby 1.9.x and newer.
+
 ## Installation
 
 ```
@@ -70,8 +74,10 @@ Follow these steps to make a contribution to any of our open source repositories
 1. Complete our CLA Agreement for [individuals](http://www.cloudfoundry.org/individualcontribution.pdf) or [corporations](http://www.cloudfoundry.org/corpcontribution.pdf)
 2. Set your name and email
 
-    git config --global user.name "Firstname Lastname"
-    git config --global user.email "your_email@youremail.com"
+```
+$ git config --global user.name "Firstname Lastname"
+$ git config --global user.email "your_email@youremail.com"
+```
 
 3. Fork the repo
 4. Make your changes on a topic branch, commit, and push to github and open a pull request.

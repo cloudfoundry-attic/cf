@@ -39,8 +39,8 @@ module CF::App
 
     def start_app(app)
       log = nil
-      with_progress("Starting #{c(app.name, :name)}") do
-        app.start!(true) do |url|
+      with_progress("Preparing to start #{c(app.name, :name)}") do
+        app.start! do |url|
           log = url
         end
       end
@@ -110,7 +110,7 @@ module CF::App
             indented { print_instances_summary(instances) }
 
             if all_instances_running?(instances)
-              line "#{c("Push successful! App '#{app.name}' available at http://#{app.name}.#{app.domain}", :good)}"
+              line "#{c("Push successful! App '#{app.name}' available at http://#{app.host}.#{app.domain}", :good)}"
               return
             end
           rescue CFoundry::NotStaged

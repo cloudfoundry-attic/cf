@@ -21,12 +21,13 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "cf"
 
   s.files         = %w(LICENSE Rakefile) + Dir["lib/**/*"]
+  s.license       = "Apache 2.0"
   s.test_files    = Dir["spec/**/*"]
   s.require_paths = %w(lib)
 
   s.add_runtime_dependency "addressable", "~> 2.2"
   s.add_runtime_dependency "caldecott-client", "~> 0.0.2"
-  s.add_runtime_dependency "cfoundry", ">= 2.4.0", "< 3.0"
+  s.add_runtime_dependency "cfoundry", "~> 3.0"
   s.add_runtime_dependency "interact", "~> 0.5"
   s.add_runtime_dependency "json_pure", "~> 1.6"
   s.add_runtime_dependency "mothership", ">= 0.5.1", "< 1.0"

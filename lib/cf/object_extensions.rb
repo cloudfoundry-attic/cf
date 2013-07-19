@@ -1,11 +1,15 @@
 class Object
-  def try(*args)
-    send(*args)
+  def try(*a, &b)
+    if a.empty? && block_given?
+      yield self
+    else
+      __send__(*a, &b)
+    end
   end
 end
 
 class NilClass
-  def try(*args)
+  def try(*a, &b)
     nil
   end
 end

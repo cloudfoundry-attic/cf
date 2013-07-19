@@ -12,6 +12,7 @@ module CF
 
         app.stub(:host).and_return("some_host")
         app.stub(:domain).and_return("some_domain")
+        app.stub(:subdomain).and_return("some_subdomain")
       end
 
       def execute_start_app
@@ -36,7 +37,7 @@ module CF
         def self.it_says_application_is_starting
           it "says that it's starting the application" do
             execute_start_app
-            expect(output).to say("Starting #{app.name}... OK")
+            expect(output).to say("Preparing to start #{app.name}... OK")
           end
         end
 
@@ -146,7 +147,7 @@ module CF
             [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")]
           end
 
-          app.should_receive(:start!).with(true) do |_, &blk|
+          app.should_receive(:start!) do |_, &blk|
             app.state = "STARTED"
             blk.call(log_url)
           end

@@ -72,21 +72,18 @@ module CF::Service
       table(
         ["name", "service", "provider", "version", "plan", "bound apps"],
         @services.collect { |i|
-          plan = i.service_plan
-          service = plan.service
-
-          label    = service.label
-          version  = service.version
           apps     = name_list(i.service_bindings.collect(&:app))
-          provider = service.provider
+          plan = i.service_plan
 
-          [ c(i.name, :name),
-            label,
-            provider,
-            version,
-            plan.name,
-            apps
-          ]
+          unless plan
+            [ c(i.name, :name), "none", "none", "none", "none", apps]
+          else
+            service = plan.service
+            label    = service.label
+            version  = service.version
+            provider = service.provider
+            [ c(i.name, :name), label, provider, version, plan.name, apps]
+          end
         })
 
     end
