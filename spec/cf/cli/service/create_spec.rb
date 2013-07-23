@@ -94,6 +94,38 @@ module CF
             capture_output { command }
           end
         end
+
+        describe "when selecting the user-provided service" do
+          let(:services) { [build(:service), build(:service)] }
+          let(:user_provided_service) { build(:service, label: "user-provided")}
+
+          before do
+            client.stub(:services).and_return(services)
+          end
+
+          it "asks for an instance name and credentials" do
+            should_ask("What kind?", hash_including(choices: include(has_label("user-provided")))) { user_provided_service }
+            should_ask("Name?", anything) { "user-provided-service-name-1" }
+
+            should_print("What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)")
+            should_ask("Key") { "host" }
+            should_ask("Value") { "example.com" }
+            should_ask("Another credentials parameter?", anything) { true }
+            should_ask("Key") { "port" }
+            should_ask("Value") { 8080 }
+            should_ask("Another credentials parameter?", anything) { false }
+            mock_with_progress("Creating service user-provided-service-name-1")
+
+            instance = client.user_provided_service_instance
+            client.should_receive(:user_provided_service_instance).and_return(instance)
+            instance.should_receive(:create!)
+
+            capture_output { command }
+
+            instance.credentials['host'].should == 'example.com'
+            instance.credentials['port'].should == 8080
+          end
+        end
       end
     end
   end

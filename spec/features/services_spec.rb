@@ -20,6 +20,33 @@ if ENV['CF_V2_RUN_INTEGRATION']
           end
         end
       end
+
+      describe "when the service is a user-provided instance" do
+        let(:service_name) { "my-private-db-#{Random.rand(1000) + 1000}"}
+        after do
+          #BlueShell::Runner.run("#{cf_bin} delete-service #{service_name}")
+        end
+
+        xit "can create a service instance" do
+          BlueShell::Runner.run("#{cf_bin} create-service") do |runner|
+            expect(runner).to say "What kind?"
+            runner.send_keys "user-provided"
+
+            expect(runner).to say "Name?"
+            runner.send_keys service_name
+
+            expect(runner).to say "What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)
+Key"
+            runner.send_keys "hostname"
+            expect(runner).to say "Value"
+            runner.send_keys "myserviceinstance.com"
+            expect(runner).to say "Another credentials parameter?"
+            runner.send_keys "n"
+
+            expect(runner).to say /Creating service #{service_name}.+ OK/
+          end
+        end
+      end
     end
   end
 end
