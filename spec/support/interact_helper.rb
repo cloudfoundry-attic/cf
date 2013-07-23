@@ -7,6 +7,14 @@ module InteractHelper
     CF::CLI.any_instance.should_receive(:ask).with(*args, &block)
   end
 
+  def should_print(*args, &block)
+    CF::CLI.any_instance.should_receive(:line).with(*args, &block)
+  end
+
+  def should_print_error(*args, &block)
+    CF::CLI.any_instance.should_receive(:err).with(*args, &block)
+  end
+
   def dont_allow_ask(*args)
     CF::CLI.any_instance.should_not_receive(:ask).with(*args)
   end
