@@ -28,6 +28,39 @@ module FeaturesHelper
     end
   end
 
+  def create_service_instance(service_name, instance_name, opts = {})
+    plan_name = opts[:plan]
+    credentials = opts[:credentials]
+
+    BlueShell::Runner.run("#{cf_bin} create-service") do |runner|
+      expect(runner).to say "What kind?>"
+      runner.send_keys service_name
+
+      expect(runner).to say "Name?>"
+      runner.send_keys instance_name
+
+      if service_name == "user-provided"
+        credentials.keys.each_with_index do |k, i|
+          expect(runner).to say "Key"
+          runner.send_keys k
+          expect(runner).to say "Value"
+          runner.send_keys credentials[k]
+          expect(runner).to say "Another credentials parameter?"
+          if i < credentials.size - 1
+            runner.send_keys "y"
+          else
+            runner.send_keys "n"
+          end
+        end
+      else
+        expect(runner).to say "Which plan?"
+        runner.send_keys plan_name
+      end
+
+      expect(runner).to say "Creating service #{instance_name}... OK"
+    end
+  end
+
   def push_app(app_folder, deployed_app_name)
     Dir.chdir("#{SPEC_ROOT}/assets/#{app_folder}") do
       BlueShell::Runner.run("#{cf_bin} push --no-manifest") do |runner|
