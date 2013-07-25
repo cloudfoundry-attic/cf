@@ -61,9 +61,12 @@ module FeaturesHelper
     end
   end
 
-  def push_app(app_folder, deployed_app_name)
+  def push_app(app_folder, deployed_app_name, opts = {})
+    push_cmd = "#{cf_bin} push --no-manifest"
+    push_cmd += " --command #{opts[:start_command]}" if opts[:start_command]
+
     Dir.chdir("#{SPEC_ROOT}/assets/#{app_folder}") do
-      BlueShell::Runner.run("#{cf_bin} push --no-manifest") do |runner|
+      BlueShell::Runner.run(push_cmd) do |runner|
         expect(runner).to say "Name>"
         runner.send_keys deployed_app_name
 
@@ -92,7 +95,9 @@ module FeaturesHelper
           runner.send_return
         end
 
-        runner.wait_for_exit
+        expect(runner).to say "Push successful!"
+
+        runner.wait_for_exit opts[:timeout] || 30
       end
     end
   end

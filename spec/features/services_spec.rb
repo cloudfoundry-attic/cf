@@ -61,5 +61,46 @@ Key"
         end
       end
     end
+
+    describe "binding to a service" do
+      let(:app_name) { "env" }
+      let(:service_name) { "some-provided-instance-#{Time.now.to_i}" }
+
+      it "can bind and unbind user-provided services to apps" do
+        push_app(app_name, app_name, start_command: "'bundle exec ruby env_test.rb -p $PORT'", timeout: 90)
+        create_service_instance("user-provided", service_name, credentials: { hostname: "myservice.com"} )
+
+        BlueShell::Runner.run("#{cf_bin} bind-service") do |runner|
+          expect(runner).to say "Which application?>"
+          runner.send_keys app_name
+
+          expect(runner).to say "Which service?>"
+          runner.send_keys service_name
+
+          expect(runner).to say "Binding #{service_name} to #{app_name}... OK"
+        end
+
+        BlueShell::Runner.run("#{cf_bin} unbind-service") do |runner|
+          expect(runner).to say "Which application?"
+          runner.send_keys app_name
+
+
+        end
+      end
+
+      after do
+        delete_app(app_name)
+      end
+
+      def delete_app(app_name, routes=true)
+        delete_cmd = "#{cf_bin} delete #{app_name}"
+        delete_cmd + " --routes" if routes
+        BlueShell::Runner.run(delete_cmd) do |runner|
+          expect(runner).to say "Really delete #{app_name}?"
+          runner.send_keys "y"
+          expect(runner).to say "Deleting #{app_name}... OK"
+        end
+      end
+    end
   end
 end
