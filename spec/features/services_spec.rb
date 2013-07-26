@@ -8,11 +8,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
     describe "listing services" do
       it "shows all service instances in the space" do
-        pending "Need a test environment to run this against. A1 should soon contain the necessary changes - DS & RT"
         service1 = "some-provided-instance-#{Time.now.to_i}"
         service2 = "cf-managed-instance-#{Time.now.to_i}"
         create_service_instance("user-provided", service1, credentials: { hostname: "myservice.com"} )
-        create_service_instance("1", service2, plan: "1")
+        create_service_instance("dummy-dev", service2, plan: "small")
 
         BlueShell::Runner.run("#{cf_bin} services") do |runner|
           expect(runner).to say /#{service1}\s+none\s+none\s+none\s+none\s+.*/
@@ -40,7 +39,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
         let(:service_name) { "my-private-db-#{Random.rand(1000) + 1000}"}
 
         it "can create a service instance" do
-          pending "Need a test environment to run this against. A1 should soon contain the necessary changes - DS & RT"
           BlueShell::Runner.run("#{cf_bin} create-service") do |runner|
             expect(runner).to say "What kind?"
             runner.send_keys "user-provided"
