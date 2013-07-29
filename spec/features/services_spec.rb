@@ -14,7 +14,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
         create_service_instance("dummy-dev", service2, plan: "small")
 
         BlueShell::Runner.run("#{cf_bin} services") do |runner|
-          expect(runner).to say /#{service1}\s+none\s+none\s+none\s+none\s+.*/
+          expect(runner).to say /#{service1}\s+user-provided\s+none\s+none\s+none\s+.*/
         end
 
       end
