@@ -76,7 +76,7 @@ module CF::Service
           plan = i.service_plan
 
           unless plan
-            [ c(i.name, :name), "none", "none", "none", "none", apps]
+            [ c(i.name, :name), "user-provided", "none", "none", "none", apps]
           else
             service = plan.service
             label    = service.label

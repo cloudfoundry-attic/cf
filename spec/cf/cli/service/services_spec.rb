@@ -82,6 +82,7 @@ module CF
           context "when one of the services does not have a service plan" do
             let(:service_instances) { [service1, service2]}
             let(:service2) { build(:service_instance, :service_plan => nil, :service_bindings => [service_binding]) }
+
             it 'still produces a table of service' do
               subject
               stdout.rewind
@@ -96,15 +97,15 @@ module CF
         provider.*?\s+                                  # provider
         service_version\s+                              # version
         service-plan-.*?\s+                             # plan
-        app-name-\d+\s+                                         # bound apps
+        app-name-\d+\s+                                 # bound apps
         /x
 
               expect(output).to match /service-instance-.+?\s+  # name
-        none\s+                                  # service
-        none\s+                                  # provider
-        none\s+                              # version
-        none\s+                             # plan
-        app-name-\d+\s+                                         # bound apps
+        user-provided\s+                                # service
+        none\s+                                         # provider
+        none\s+                                         # version
+        none\s+                                         # plan
+        app-name-\d+\s+                                 # bound apps
         /x
             end
           end
