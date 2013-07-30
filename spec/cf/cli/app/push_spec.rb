@@ -40,6 +40,7 @@ module CF
         before do
           app.stub(:upload)
           app.changes = {}
+          push.stub(:warn)
         end
 
         subject do
@@ -70,6 +71,17 @@ module CF
         it "uploads the app" do
           app.should_receive(:upload).with(path)
           subject
+        end
+
+        context "when the app is stopped" do
+          before do
+            app.stub(:started?).and_return(false)
+          end
+
+          it "warns the user" do
+            push.should_receive(:warn).with("\n#{app.name} is currently stopped, start it with 'cf start'")
+            subject
+          end
         end
 
         context "when no inputs are given" do
