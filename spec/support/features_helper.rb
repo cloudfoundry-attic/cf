@@ -40,17 +40,12 @@ module FeaturesHelper
       runner.send_keys instance_name
 
       if service_name == "user-provided"
-        credentials.keys.each_with_index do |k, i|
-          expect(runner).to say "Key"
-          runner.send_keys k
-          expect(runner).to say "Value"
-          runner.send_keys credentials[k]
-          expect(runner).to say "Another credentials parameter?"
-          if i < credentials.size - 1
-            runner.send_keys "y"
-          else
-            runner.send_keys "n"
-          end
+        expect(runner).to say "Keys"
+        runner.send_keys credentials.keys.join(", ")
+
+        credentials.each do |key, value|
+          expect(runner).to say key.to_s
+          runner.send_keys value.to_s
         end
       else
         expect(runner).to say "Which plan?"

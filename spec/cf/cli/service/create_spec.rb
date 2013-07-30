@@ -108,12 +108,11 @@ module CF
             should_ask("Name?", anything) { "user-provided-service-name-1" }
 
             should_print("What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)")
-            should_ask("Key") { "host" }
-            should_ask("Value") { "example.com" }
-            should_ask("Another credentials parameter?", anything) { true }
-            should_ask("Key") { "port" }
-            should_ask("Value") { 8080 }
-            should_ask("Another credentials parameter?", anything) { false }
+            should_ask("Keys") { "host, port, user name" }
+            should_print("'user name' is not a valid key")
+            should_ask("Keys") { "host, port" }
+            should_ask("host") { "example.com" }
+            should_ask("port") { "8080" }
             mock_with_progress("Creating service user-provided-service-name-1")
 
             instance = client.user_provided_service_instance
@@ -123,7 +122,7 @@ module CF
             capture_output { command }
 
             instance.credentials['host'].should == 'example.com'
-            instance.credentials['port'].should == 8080
+            instance.credentials['port'].should == '8080'
           end
         end
       end

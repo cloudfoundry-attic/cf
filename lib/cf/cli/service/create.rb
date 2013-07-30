@@ -108,14 +108,18 @@ module CF::Service
       credentials = {}
       line("What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)")
 
-      while true
-        key = ask("Key")
-        finalize
-        value = ask("Value")
+      while keys = ask("Keys").split(/\s*,\s*/).map(&:strip)
+        if bad_key = keys.detect { |key| key !~ /^[-\w]+$/ }
+          line("'#{bad_key}' is not a valid key")
+        else
+          break
+        end
+      end
+      finalize
+      keys.each do |key|
+        value = ask(key)
         finalize
         credentials[key] = value
-
-        break unless ask("Another credentials parameter?", :default => false)
       end
 
       credentials

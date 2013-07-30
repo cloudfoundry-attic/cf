@@ -47,12 +47,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
             runner.send_keys service_name
 
             expect(runner).to say "What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)
-Key"
+Keys"
             runner.send_keys "hostname"
-            expect(runner).to say "Value"
+            expect(runner).to say "hostname"
             runner.send_keys "myserviceinstance.com"
-            expect(runner).to say "Another credentials parameter?"
-            runner.send_keys "n"
 
             expect(runner).to say /Creating service #{service_name}.+ OK/
           end
