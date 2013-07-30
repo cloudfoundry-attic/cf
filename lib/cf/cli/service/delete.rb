@@ -4,7 +4,7 @@ module CF::Service
   class Delete < Base
     desc "Delete a service"
     group :services, :manage
-    input :service, :desc => "Service to bind", :argument => :optional,
+    input :service, :desc => "Service to delete", :argument => :optional,
           :from_given => by_name(:service_instance, :service)
     input :unbind, :desc => "Unbind from applications before deleting?",
           :type => :boolean, :default => proc { force? || interact }

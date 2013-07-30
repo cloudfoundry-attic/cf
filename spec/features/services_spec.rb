@@ -7,16 +7,21 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     describe "listing services" do
+      let(:service1) { "some-provided-instance-#{Time.now.to_i}" }
+      let(:service2) { "cf-managed-instance-#{Time.now.to_i}" }
+
       it "shows all service instances in the space" do
-        service1 = "some-provided-instance-#{Time.now.to_i}"
-        service2 = "cf-managed-instance-#{Time.now.to_i}"
         create_service_instance("user-provided", service1, credentials: { hostname: "myservice.com"} )
         create_service_instance("dummy-dev", service2, plan: "small")
 
         BlueShell::Runner.run("#{cf_bin} services") do |runner|
           expect(runner).to say /#{service1}\s+user-provided\s+none\s+none\s+none\s+.*/
         end
+      end
 
+      after do
+        delete_service(service1)
+        delete_service(service2)
       end
     end
 
@@ -55,6 +60,10 @@ Keys"
             expect(runner).to say /Creating service #{service_name}.+ OK/
           end
         end
+
+        after do
+          delete_service(service_name)
+        end
       end
     end
 
@@ -92,15 +101,21 @@ Keys"
       after do
         delete_app(app_name)
       end
+    end
 
-      def delete_app(app_name, routes=true)
-        delete_cmd = "#{cf_bin} delete #{app_name}"
-        delete_cmd + " --routes" if routes
-        BlueShell::Runner.run(delete_cmd) do |runner|
-          expect(runner).to say "Really delete #{app_name}?"
-          runner.send_keys "y"
-          expect(runner).to say "Deleting #{app_name}... OK"
-        end
+    def delete_service(service_name)
+      BlueShell::Runner.run("#{cf_bin} delete-service --service #{service_name} --force") do |runner|
+        expect(runner).to say "Deleting #{service_name}... OK"
+      end
+    end
+
+    def delete_app(app_name, routes=true)
+      delete_cmd = "#{cf_bin} delete #{app_name}"
+      delete_cmd + " --routes" if routes
+      BlueShell::Runner.run(delete_cmd) do |runner|
+        expect(runner).to say "Really delete #{app_name}?"
+        runner.send_keys "y"
+        expect(runner).to say "Deleting #{app_name}... OK"
       end
     end
   end
