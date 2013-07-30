@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "addressable", "~> 2.2"
   s.add_runtime_dependency "caldecott-client", "~> 0.0.2"
-  s.add_runtime_dependency "cfoundry", "~> 4.0.2.rc5"
+  s.add_runtime_dependency "cfoundry", "~> 4.0.3"
   s.add_runtime_dependency "interact", "~> 0.5"
   s.add_runtime_dependency "json_pure", "~> 1.6"
   s.add_runtime_dependency "mothership", ">= 0.5.1", "< 1.0"
@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "rest-client", "~> 1.6"
   s.add_runtime_dependency "uuidtools", "~> 2.1"
 
-  s.add_development_dependency "anchorman"
   s.add_development_dependency "blue-shell", ">= 0.2.1"
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "fakefs", "~> 0.4.2"
