@@ -88,7 +88,6 @@ module CF
 
     desc "Help!"
     input :command, :argument => :optional
-    input :all, :type => :boolean
     def help
       if name = input[:command]
         if cmd = @@commands[name.gsub("-", "_").to_sym]
@@ -97,11 +96,9 @@ module CF
           unknown_command(name)
         end
       elsif Help.has_groups?
-        unless input[:all]
-          puts "#{help_header}"
-        end
+        puts "#{help_header}"
 
-        Mothership::Help.print_help_groups(@@global, input[:all])
+        Mothership::Help.print_help_groups(@@global, true)
       else
         Mothership::Help.basic_help(@@commands, @@global)
       end
@@ -110,7 +107,7 @@ module CF
     def help_header
     <<EOS
 Cloud Foundry Command Line Interface, version [#{CF::VERSION}]
-  Use 'cf help' for basic help, 'cf help --all' for all commands, 'cf help [command]' for command details.
+  Use 'cf help [command]' for command details.
   For docs and support visit http://support.cloudfoundry.com
 
 USAGE EXAMPLES

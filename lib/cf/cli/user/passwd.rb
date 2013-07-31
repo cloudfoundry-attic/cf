@@ -3,7 +3,7 @@ require "cf/cli/user/base"
 module CF::User
   class Passwd < Base
     desc "Update the current user's password"
-    group :admin, :user, :hidden => true
+    group :admin, :user
     input :password, :desc => "Current password"
     input :new_password, :desc => "New password"
     input :verify, :desc => "Repeat new password"

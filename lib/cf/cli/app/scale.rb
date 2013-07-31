@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Scale < Base
     desc "Update the instances/memory limit for an application"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to update", :argument => true,
           :from_given => by_name(:app)
     input :instances, :desc => "Number of instances to run",

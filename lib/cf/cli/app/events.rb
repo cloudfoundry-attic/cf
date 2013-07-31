@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Events < Base
     desc "Display application events"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to get the events for",
           :argument => true, :from_given => by_name(:app)
     def events

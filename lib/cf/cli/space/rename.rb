@@ -3,7 +3,7 @@ require "cf/cli/space/base"
 module CF::Space
   class Rename < Base
     desc "Rename a space"
-    group :spaces, :hidden => true
+    group :spaces
     input :organization, :desc => "Space's organization",
           :aliases => ["--org", "-o"], :from_given => by_name(:organization),
           :default => proc { client.current_organization }

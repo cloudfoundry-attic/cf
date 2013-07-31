@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Stats < Base
     desc "Display application instance status"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to get the stats for",
           :argument => true, :from_given => by_name(:app)
     def stats

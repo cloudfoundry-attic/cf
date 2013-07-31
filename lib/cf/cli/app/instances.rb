@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Instances < Base
     desc "List an app's instances"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :apps, :desc => "Applications whose instances to list",
           :argument => :splat, :singular => :app,
           :from_given => by_name(:app)

@@ -3,7 +3,7 @@ require "cf/cli/user/base"
 module CF::User
   class Users < Base
     desc "List all users"
-    group :admin, :hidden => true
+    group :admin
     def users
       users =
         with_progress("Getting users") do

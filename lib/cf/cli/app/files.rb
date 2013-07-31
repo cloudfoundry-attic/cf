@@ -4,7 +4,7 @@ require "cf/cli/app/base"
 module CF::App
   class Files < Base
     desc "Print out an app's file contents"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to inspect the files of",
           :argument => true, :from_given => by_name(:app)
     input :path, :desc => "Path of file to read", :argument => :optional,
@@ -34,7 +34,7 @@ module CF::App
     end
 
     desc "Examine an app's files"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to inspect the files of",
           :argument => true, :from_given => by_name(:app)
     input :path, :desc => "Path of directory to list", :argument => :optional,
@@ -62,7 +62,7 @@ module CF::App
     end
 
     desc "Stream an app's file contents"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to inspect the files of",
           :argument => true, :from_given => by_name(:app)
     input :path, :desc => "Path of file to stream", :argument => :optional

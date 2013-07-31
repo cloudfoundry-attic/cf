@@ -3,7 +3,7 @@ require "cf/cli/organization/base"
 module CF::Organization
   class Rename < Base
     desc "Rename an organization"
-    group :organizations, :hidden => true
+    group :organizations
     input :organization, :desc => "Organization to rename",
           :aliases => ["--org", "-o"], :argument => :optional,
           :from_given => by_name(:organization)

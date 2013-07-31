@@ -5,7 +5,7 @@ module CF::User
     def precondition; end
 
     desc "Create a user and log in"
-    group :admin, :user, :hidden => true
+    group :admin, :user
     input :email, :desc => "Desired email", :argument => :optional
     input :password, :desc => "Desired password"
     input :verify, :desc => "Repeat password"

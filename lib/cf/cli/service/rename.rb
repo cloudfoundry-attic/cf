@@ -3,7 +3,7 @@ require "cf/cli/service/base"
 module CF::Service
   class Rename < Base
     desc "Rename a service"
-    group :services, :manage, :hidden => true
+    group :services, :manage
     input :service, :desc => "Service to rename", :argument => :optional,
           :from_given => by_name(:service_instance, :service)
     input :name, :desc => "New service name", :argument => :optional

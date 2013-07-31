@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Logs < Base
     desc "Print out an app's logs"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to get the logs of", :argument => true,
           :from_given => by_name(:app)
     input :instance, :desc => "Instance of application to get the logs of",
@@ -33,7 +33,7 @@ module CF::App
     end
 
     desc "Print out the logs for an app's crashed instances"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to get the logs of", :argument => true,
           :from_given => by_name(:app)
     def crashlogs

@@ -3,7 +3,7 @@ require "cf/cli/start/base"
 module CF::Start
   class Targets < Base
     desc "List known targets."
-    group :start, :hidden => true
+    group :start
     def targets
       targets_info.each do |target, _|
         line target

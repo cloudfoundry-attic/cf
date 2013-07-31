@@ -42,7 +42,7 @@ To run the checked out code use the cf.dev script:
 See the 'cf help' command for up-to-date usage info:
 
 ```
-$ cf help --all
+$ cf help
 ```
 
 # Cloud Foundry Resources #

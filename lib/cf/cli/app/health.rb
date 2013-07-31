@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Health < Base
     desc "Get application health"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :apps, :desc => "Show the health information for one or more applications", :argument => :splat,
           :singular => :app, :from_given => by_name(:app)
     def health

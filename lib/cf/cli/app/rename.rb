@@ -3,7 +3,7 @@ require "cf/cli/app/base"
 module CF::App
   class Rename < Base
     desc "Rename an application"
-    group :apps, :manage, :hidden => true
+    group :apps, :manage
     input :app, :desc => "Application to rename", :argument => :optional,
           :from_given => by_name(:app)
     input :name, :desc => "New application name", :argument => :optional

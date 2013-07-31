@@ -3,7 +3,7 @@ require "cf/cli/user/base"
 module CF::User
   class Create < Base
     desc "Create a user"
-    group :admin, :user, :hidden => true
+    group :admin, :user
     input :email, :desc => "User email", :argument => :optional
     input :password, :desc => "User password"
     input :verify, :desc => "Repeat password"

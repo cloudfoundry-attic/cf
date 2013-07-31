@@ -3,7 +3,7 @@ require "cf/cli/space/base"
 module CF::Space
   class Switch < Base
     desc "Switch to a space"
-    group :spaces, :hidden => true
+    group :spaces
     input :name, :desc => "Space name", :argument => true
     def switch_space
       space = client.space_by_name(input[:name])
