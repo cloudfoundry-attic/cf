@@ -106,7 +106,7 @@ module CF::Service
 
     def ask_credentials
       credentials = {}
-      line("What credentials parameters should applications use to connect to this service instance? (e.g. key: uri, value: mysql://username:password@hostname:port/name)")
+      line("What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)")
 
       while keys = ask("Keys").split(/\s*,\s*/).map(&:strip)
         if bad_key = keys.detect { |key| key !~ /^[-\w]+$/ }
