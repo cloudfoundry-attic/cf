@@ -235,7 +235,7 @@ module CF
             let(:mode) { "none" }
 
             it "removes the debug mode" do
-              expect { execute_start_app_with_mode }.to change { app.debug }.from("in_debug").to(nil)
+              expect { execute_start_app_with_mode }.to change { app.debug }.from("in_debug").to("none")
             end
           end
 
