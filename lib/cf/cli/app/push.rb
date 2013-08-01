@@ -54,6 +54,8 @@ module CF::App
       apply_changes(app)
       display_changes(app)
       commit_changes(app)
+
+      warn "\n#{c(app.name, :name)} is currently stopped, start it with 'cf start'" unless app.started?
     end
 
     def setup_new_app(path)
