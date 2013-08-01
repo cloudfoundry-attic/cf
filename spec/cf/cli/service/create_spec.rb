@@ -73,8 +73,8 @@ module CF
           } }
 
           it "creates the specified service" do
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:create!)
             capture_output { command }
           end
         end
@@ -89,8 +89,8 @@ module CF
           let(:services) { [selected_service] }
 
           it "uses case insensitive match" do
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:create!)
             capture_output { command }
           end
         end

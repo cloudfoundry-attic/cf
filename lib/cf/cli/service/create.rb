@@ -74,7 +74,7 @@ module CF::Service
 
         service_instance.credentials = ask_credentials # input[:credentials]
       else
-        service_instance = client.service_instance
+        service_instance = client.managed_service_instance
         service_instance.name = input[:name, offering]
         finalize
 

@@ -65,7 +65,7 @@ describe CFManifests do
             :service_binding,
             :service_instance =>
               build(
-                :service_instance,
+                :managed_service_instance,
                 :name => "service-1",
                 :service_plan =>
                   build(
@@ -140,7 +140,7 @@ describe CFManifests do
         {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}
       end
 
-      let(:service_1) { build(:service_instance, :name => "service-1") }
+      let(:service_1) { build(:managed_service_instance, :name => "service-1") }
       let(:plan_100) { build :service_plan, :name => "100" }
 
       let(:mysql) do

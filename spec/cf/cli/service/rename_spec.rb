@@ -51,7 +51,7 @@ describe CF::Service::Rename do
   end
 
   context "when there are services" do
-    let(:services) { Array.new(2) { build(:service_instance) } }
+    let(:services) { Array.new(2) { build(:managed_service_instance) } }
     let(:renamed_service) { services.first }
 
     context "when the defaults are used" do

@@ -42,7 +42,7 @@ module CF
 
         let(:service_plan) { build(:service_plan, :service => build(:service, :version => "service_version", :provider => "provider")) }
         let(:service_binding) { build(:service_binding, :app => app) }
-        let(:service1) { build(:service_instance, :service_plan => service_plan, :service_bindings => [service_binding]) }
+        let(:service1) { build(:managed_service_instance, :service_plan => service_plan, :service_bindings => [service_binding]) }
 
         let(:service_instances) { [service1] }
         let(:current_space) { build(:space, :name => "the space") }
@@ -81,7 +81,7 @@ module CF
 
           context "when one of the services does not have a service plan" do
             let(:service_instances) { [service1, service2]}
-            let(:service2) { build(:service_instance, :service_plan => nil, :service_bindings => [service_binding]) }
+            let(:service2) { build(:user_provided_service_instance, :service_bindings => [service_binding]) }
 
             it 'still produces a table of service' do
               subject
@@ -102,9 +102,9 @@ module CF
 
               expect(output).to match /service-instance-.+?\s+  # name
         user-provided\s+                                # service
-        none\s+                                         # provider
-        none\s+                                         # version
-        none\s+                                         # plan
+        n\/a\s+                                         # provider
+        n\/a\s+                                         # version
+        n\/a\s+                                         # plan
         app-name-\d+\s+                                 # bound apps
         /x
             end

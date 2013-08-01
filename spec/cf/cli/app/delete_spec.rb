@@ -52,8 +52,8 @@ module CF
       end
 
       context "when there are apps" do
-        let(:service_1) { build(:service_instance, :name => "service-instance-name-1") }
-        let(:service_2) { build(:service_instance, :name => "service-instance-name-2") }
+        let(:service_1) { build(:managed_service_instance, :name => "service-instance-name-1") }
+        let(:service_2) { build(:managed_service_instance, :name => "service-instance-name-2") }
 
         let(:service_binding_1) { build(:service_binding, :service_instance => service_1) }
         let(:service_binding_2) { build(:service_binding, :service_instance => service_2) }

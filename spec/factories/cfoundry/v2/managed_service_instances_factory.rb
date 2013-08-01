@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :service_instance, :class => CFoundry::V2::ServiceInstance do
+  factory :managed_service_instance, :class => CFoundry::V2::ManagedServiceInstance do
     sequence(:guid) { |n| "service-instance-guid-#{n}" }
     sequence(:name) { |n| "service-instance-name-#{n}" }
 
