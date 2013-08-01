@@ -21,7 +21,7 @@ module CF::Start
         target = sane_target_url(input[:url])
         with_progress("Setting target to #{c(target, :name)}") do
           begin
-            CFoundry::Client.get(target) # check that it's valid before setting
+            build_client(target).info # check that it's valid before setting
           rescue CFoundry::TargetRefused
             fail "Target refused connection."
           rescue CFoundry::InvalidTarget
