@@ -28,7 +28,7 @@ module CF::App
         stream_start_log(log) if log
         check_application(app)
 
-        if app.debug_mode && !quiet?
+        if !app.debug_mode.nil? && app.debug_mode != "none" && !quiet?
           line
           invoke :instances, :app => app
         end
@@ -64,14 +64,13 @@ module CF::App
 
     # set app debug mode, ensuring it's valid, and shutting it down
     def switch_mode(app, mode)
-      mode = nil if mode == "none"
       mode = "run" if mode == "" # no value given
 
       return false if app.debug == mode
 
-      if mode.nil?
+      if mode == "none"
         with_progress("Removing debug mode") do
-          app.debug = nil
+          app.debug = mode
           app.stop! if app.started?
         end
 
