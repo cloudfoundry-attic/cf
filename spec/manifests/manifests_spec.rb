@@ -103,11 +103,7 @@ describe CFManifests do
     its(["buildpack"]) { should eq "git://example.com/foo.git" }
 
     it "contains the service information" do
-      expect(subject["services"]).to be_a Hash
-
-      services = subject["services"]
-
-      expect(services).to eq(
+      expect(subject["services"]).to eq(
         "service-1" => {
           "plan" => "P200",
           "label" => "managed",
