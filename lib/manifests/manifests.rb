@@ -183,6 +183,7 @@ module CFManifests
       meta["services"] = {}
 
       services.each do |service_instance|
+        next if service_instance.is_a?(CFoundry::V2::UserProvidedServiceInstance)
         service_plan = service_instance.service_plan
         service = service_plan.service
 
