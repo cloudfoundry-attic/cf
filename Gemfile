@@ -7,6 +7,3 @@ source "http://rubygems.org"
 gemspec
 
 #gem "cfoundry", :path => "../cfoundry"
-group "release" do
-  gem "anchorman"
-end
