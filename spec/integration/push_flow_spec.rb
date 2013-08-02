@@ -9,6 +9,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
     let(:app) { "hello-sinatra-#{run_id}" }
     let(:subdomain) { "hello-sinatra-subdomain-#{run_id}" }
     let(:service_name) { "dummy-service-#{run_id}" }
+    let(:user_provided_name) { "user-provided-#{run_id}"}
 
     before do
       FileUtils.rm_rf File.expand_path(CF::CONFIG_DIR)
@@ -85,7 +86,27 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           expect(runner).not_to say "Which plan?>"
           runner.send_up_arrow
           expect(runner).not_to say "Which plan?>"
-          runner.send_return
+          runner.send_keys "y"
+
+          # create a user-provided service here
+          expect(runner).to say "What kind?>"
+          runner.send_keys "user-provided"
+
+          expect(runner).to say "Name?>"
+          runner.send_keys user_provided_name
+
+          expect(runner).not_to say "Which plan?>"
+          expect(runner).to say "What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)\nKeys>"
+          runner.send_keys "uri"
+
+          expect(runner).to say "uri>"
+          runner.send_keys "mysql://u:p@example.com:port/db"
+
+          expect(runner).to say /Creating service #{user_provided_name}.*OK/
+          expect(runner).to say /Binding .+ to .+ OK/
+
+          expect(runner).to say "Create another service?> n"
+          runner.send_keys "n"
 
           if runner.expect "Bind other services to application?> n", 15
             runner.send_return
