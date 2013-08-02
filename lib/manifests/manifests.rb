@@ -182,15 +182,15 @@ module CFManifests
     unless services.empty?
       meta["services"] = {}
 
-      services.each do |i|
-        p = i.service_plan
-        s = p.service
+      services.each do |service_instance|
+        service_plan = service_instance.service_plan
+        service = service_plan.service
 
-        meta["services"][i.name] = {
-          "label" => s.label,
-          "provider" => s.provider,
-          "version" => s.version,
-          "plan" => p.name
+        meta["services"][service_instance.name] = {
+          "label" => service.label,
+          "provider" => service.provider,
+          "version" => service.version,
+          "plan" => service_plan.name
         }
       end
     end
