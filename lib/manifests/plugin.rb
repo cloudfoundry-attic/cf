@@ -74,6 +74,8 @@ class ManifestsPlugin < CF::App::Base
       return
     end
 
+    line(c("--path is ignored when using a manifest. Please specify the path in the manifest.", :warning)) if input.has?(:path)
+
     particular, external = apps_in_manifest(input)
 
     unless external.empty?

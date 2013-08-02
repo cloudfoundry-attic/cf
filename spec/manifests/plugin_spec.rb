@@ -316,6 +316,19 @@ describe ManifestsPlugin do
           end
         end
       end
+
+      context "and --path is specified too" do
+        let(:given_hash) { { :path => "/somewhere/else" } }
+
+        it "warns the user that --path will be ignored" do
+          plugin.stub(:line)
+          plugin.stub(:push_with_manifest)
+
+          subject
+
+          expect(plugin).to have_received(:line).with("--path is ignored when using a manifest. Please specify the path in the manifest.")
+        end
+      end
     end
 
     context "without a manifest" do
