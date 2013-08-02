@@ -183,16 +183,22 @@ module CFManifests
       meta["services"] = {}
 
       services.each do |service_instance|
-        next if service_instance.is_a?(CFoundry::V2::UserProvidedServiceInstance)
-        service_plan = service_instance.service_plan
-        service = service_plan.service
+        if service_instance.is_a?(CFoundry::V2::UserProvidedServiceInstance)
+          meta["services"][service_instance.name] = {
+            "label" => "user-provided",
+            "credentials" => service_instance.credentials.stringify_keys,
+          }
+        else
+          service_plan = service_instance.service_plan
+          service = service_plan.service
 
-        meta["services"][service_instance.name] = {
-          "label" => service.label,
-          "provider" => service.provider,
-          "version" => service.version,
-          "plan" => service_plan.name
-        }
+          meta["services"][service_instance.name] = {
+            "label" => service.label,
+            "provider" => service.provider,
+            "version" => service.version,
+            "plan" => service_plan.name
+          }
+        end
       end
     end
 

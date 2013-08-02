@@ -71,7 +71,23 @@ describe CFManifests do
                   build(
                     :service_plan,
                     :name => "P200",
-                    :service => build(:service))))
+                    :service => build(:service,
+                      label: "managed",
+                      provider: "hamazon",
+                      version: "v3"
+                    )
+                  )
+              )
+          ),
+          build(
+            :service_binding,
+            :service_instance =>
+              build(
+                :user_provided_service_instance,
+                :name => "service-2",
+                :credentials => { uri: "mysql://example.com" }
+              )
+          )
         ]
     end
 
@@ -90,25 +106,19 @@ describe CFManifests do
       expect(subject["services"]).to be_a Hash
 
       services = subject["services"]
-      app.service_bindings.each do |b|
-        service = b.service_instance
 
-        expect(services).to include service.name
-
-        info = services[service.name]
-
-        plan = service.service_plan
-        offering = plan.service
-
-        {"plan" => plan.name,
-          "label" => offering.label,
-          "provider" => offering.provider,
-          "version" => offering.version
-        }.each do |attr, val|
-          expect(info).to include attr
-          expect(info[attr]).to eq val
-        end
-      end
+      expect(services).to eq(
+        "service-1" => {
+          "plan" => "P200",
+          "label" => "managed",
+          "provider" => "hamazon",
+          "version" => "v3",
+        },
+        "service-2" => {
+          "credentials" => {"uri" => "mysql://example.com"},
+          "label" => "user-provided"
+        },
+      )
     end
 
     context "with only minimum configuration" do
