@@ -377,10 +377,7 @@ module Luft
         end
       end.join(' ')
       formatted_error << "    Command:     luft #{command}"
-      require 'luft/auth'
-      unless Luft::Auth.host == Luft::Auth.default_host
-        formatted_error << "    Host:        #{Luft::Auth.host}"
-      end
+
       if http_proxy = ENV['http_proxy'] || ENV['HTTP_PROXY']
         formatted_error << "    HTTP Proxy:  #{http_proxy}"
       end
