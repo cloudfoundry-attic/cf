@@ -34,6 +34,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "multi_json", "~> 1.3"
   s.add_runtime_dependency "rest-client", "~> 1.6"
   s.add_runtime_dependency "uuidtools", "~> 2.1"
+  s.add_dependency "netrc"
+  s.add_dependency "rest-client"
+  s.add_dependency "rendezvous"
+  s.add_dependency "highline"
 
   s.add_development_dependency "blue-shell", ">= 0.2.1"
   s.add_development_dependency "factory_girl"
