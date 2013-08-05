@@ -1,5 +1,6 @@
 require "yaml"
 require "set"
+require "cf/cli/service/create"
 
 require "manifests/loader"
 
@@ -299,25 +300,33 @@ module CFManifests
       if instance = client.service_instance_by_name(name)
         to_bind << instance
       else
-        offering = offerings.find { |o|
-          o.label == (svc[:label] || svc[:type] || svc[:vendor]) &&
-            (!svc[:version] || o.version == svc[:version]) &&
-            (o.provider == (svc[:provider] || "core"))
-        }
+        if svc[:label] == "user-provided"
+          invoke :create_service,
+            name: name,
+            offering: CF::Service::UPDummy.new,
+            app: app,
+            credentials: svc[:credentials]
+        else
+          offering = offerings.find { |o|
+            o.label == (svc[:label] || svc[:type] || svc[:vendor]) &&
+              (!svc[:version] || o.version == svc[:version]) &&
+              (o.provider == (svc[:provider] || "core"))
+          }
 
-        fail "Unknown service offering: #{svc.inspect}." unless offering
+          fail "Unknown service offering: #{svc.inspect}." unless offering
 
-        plan = offering.service_plans.find { |p|
-          p.name == (svc[:plan] || "D100")
-        }
+          plan = offering.service_plans.find { |p|
+            p.name == (svc[:plan] || "D100")
+          }
 
-        fail "Unknown service plan: #{svc[:plan]}." unless plan
+          fail "Unknown service plan: #{svc[:plan]}." unless plan
 
-        invoke :create_service,
-          :name => name,
-          :offering => offering,
-          :plan => plan,
-          :app => app
+          invoke :create_service,
+            :name => name,
+            :offering => offering,
+            :plan => plan,
+            :app => app
+        end
       end
     end
 

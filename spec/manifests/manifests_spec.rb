@@ -141,6 +141,21 @@ describe CFManifests do
       dont_allow_ask(anything, anything)
     end
 
+    context "when user-provided services are defined in the manifest" do
+      let(:client) do
+        build(:client).tap { |client| client.stub(:services => [], :service_instances => []) }
+      end
+
+      let(:info) { {:services => {'moracle' => {:label => "user-provided", :credentials =>{"k" => "v"}}}}}
+
+      it "creates the service with label user-provided" do
+        cmd.should_receive(:invoke).with(:create_service,
+          :name => 'moracle', :offering => has_label("user-provided"), :app => app, :credentials => {"k" => "v"}
+        )
+        cmd.send("setup_services", app, info)
+      end
+    end
+
     context "when services are defined in the manifest" do
       let(:info) do
         {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}

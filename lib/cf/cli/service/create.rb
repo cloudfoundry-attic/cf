@@ -72,7 +72,8 @@ module CF::Service
         service_instance.name = input[:name, offering]
         finalize
 
-        service_instance.credentials = ask_credentials # input[:credentials]
+        # at this point there's no way input[:credentials] can work interactively...
+        service_instance.credentials = input[:credentials, nil] || ask_credentials
       else
         service_instance = client.managed_service_instance
         service_instance.name = input[:name, offering]

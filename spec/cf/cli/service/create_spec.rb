@@ -124,6 +124,23 @@ module CF
             instance.credentials['host'].should == 'example.com'
             instance.credentials['port'].should == '8080'
           end
+
+          # lame, i know
+          context "when invoked from another command" do
+            let(:params) { {
+              :credentials => {"k" => "v"},
+              :name => "service-name",
+              :offering => UPDummy.new,
+            } }
+
+            it "creates a user-provided service" do
+              instance = client.user_provided_service_instance
+              client.should_receive(:user_provided_service_instance).and_return(instance)
+              instance.should_receive(:create!)
+
+              Mothership.new.invoke(:create_service, params, {})
+            end
+          end
         end
       end
     end
