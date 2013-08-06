@@ -1,0 +1,3 @@
+[submodule "vendor/integration-test-support"]
+	path = vendor/integration-test-support
+	url = git@github.com:cloudfoundry/integration-test-support.git
