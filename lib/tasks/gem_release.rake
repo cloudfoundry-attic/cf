@@ -10,7 +10,7 @@ namespace :gem do
     sh! "git add lib/cf/version.rb"
 
     print_with_purpose "Bumping to version #{gem_version}"
-    generate_release_notes(old_version)
+    #generate_release_notes(old_version)
     sh!("git commit -m 'Bumping to version #{gem_version}.'")
     sh!("git push")
     sh!("gem release --tag")
