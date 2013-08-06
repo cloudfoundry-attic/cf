@@ -15,13 +15,20 @@ module CF
       input :manager, :desc => "Add yourself as manager", :default => true
       input :developer, :desc => "Add yourself as developer", :default => true
       input :auditor, :desc => "Add yourself as auditor", :default => false
+      input :find_if_exists, :desc => "Use an existing space if one already exists with the given name", :default => false
 
       def create_space
         space = client.space
         space.organization = org
         space.name = input[:name]
 
-        with_progress("Creating space #{c(space.name, :name)}") { space.create! }
+        begin
+          with_progress("Creating space #{c(space.name, :name)}") { space.create! }
+        rescue CFoundry::SpaceNameTaken
+          raise unless input[:find_if_exists]
+          space = client.space_by_name(input[:name])
+          already_exists = true
+        end
 
         if input[:manager]
           with_progress("Adding you as a manager") { space.add_manager client.current_user }
@@ -36,11 +43,17 @@ module CF
         end
 
         if input[:target]
-          invoke :target, :organization => space.organization, :space => space
+          invoke :target, :organization => org, :space => space
         else
-          line c("Space created!", :good)
-          line
-          line "#{b("cf switch-space #{space.name}")}    # targets new space"
+          if already_exists
+            line c("Space already exists!", :good)
+            line
+            line "#{b("cf switch-space #{space.name}")}    # targets existing space"
+          else    
+            line c("Space created!", :good)
+            line
+            line "#{b("cf switch-space #{space.name}")}    # targets new space"
+          end
         end
       end
 
