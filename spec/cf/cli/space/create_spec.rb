@@ -34,7 +34,6 @@ module CF
         before do
           client.stub(space: new_space)
           CF::Populators::Organization.any_instance.stub(populate_and_save!: organization)
-          CF::Populators::Organization.any_instance.stub(choices: [organization])
 
           @command_args = ["create-space", new_space.name]
         end
@@ -42,17 +41,20 @@ module CF
         context "when the space already exists" do
           let(:existing_space) { build(:space, name: new_space.name) }
           let(:organization) { build(:organization, spaces: [existing_space]) }
-          
+          let(:current_user) { build(:user) }
+
           before do
+            client.stub(current_user: current_user)
             new_space.stub(:create!).and_raise(CFoundry::SpaceNameTaken)
-            existing_space.stub(:add_manager)
-            existing_space.stub(:add_developer)
-            existing_space.stub(:add_auditor)
-          end             
+          end
           
           context "when --find-if-exists is given" do
-            before { @command_args << "--find-if-exists" }
-            before { client.stub(:space_by_name).with(new_space.name).and_return(existing_space) }
+            before do
+              @command_args << "--find-if-exists"
+              client.stub(:space_by_name).with(new_space.name).and_return(existing_space)
+              existing_space.stub(:add_manager).with(current_user)
+              existing_space.stub(:add_developer).with(current_user)
+            end
 
             context "when --target is given" do
               before { @command_args << "--target" }

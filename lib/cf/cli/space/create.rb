@@ -16,7 +16,6 @@ module CF
       input :developer, :desc => "Add yourself as developer", :default => true
       input :auditor, :desc => "Add yourself as auditor", :default => false
       input :find_if_exists, :desc => "Use an existing space if one already exists with the given name", :default => false
-
       def create_space
         space = client.space
         space.organization = org

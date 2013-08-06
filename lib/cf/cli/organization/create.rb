@@ -9,13 +9,17 @@ module CF::Organization
           :alias => "-t", :default => true
     input :add_self, :desc => "Add yourself to the organization",
           :default => true
+    input :find_if_exists, :desc => "Use an existing organization if one already exists with the given name", :default => false
     def create_org
       org = client.organization
       org.name = input[:name]
       org.users = [client.current_user] if input[:add_self]
 
-      with_progress("Creating organization #{c(org.name, :name)}") do
-        org.create!
+      begin
+        with_progress("Creating organization #{c(org.name, :name)}") { org.create! }
+      rescue CFoundry::OrganizationNameTaken
+        raise unless input[:find_if_exists]
+        org = client.organization_by_name(input[:name])
       end
 
       if input[:target]
