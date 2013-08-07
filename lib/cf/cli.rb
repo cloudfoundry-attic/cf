@@ -414,10 +414,8 @@ EOS
 
       fail "V1 targets are no longer supported." if info[:version] == 1
 
-      @@client = CFoundry::V2::Client.new(target, token)
+      @@client = build_client(target, token)
 
-      @@client.http_proxy = input[:http_proxy] || ENV['HTTP_PROXY'] || ENV['http_proxy']
-      @@client.https_proxy = input[:https_proxy] || ENV['HTTPS_PROXY'] || ENV['https_proxy']
       @@client.trace = input[:trace]
 
       uri = URI.parse(target)
@@ -433,6 +431,13 @@ EOS
 
       @@client
     rescue CFoundry::InvalidTarget
+    end
+
+    def build_client(target, token = nil)
+      client = CFoundry::V2::Client.new(target, token)
+      client.http_proxy = input[:http_proxy] || ENV['HTTP_PROXY'] || ENV['http_proxy']
+      client.https_proxy = input[:https_proxy] || ENV['HTTPS_PROXY'] || ENV['https_proxy']
+      client
     end
 
     def fail_unknown(display, name)
