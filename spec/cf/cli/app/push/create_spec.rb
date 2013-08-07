@@ -7,7 +7,7 @@ module CF
       let(:given) { {} }
       let(:global) { {:color => false, :quiet => true} }
 
-      let(:service_instances) { Array.new(5) { build(:service_instance) } }
+      let(:service_instances) { Array.new(5) { build(:managed_service_instance) } }
       let(:lucid64) { build(:stack, :name => "lucid64") }
       let(:client) { build(:client) }
 

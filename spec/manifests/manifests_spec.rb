@@ -65,13 +65,29 @@ describe CFManifests do
             :service_binding,
             :service_instance =>
               build(
-                :service_instance,
+                :managed_service_instance,
                 :name => "service-1",
                 :service_plan =>
                   build(
                     :service_plan,
                     :name => "P200",
-                    :service => build(:service))))
+                    :service => build(:service,
+                      label: "managed",
+                      provider: "hamazon",
+                      version: "v3"
+                    )
+                  )
+              )
+          ),
+          build(
+            :service_binding,
+            :service_instance =>
+              build(
+                :user_provided_service_instance,
+                :name => "service-2",
+                :credentials => { uri: "mysql://example.com" }
+              )
+          )
         ]
     end
 
@@ -87,28 +103,18 @@ describe CFManifests do
     its(["buildpack"]) { should eq "git://example.com/foo.git" }
 
     it "contains the service information" do
-      expect(subject["services"]).to be_a Hash
-
-      services = subject["services"]
-      app.service_bindings.each do |b|
-        service = b.service_instance
-
-        expect(services).to include service.name
-
-        info = services[service.name]
-
-        plan = service.service_plan
-        offering = plan.service
-
-        {"plan" => plan.name,
-          "label" => offering.label,
-          "provider" => offering.provider,
-          "version" => offering.version
-        }.each do |attr, val|
-          expect(info).to include attr
-          expect(info[attr]).to eq val
-        end
-      end
+      expect(subject["services"]).to eq(
+        "service-1" => {
+          "plan" => "P200",
+          "label" => "managed",
+          "provider" => "hamazon",
+          "version" => "v3",
+        },
+        "service-2" => {
+          "credentials" => {"uri" => "mysql://example.com"},
+          "label" => "user-provided"
+        },
+      )
     end
 
     context "with only minimum configuration" do
@@ -135,12 +141,27 @@ describe CFManifests do
       dont_allow_ask(anything, anything)
     end
 
+    context "when user-provided services are defined in the manifest" do
+      let(:client) do
+        build(:client).tap { |client| client.stub(:services => [], :service_instances => []) }
+      end
+
+      let(:info) { {:services => {'moracle' => {:label => "user-provided", :credentials =>{"k" => "v"}}}}}
+
+      it "creates the service with label user-provided" do
+        cmd.should_receive(:invoke).with(:create_service,
+          :name => 'moracle', :offering => has_label("user-provided"), :app => app, :credentials => {"k" => "v"}
+        )
+        cmd.send("setup_services", app, info)
+      end
+    end
+
     context "when services are defined in the manifest" do
       let(:info) do
         {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}
       end
 
-      let(:service_1) { build(:service_instance, :name => "service-1") }
+      let(:service_1) { build(:managed_service_instance, :name => "service-1") }
       let(:plan_100) { build :service_plan, :name => "100" }
 
       let(:mysql) do

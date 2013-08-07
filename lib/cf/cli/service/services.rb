@@ -71,19 +71,16 @@ module CF::Service
     def show_services_table
       table(
         ["name", "service", "provider", "version", "plan", "bound apps"],
-        @services.collect { |i|
-          apps     = name_list(i.service_bindings.collect(&:app))
-          plan = i.service_plan
+        @services.collect { |instance|
+          presenter = ServiceInstanceHelper.new(instance)
+          apps     = name_list(presenter.service_bindings.collect(&:app))
 
-          unless plan
-            [ c(i.name, :name), "none", "none", "none", "none", apps]
-          else
-            service = plan.service
-            label    = service.label
-            version  = service.version
-            provider = service.provider
-            [ c(i.name, :name), label, provider, version, plan.name, apps]
-          end
+          label = presenter.service_label
+          provider = presenter.service_provider
+          version = presenter.version
+          plan_name = presenter.plan_name
+
+          [ c(presenter.name, :name), label, provider, version, plan_name, apps]
         })
 
     end
@@ -105,25 +102,8 @@ module CF::Service
         return false unless File.fnmatch(name, i.name)
       end
 
-      plan = i.service_plan
-
-      if service = options[:service]
-        return false unless File.fnmatch(service, plan.service.label)
-      end
-
-      if plan = options[:plan]
-        return false unless File.fnmatch(plan.upcase, plan.name.upcase)
-      end
-
-      if provider = options[:provider]
-        return false unless File.fnmatch(provider, plan.service.provider)
-      end
-
-      if version = options[:version]
-        return false unless File.fnmatch(version, plan.service.version)
-      end
-
-      true
+      helper = ServiceInstanceHelper.new(i)
+      return helper.matches(options)
     end
   end
 end

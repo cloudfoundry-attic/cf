@@ -1,6 +1,16 @@
 require "cf/cli/service/base"
 
 module CF::Service
+  USER_PROVIDED_OFFERING = "user-provided" # I'd rather move this to CFoundry
+
+  class UPDummy
+    def label
+      "user-provided"
+    end
+
+    attr_reader :version, :provider
+  end
+
   class Create < Base
     offerings_from_label = proc { |label, offerings|
       offerings.select { |s| s.label == label }
@@ -46,6 +56,8 @@ module CF::Service
       end
       finalize
 
+      offerings << UPDummy.new
+
       selected_offerings = offerings.any? ? Array(input[:offering, offerings.sort_by(&:label)]) : []
       finalize
 
@@ -55,48 +67,85 @@ module CF::Service
 
       offering = selected_offerings.first
 
-      service = client.service_instance
-      service.name = input[:name, offering]
-      finalize
-      plan = input[:plan, offering.service_plans]
-      finalize
-      service.service_plan = if plan.is_a?(String)
-                               offering.service_plans.find { |p| p.name.casecmp(plan) == 0 }
-                             else
-                               plan
-                             end
-      service.space = client.current_space
+      if offering.label == CF::Service::USER_PROVIDED_OFFERING
+        service_instance = client.user_provided_service_instance
+        service_instance.name = input[:name, offering]
+        finalize
 
-      with_progress("Creating service #{c(service.name, :name)}") do
-        service.create!
+        # at this point there's no way input[:credentials] can work interactively...
+        service_instance.credentials = input[:credentials, nil] || ask_credentials
+      else
+        service_instance = client.managed_service_instance
+        service_instance.name = input[:name, offering]
+        finalize
+
+        plan = input[:plan, offering.service_plans]
+        finalize
+        service_instance.service_plan = if plan.is_a?(String)
+                                          offering.service_plans.find { |p| p.name.casecmp(plan) == 0 }
+                                        else
+                                          plan
+                                        end
+      end
+
+      service_instance.space = client.current_space
+
+      with_progress("Creating service #{c(service_instance.name, :name)}") do
+        service_instance.create!
       end
 
       app = input[:app]
       finalize
 
       if app
-        invoke :bind_service, :service => service, :app => app
+        invoke :bind_service, :service => service_instance, :app => app
       end
-      service
+      service_instance
     end
 
     private
 
+    def ask_credentials
+      credentials = {}
+      line("What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)")
+
+      while keys = ask("Keys").split(/\s*,\s*/).map(&:strip)
+        if bad_key = keys.detect { |key| key !~ /^[-\w]+$/ }
+          line("'#{bad_key}' is not a valid key")
+        else
+          break
+        end
+      end
+      finalize
+      keys.each do |key|
+        value = ask(key)
+        finalize
+        credentials[key] = value
+      end
+
+      credentials
+    end
+
     def ask_offering(offerings)
       [ask("What kind?", :choices => offerings.sort_by(&:label),
-        :display => proc { |s|
+        :display => proc do |s|
           str = "#{c(s.label, :name)} #{s.version}"
           if s.provider != "core"
             str << ", via #{s.provider}"
           end
           str
-        },
+        end,
         :complete => proc { |s| "#{s.label} #{s.version}" })]
     end
 
     def ask_name(offering)
-      random = sprintf("%x", rand(1000000))
-      ask "Name?", :default => "#{offering.label}-#{random}"
+      default = nil
+      unless offering == CF::Service::USER_PROVIDED_OFFERING
+        random = sprintf("%x", rand(1000000))
+        default = "#{offering.label}-#{random}"
+      end
+
+      ask "Name?", :default => default
     end
 
     def ask_plan(plans)

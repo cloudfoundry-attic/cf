@@ -5,9 +5,9 @@ module CF
     describe Spaces do
       let(:full) { false }
       let(:app) { build(:app) }
-      let!(:space_1) { build(:space, :name => "bb_second", :apps => [app], :service_instances => [build(:service_instance)]) }
-      let!(:space_2) { build(:space, :name => "aa_first", :apps => [app], :service_instances => [build(:service_instance)], :domains => [build(:domain)]) }
-      let!(:space_3) { build(:space, :name => "cc_last", :apps => [app], :service_instances => [build(:service_instance)], :domains => [build(:domain)]) }
+      let!(:space_1) { build(:space, :name => "bb_second", :apps => [app], :service_instances => [build(:managed_service_instance)]) }
+      let!(:space_2) { build(:space, :name => "aa_first", :apps => [app], :service_instances => [build(:managed_service_instance)], :domains => [build(:domain)]) }
+      let!(:space_3) { build(:space, :name => "cc_last", :apps => [app], :service_instances => [build(:managed_service_instance)], :domains => [build(:domain)]) }
       let(:spaces) { [space_1, space_2, space_3] }
       let(:organization) { build(:organization, :spaces => spaces, :name => "foo") }
       let(:client) do

@@ -73,8 +73,8 @@ module CF
           } }
 
           it "creates the specified service" do
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:create!)
             capture_output { command }
           end
         end
@@ -89,9 +89,57 @@ module CF
           let(:services) { [selected_service] }
 
           it "uses case insensitive match" do
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
-            CFoundry::V2::ServiceInstance.any_instance.should_receive(:create!)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:service_plan=).with(service_plan)
+            CFoundry::V2::ManagedServiceInstance.any_instance.should_receive(:create!)
             capture_output { command }
+          end
+        end
+
+        describe "when selecting the user-provided service" do
+          let(:services) { [build(:service), build(:service)] }
+          let(:user_provided_service) { build(:service, label: "user-provided")}
+
+          before do
+            client.stub(:services).and_return(services)
+          end
+
+          it "asks for an instance name and credentials" do
+            should_ask("What kind?", hash_including(choices: include(has_label("user-provided")))) { user_provided_service }
+            should_ask("Name?", anything) { "user-provided-service-name-1" }
+
+            should_print("What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)")
+            should_ask("Keys") { "host, port, user name" }
+            should_print("'user name' is not a valid key")
+            should_ask("Keys") { "host, port" }
+            should_ask("host") { "example.com" }
+            should_ask("port") { "8080" }
+            mock_with_progress("Creating service user-provided-service-name-1")
+
+            instance = client.user_provided_service_instance
+            client.should_receive(:user_provided_service_instance).and_return(instance)
+            instance.should_receive(:create!)
+
+            capture_output { command }
+
+            instance.credentials['host'].should == 'example.com'
+            instance.credentials['port'].should == '8080'
+          end
+
+          # lame, i know
+          context "when invoked from another command" do
+            let(:params) { {
+              :credentials => {"k" => "v"},
+              :name => "service-name",
+              :offering => UPDummy.new,
+            } }
+
+            it "creates a user-provided service" do
+              instance = client.user_provided_service_instance
+              client.should_receive(:user_provided_service_instance).and_return(instance)
+              instance.should_receive(:create!)
+
+              Mothership.new.invoke(:create_service, params, {})
+            end
           end
         end
       end

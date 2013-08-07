@@ -42,42 +42,26 @@ module CF
 
         let(:service_plan) { build(:service_plan, :service => build(:service, :version => "service_version", :provider => "provider")) }
         let(:service_binding) { build(:service_binding, :app => app) }
-        let(:service1) { build(:service_instance, :service_plan => service_plan, :service_bindings => [service_binding]) }
+        let(:service1) { build(:managed_service_instance, :service_plan => service_plan, :service_bindings => [service_binding]) }
 
         let(:service_instances) { [service1] }
         let(:current_space) { build(:space, :name => "the space") }
 
         subject do
-          capture_output { Mothership.new.invoke(:services, inputs, given, global) }
+          capture_output { CF::CLI.new.invoke(:services, inputs, given, global) }
         end
 
         before do
-          stub_client_and_precondition
+          stub_client
           client.stub(:service_bindings).and_return([service_binding])
         end
 
-        it "produces a table of services" do
-          subject
-          stdout.rewind
-          output = stdout.read
+        context "when the user is targeted to a space" do
+          before do
+            stub_precondition
+          end
 
-          expect(output).to match /Getting services in the space.*OK/
-
-          expect(output).to match /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-          expect(output).to match /service-instance-.+?\s+  # name
-        service-.*?\s+                                  # service
-        provider.*?\s+                                  # provider
-        service_version\s+                              # version
-        service-plan-.*?\s+                             # plan
-        app-name-\d+\s+                                         # bound apps
-        /x
-
-        end
-
-        context "when one of the services does not have a service plan" do
-          let(:service_instances) { [service1, service2]}
-          let(:service2) { build(:service_instance, :service_plan => nil, :service_bindings => [service_binding]) }
-          it 'still produces a table of service' do
+          it "produces a table of services" do
             subject
             stdout.rewind
             output = stdout.read
@@ -85,7 +69,6 @@ module CF
             expect(output).to match /Getting services in the space.*OK/
 
             expect(output).to match /name\s+service\s+provider\s+version\s+plan\s+bound apps/
-
             expect(output).to match /service-instance-.+?\s+  # name
         service-.*?\s+                                  # service
         provider.*?\s+                                  # provider
@@ -94,23 +77,69 @@ module CF
         app-name-\d+\s+                                         # bound apps
         /x
 
-            expect(output).to match /service-instance-.+?\s+  # name
-        none\s+                                  # service
-        none\s+                                  # provider
-        none\s+                              # version
-        none\s+                             # plan
-        app-name-\d+\s+                                         # bound apps
+          end
+
+          context "when one of the services does not have a service plan" do
+            let(:service_instances) { [service1, service2]}
+            let(:service2) { build(:user_provided_service_instance, :service_bindings => [service_binding]) }
+
+            it 'still produces a table of service' do
+              subject
+              stdout.rewind
+              output = stdout.read
+
+              expect(output).to match /Getting services in the space.*OK/
+
+              expect(output).to match /name\s+service\s+provider\s+version\s+plan\s+bound apps/
+
+              expect(output).to match /service-instance-.+?\s+  # name
+        service-.*?\s+                                  # service
+        provider.*?\s+                                  # provider
+        service_version\s+                              # version
+        service-plan-.*?\s+                             # plan
+        app-name-\d+\s+                                 # bound apps
         /x
+
+              expect(output).to match /service-instance-.+?\s+  # name
+        user-provided\s+                                # service
+        n\/a\s+                                         # provider
+        n\/a\s+                                         # version
+        n\/a\s+                                         # plan
+        app-name-\d+\s+                                 # bound apps
+        /x
+            end
+          end
+
+          context 'when given --marketplace argument' do
+            it 'lists services on the target' do
+              client.stub(:services => Array.new(3) { build(:service) })
+              cf %W[services --marketplace]
+              expect(output).to say("Getting services... OK")
+              expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
+            end
           end
         end
 
+        context "when the user is not targeted to a space" do
+          before do
+            service_command.stub(:check_logged_in).and_return(true)
+            client.stub(:current_organization).and_return(true)
+          end
+          let(:service_command) { CF::Service::Services.new(nil, {}) }
+          let(:current_space) { nil }
 
-        context 'when given --marketplace argument' do
-          it 'lists services on the target' do
-            client.stub(:services => Array.new(3) { build(:service) })
-            cf %W[services --marketplace]
-            expect(output).to say("Getting services... OK")
-            expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
+          subject do
+            capture_output { service_command.execute(:services, inputs, global) }
+
+            #capture_output { CF::CLI.new.invoke(:services, inputs, given, global) }
+          end
+
+          it "returns an error" do
+            subject
+            stdout.rewind
+            output = stderr.read
+
+            expect(output.to_s).to match "Please select a space with 'cf target --space SPACE_NAME'"
           end
         end
       end

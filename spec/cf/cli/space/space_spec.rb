@@ -29,7 +29,7 @@ module CF
 
         let(:apps) { Array.new(2) { build(:app) } }
         let(:domains) { Array.new(2) { build(:domain) } }
-        let(:services) { Array.new(2) { build(:service_instance) } }
+        let(:services) { Array.new(2) { build(:managed_service_instance) } }
         let(:space) { build(:space, :name => "some_space_name", :apps => apps, :service_instances => services, :domains => domains, :organization => organization ) }
         let(:spaces) { [space] }
         let(:organization) { build(:organization, :name => "Spacey Org") }
