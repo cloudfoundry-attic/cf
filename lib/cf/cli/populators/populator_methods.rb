@@ -11,7 +11,7 @@ module CF
 
       def populate_and_save!
         obj = get_object
-        info[type] = obj.guid
+        info[type] = obj.guid unless obj.nil?
         save_target_info(info)
         invalidate_client
 
@@ -48,9 +48,7 @@ module CF
         object_choices = choices
 
         if object_choices.empty?
-          raise CF::UserFriendlyError.new(
-            "There are no #{type}s. You may want to create one with #{c("create-#{type == :organization ? "org" : type}", :good)}."
-          )
+          with_progress("There are no #{type}s. You may want to create one with #{c("create-#{type == :organization ? "org" : type}", :good)}.") {}
         elsif object_choices.is_a?(String)
           raise CF::UserFriendlyError.new(object_choices)
         elsif object_choices.size == 1 && !input.interactive?(type)

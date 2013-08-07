@@ -143,8 +143,9 @@ module CF
                 organization.stub(:spaces).and_return([])
               end
 
-              it "tells the user to create one by raising a UserFriendlyError" do
-                expect { execute_populate_and_save }.to raise_error(CF::UserFriendlyError, /There are no spaces/)
+              it "warns the user they should create one" do
+                execute_populate_and_save
+                expect(output).to say("There are no spaces. You may want to create one with create-space.")
               end
             end
           end
