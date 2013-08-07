@@ -24,7 +24,7 @@ module FeaturesHelper
   def set_target
     target = ENV['CF_V2_TEST_TARGET']
     BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
-      runner.wait_for_exit(20)
+      runner.wait_for_exit 20
     end
   end
 
@@ -80,8 +80,8 @@ module FeaturesHelper
         expect(runner).to say "Domain>"
         runner.send_keys "1"
 
-        expect(runner).to say(/Creating route #{deployed_app_name}\..*\.\.\. OK/)
-        expect(runner).to say(/Binding #{deployed_app_name}\..* to #{deployed_app_name}\.\.\. OK/)
+        expect(runner).to say /Creating route #{deployed_app_name}\..*\.\.\. OK/
+        expect(runner).to say /Binding #{deployed_app_name}\..* to #{deployed_app_name}\.\.\. OK/
 
         expect(runner).to say "Create services for application?> n"
         runner.send_return
