@@ -3,8 +3,6 @@ require "webmock/rspec"
 
 if ENV["CF_V2_RUN_INTEGRATION"]
   describe "A user pushing a new sinatra app", :ruby19 => true do
-    include CF::Interactive
-
     let(:run_id) { TRAVIS_BUILD_ID.to_s + Time.new.to_f.to_s.gsub(".", "_") }
     let(:app) { "hello-sinatra-#{run_id}" }
     let(:subdomain) { "hello-sinatra-subdomain-#{run_id}" }
