@@ -99,7 +99,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           runner.send_keys user_provided_name
 
           expect(runner).not_to say "Which plan?>"
-          expect(runner).to say "What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)\nKeys>"
+          expect(runner).to say "What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)>"
           runner.send_keys "uri"
 
           expect(runner).to say "uri>"

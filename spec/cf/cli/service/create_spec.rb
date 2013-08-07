@@ -107,10 +107,9 @@ module CF
             should_ask("What kind?", hash_including(choices: include(has_label("user-provided")))) { user_provided_service }
             should_ask("Name?", anything) { "user-provided-service-name-1" }
 
-            should_print("What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)")
-            should_ask("Keys") { "host, port, user name" }
+            should_ask("What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)") { "host, port, user name" }
             should_print("'user name' is not a valid key")
-            should_ask("Keys") { "host, port" }
+            should_ask("What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)") { "host, port" }
             should_ask("host") { "example.com" }
             should_ask("port") { "8080" }
             mock_with_progress("Creating service user-provided-service-name-1")

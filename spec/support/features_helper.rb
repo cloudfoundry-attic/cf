@@ -40,7 +40,7 @@ module FeaturesHelper
       runner.send_keys instance_name
 
       if service_name == "user-provided"
-        expect(runner).to say "Keys"
+        expect(runner).to say "What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)>"
         runner.send_keys credentials.keys.join(", ")
 
         credentials.each do |key, value|

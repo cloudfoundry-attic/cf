@@ -51,7 +51,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
             expect(runner).to say "Name?"
             runner.send_keys service_name
 
-            expect(runner).to say "What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)\nKeys"
+            expect(runner).to say "What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)"
             runner.send_keys "hostname"
             expect(runner).to say "hostname"
             runner.send_keys "myserviceinstance.com"

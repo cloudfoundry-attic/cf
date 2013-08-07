@@ -107,9 +107,8 @@ module CF::Service
 
     def ask_credentials
       credentials = {}
-      line("What credential parameters should applications use to connect to this service instance? (e.g. hostname, port, password)")
 
-      while keys = ask("Keys").split(/\s*,\s*/).map(&:strip)
+      while keys = ask("What credential parameters should applications use to connect to this service instance?\n(e.g. hostname, port, password)").split(/\s*,\s*/).map(&:strip)
         if bad_key = keys.detect { |key| key !~ /^[-\w]+$/ }
           line("'#{bad_key}' is not a valid key")
         else
