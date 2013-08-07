@@ -48,4 +48,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "yajl-ruby"
   s.add_development_dependency "nats"
   s.add_development_dependency "typhoeus"
+  s.add_development_dependency "anchorman"
 end
