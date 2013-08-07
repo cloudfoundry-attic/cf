@@ -24,13 +24,13 @@ if ENV["CF_V2_RUN_INTEGRATION"]
     end
 
     it "can create and recursively delete an org" do
-      BlueShell::Runner.run("cf create-org #{new_org_name}") do |runner|
+      BlueShell::Runner.run("#{cf_bin} create-org #{new_org_name}") do |runner|
         runner.should say "Creating organization #{new_org_name}... OK"
         runner.should say "Switching to organization #{new_org_name}... OK"
         runner.should say "There are no spaces. You may want to create one with create-space."
       end
 
-      BlueShell::Runner.run("cf create-space new-space") do |runner|
+      BlueShell::Runner.run("#{cf_bin} create-space new-space") do |runner|
         runner.should say "Creating space new-space... OK"
       end
 
@@ -39,11 +39,11 @@ if ENV["CF_V2_RUN_INTEGRATION"]
       #  runner.should say "If you want to delete the organization along with all dependent objects, rerun the command with the '--recursive' flag."
       #end
 
-      BlueShell::Runner.run("cf delete-org #{new_org_name} --force --recursive") do |runner|
+      BlueShell::Runner.run("#{cf_bin} delete-org #{new_org_name} --force --recursive") do |runner|
         runner.should say("Deleting organization #{new_org_name}... OK")
       end
 
-      BlueShell::Runner.run("cf orgs") do |runner|
+      BlueShell::Runner.run("#{cf_bin} orgs") do |runner|
         runner.should_not say("#{new_org_name}")
       end
     end
