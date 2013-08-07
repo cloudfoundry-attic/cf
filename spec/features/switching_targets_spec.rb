@@ -1,7 +1,7 @@
 require "spec_helper"
 
 if ENV['CF_V2_RUN_INTEGRATION']
-  describe 'A new user tries to use CF against v2 production', :ruby19 => true do
+  describe 'A new user tries to use CF against v2 production', ruby19: true do
 
     let(:target) { ENV['CF_V2_TEST_TARGET'] }
     let(:space) { ENV['CF_V2_TEST_SPACE'] }
@@ -14,6 +14,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
     before do
       Interact::Progress::Dots.start!
     end
+
     after do
       logout
       Interact::Progress::Dots.stop!
@@ -37,23 +38,23 @@ if ENV['CF_V2_RUN_INTEGRATION']
         login
 
         BlueShell::Runner.run("#{cf_bin} target -o #{organization_2}") do |runner|
-          expect(runner).to say("Switching to organization #{organization_2}")
-          expect(runner).to say("Space>")
+          expect(runner).to say "Switching to organization #{organization_2}"
+          expect(runner).to say "Space>"
           runner.send_keys space_2
 
           expect(runner).to say(/Switching to space #{space_2}/)
 
-          runner.wait_for_exit
+          runner.wait_for_exit 15
         end
 
         BlueShell::Runner.run("#{cf_bin} target -s #{space}") do |runner|
           expect(runner).to say("Switching to space #{space}")
-          runner.wait_for_exit(15)
+          runner.wait_for_exit 15
         end
 
         BlueShell::Runner.run("#{cf_bin} target -s #{space_2}") do |runner|
           expect(runner).to say("Switching to space #{space_2}")
-          runner.wait_for_exit(15)
+          runner.wait_for_exit 15
         end
       end
     end
