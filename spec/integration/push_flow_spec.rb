@@ -36,6 +36,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
       end
 
       Dir.chdir("#{SPEC_ROOT}/assets/hello-sinatra") do
+        FileUtils.rm("manifest.yml", force: true)
         BlueShell::Runner.run("#{cf_bin} push") do |runner|
           expect(runner).to say "Name>"
           runner.send_keys app
