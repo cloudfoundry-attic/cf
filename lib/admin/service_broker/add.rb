@@ -9,11 +9,11 @@ module CFAdmin::ServiceBroker
     desc "Add a Service Broker."
     group :admin
     input :name, :argument => :optional,
-      :desc => "broker name"
+      :desc => "Broker name"
     input :url,
-      :desc => "broker url"
+      :desc => "Broker URL"
     input :token,
-      :desc => "broker token"
+      :desc => "Broker token"
 
     def add_service_broker
       broker = client.service_broker
@@ -32,15 +32,15 @@ module CFAdmin::ServiceBroker
 
     private
     def ask_name
-      ask("name")
+      ask("Name")
     end
 
     def ask_url
-      ask("url")
+      ask("URL")
     end
 
     def ask_token
-      ask("token")
+      ask("Token")
     end
   end
 end
