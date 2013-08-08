@@ -29,8 +29,8 @@ describe CFAdmin::ServiceBroker::Add do
   it "creates a service broker when only the name is provided" do
     service_broker.stub(:create!)
 
-    stub_ask("url").and_return("http://example.com")
-    stub_ask("token").and_return("token")
+    stub_ask("URL").and_return("http://example.com")
+    stub_ask("Token").and_return("token")
 
     cf %W[add-service-broker cf-mysql]
 
@@ -44,9 +44,9 @@ describe CFAdmin::ServiceBroker::Add do
   it "creates a service broker when no arguments are provided" do
     service_broker.stub(:create!)
 
-    stub_ask("name").and_return("cf-mysql")
-    stub_ask("url").and_return("http://example.com")
-    stub_ask("token").and_return("token")
+    stub_ask("Name").and_return("cf-mysql")
+    stub_ask("URL").and_return("http://example.com")
+    stub_ask("Token").and_return("token")
 
     cf %W[add-service-broker]
 
