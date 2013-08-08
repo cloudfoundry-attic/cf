@@ -103,7 +103,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           runner.send_keys "uri"
 
           expect(runner).to say "uri>"
-          runner.send_keys "mysql://u:p@example.com:port/db"
+          runner.send_keys "mysql://u:p@example.com:3306/db"
 
           expect(runner).to say /Creating service #{user_provided_name}.*OK/
           expect(runner).to say /Binding .+ to .+ OK/
