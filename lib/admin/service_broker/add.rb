@@ -6,7 +6,7 @@ module CFAdmin::ServiceBroker
       check_target
     end
 
-    desc "Add a Service Broker."
+    desc "Add a service broker"
     group :admin
     input :name, :argument => :optional,
       :desc => "Broker name"

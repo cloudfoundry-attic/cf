@@ -6,7 +6,7 @@ module CFAdmin::ServiceBroker
       check_target
     end
 
-    desc "List Registered Service Brokers."
+    desc "List registered service brokers"
     group :admin
 
     def service_brokers
