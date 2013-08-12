@@ -35,6 +35,8 @@ FileUtils.mkdir_p(tmp_dir)
 IntegrationExampleGroup.tmp_dir = tmp_dir
 
 RSpec.configure do |c|
+  c.fail_fast = true
+
   c.include BlueShell::Matchers
 
   if RUBY_VERSION =~ /^1\.8\.\d/
