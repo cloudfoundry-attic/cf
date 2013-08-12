@@ -53,4 +53,6 @@ env:
     - secure: "HswFWg/EW3Kvu579kIRkUmP2HwK2VIbaufkwwOMr5DeIOoQ/dMd+mL8Py43jW+7bhIX2HRUzTa0VZOrFHw4CPEjAXVWgfkfE4h3ggDpOM2Cz5BxETKjmY9odwJXf6jsJkS9ah9eVffj1128eKcpUpmbj7FGSViTIT1raTMz1MYg="
 
 
+before_script: mysql -e 'create database ccng;'
+
 after_failure: bin/after_failure.sh
