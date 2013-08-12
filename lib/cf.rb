@@ -1,7 +1,5 @@
 require "cf/version"
 
-require "cf/object_extensions"
-
 require "cf/cli"
 
 command_files = "../cf/cli/{app,route,domain,organization,space,service,start,user}/*.rb"
