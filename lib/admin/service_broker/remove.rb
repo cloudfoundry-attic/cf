@@ -18,7 +18,7 @@ module CFAdmin::ServiceBroker
       broker = input[:name]
       return unless input[:really, broker]
 
-      with_progress("Removing #{broker.name}") do
+      with_progress("Removing service broker #{broker.name}") do
         broker.delete!
       end
     end
