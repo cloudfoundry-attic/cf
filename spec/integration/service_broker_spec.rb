@@ -25,20 +25,32 @@ describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
 
   it "allows an admin user to add a service broker" do
     BlueShell::Runner.run("#{cf_bin} add-service-broker --name cf-mysql --url http://cf-mysql.cfapp.io --token cfmysqlsecret") do |runner|
-      expect(runner).to say "... OK"
+      expect(runner).to say "Adding cf-mysql... OK"
     end
   end
 
   context "with some service brokers already registered" do
     before do
       BlueShell::Runner.run("#{cf_bin} add-service-broker --name cf-mysql --url http://cf-mysql.cfapp.io --token cfmysqlsecret") do |runner|
-        expect(runner).to say "... OK"
+        expect(runner).to say "Adding cf-mysql... OK"
       end
     end
 
     it "allows an admin user to list service brokers" do
       BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
         expect(runner).to say /cf-mysql.*cf-mysql.cfapp.io/
+      end
+    end
+
+    it "allows an admin user to remove a service broker" do
+      BlueShell::Runner.run("#{cf_bin} remove-service-broker cf-mysql") do |runner|
+        expect(runner).to say "Really remove cf-mysql?> n"
+        runner.send_keys("y")
+        expect(runner).to say "Removing cf-mysql... OK"
+      end
+
+      BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
+        expect(runner).to_not say /cf-mysql/
       end
     end
   end
