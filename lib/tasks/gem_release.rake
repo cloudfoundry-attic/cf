@@ -17,12 +17,12 @@ namespace :gem do
   end
 
   private
-  def generate_release_notes(old_version)
-    print_with_purpose "Generating release notes..."
-    file_name = "release_#{gem_version}"
-    sh!("anchorman notes --name=#{file_name} --from=v#{old_version}")
-    sh!("git add release_notes")
-  end
+  #def generate_release_notes(old_version)
+  #  print_with_purpose "Generating release notes..."
+  #  file_name = "release_#{gem_version}"
+  #  sh!("anchorman notes --name=#{file_name} --from=v#{old_version}")
+  #  sh!("git add release_notes")
+  #end
 
   def sh!(cmd)
     `#{cmd}`
