@@ -28,7 +28,7 @@ describe CFAdmin::ServiceBroker::Remove do
         should_ask('Really remove somebroker?', {:default => false}) { true }
 
         capture_output { cf %W[remove-service-broker somebroker] }
-        expect(output).to say("Removing #{service_broker.name}... OK")
+        expect(output).to say("Removing service broker #{service_broker.name}... OK")
       end
     end
 
