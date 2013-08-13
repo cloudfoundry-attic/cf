@@ -5,8 +5,12 @@ module CF::App
     end
 
     def ask_host(name)
-      ask "Subdomain", :choices => [name, "none"],
-        :default => name,
+      # Use .dup here because when we pass app.name deep into interactive,
+      # it needs an unfrozen String because the cli allows people to change
+      # this value.
+      host = name.dup
+      ask "Subdomain", :choices => [host, "none"],
+        :default => host,
         :allow_other => true
     end
 

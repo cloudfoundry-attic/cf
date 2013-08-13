@@ -192,7 +192,7 @@ module CF
       end
 
       describe "#map_url" do
-        let(:app) { double(:app, :space => space).as_null_object }
+        let(:app) { double(:app, :space => space, name: "app-name").as_null_object }
         let(:space) { double(:space, :domains => domains) }
         let(:domains) { [double(:domain, :name => "foo.com")] }
         let(:hosts) { [app.name] }
