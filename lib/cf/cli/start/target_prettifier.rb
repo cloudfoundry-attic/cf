@@ -1,3 +1,5 @@
+require "active_support/core_ext"
+
 class TargetPrettifier
   def self.prettify(client, outputter)
     outputter.line("Target Information (where will apps be pushed):")
