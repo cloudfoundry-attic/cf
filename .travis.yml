@@ -4,6 +4,10 @@ rvm:
   - "1.9.3"
   - "2.0.0"
 
+before_install:
+  - git submodule foreach --recursive git submodule sync
+  - git submodule update --init --recursive
+
 matrix:
   allow_failures:
 #    - rvm: "2.0.0"
