@@ -2,4 +2,4 @@
 
 # cat any relevant logs
 
-tail +1 tmp/log/*
+tail -n +1 tmp/log/*
