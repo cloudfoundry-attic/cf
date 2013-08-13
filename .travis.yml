@@ -58,5 +58,6 @@ env:
 
 
 before_script: mysql -e 'create database ccng;'
+script: bundle exec rspec -fd -b spec/integration
 
 after_failure: bin/after_failure.sh
