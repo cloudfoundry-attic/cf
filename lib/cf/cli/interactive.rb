@@ -56,7 +56,6 @@ module CF
 
     def handler(event, state)
       ans = state.answer
-      pos = state.position
 
       exit if event == :eof
 
@@ -69,7 +68,7 @@ module CF
           redraw_input(state)
         end
 
-        state.clear_default! if(event != :up)
+        state.clear_default! if event != :up
 
         # tab with a default accepts it and moves to the end
         if event == :tab
