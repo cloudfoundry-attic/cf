@@ -40,8 +40,8 @@ if ENV["CF_V2_RUN_INTEGRATION"]
         expect(runner).to say "Deleting organization #{new_org_name}... OK", 15
       end
 
-      BlueShell::Runner.run("#{cf_bin} orgs") do |runner|
-        expect(runner).to_not say new_org_name
+      BlueShell::Runner.run("#{cf_bin} target -o #{new_org_name}") do |runner|
+        expect(runner).to say "Unknown organization '#{new_org_name}'."
       end
     end
   end

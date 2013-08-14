@@ -18,13 +18,12 @@ module CF::Organization
       return unless input[:really, org]
 
       is_current = org == client.current_organization
-      @orgs ||= client.organizations(:depth => 0)
       with_progress("Deleting organization #{c(org.name, :name)}") do
-        deleted = org.delete!(:recursive => !!input[:recursive])
-        @orgs.delete(org) if deleted
+        org.delete!(:recursive => !!input[:recursive])
       end
 
-      if @orgs.empty?
+      orgs = client.organizations_first_page(:depth => 0)
+      if orgs.empty?
         return unless input[:warn]
 
         line

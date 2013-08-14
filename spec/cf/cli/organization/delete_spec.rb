@@ -29,6 +29,7 @@ module CF
           CF::Populators::Organization.any_instance.stub(:populate_and_save!).and_return(organization)
           organization.stub(:delete!).and_return(true)
           client.stub(:organizations).and_return(organizations)
+          client.stub(:organizations_first_page).and_return(organizations)
         end
 
         context "without the force parameter" do
@@ -43,6 +44,10 @@ module CF
         end
 
         context "when deleting the last organization" do
+          before do
+            client.stub(:organizations_first_page).and_return([])
+          end
+
           it "warns the user what they've done" do
             subject
             expect(output).to say("There are no longer any organizations.")
