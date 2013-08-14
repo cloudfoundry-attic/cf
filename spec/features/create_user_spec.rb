@@ -23,7 +23,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
       client
     end
 
-    let(:new_user) { Faker::Internet.email }
+    let(:new_user) { Faker::Internet.disposable_email("cf-test-user-#{Time.now.to_i}") }
 
     before do
       Interact::Progress::Dots.start!
@@ -66,11 +66,6 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       BlueShell::Runner.run("#{cf_bin} login #{new_user} --password #{password}") do |runner|
         expect(runner).to say "Authenticating... OK"
-
-        expect(runner).to say "Space>"
-        runner.send_keys "1"
-
-        expect(runner).to say /Switching to space.*OK/
       end
     end
   end

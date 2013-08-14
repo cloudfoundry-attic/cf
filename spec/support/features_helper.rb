@@ -3,10 +3,10 @@ module FeaturesHelper
     set_target
     logout
 
-    space = ENV['CF_V2_TEST_SPACE']
-    organization = ENV['CF_V2_TEST_ORGANIZATION']
     username = ENV['CF_V2_TEST_USER']
     password = ENV['CF_V2_TEST_PASSWORD']
+    organization = ENV['CF_V2_TEST_ORGANIZATION']
+    space = ENV['CF_V2_TEST_SPACE']
 
     cmd = "#{cf_bin} login #{username} --password #{password} -o #{organization}"
     cmd += " -s #{space}"

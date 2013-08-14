@@ -35,7 +35,7 @@ applications:
   memory: 256M
   instances: 1
   host: #{subdomain}
-  domain: a1-app.cf-app.com
+  domain: cfapps.io
   path: .
   services:
     #{user_provided_name}:
@@ -63,7 +63,7 @@ applications:
             expect(runner).to say "Preparing to start #{app}... OK", 180
             expect(runner).to say "Checking status of app '#{app}'...", 180
             expect(runner).to say "1 of 1 instances running"
-            expect(runner).to say "Push successful! App '#{app}' available at http://#{subdomain}.a1-app.cf-app.com", 30
+            expect(runner).to say "Push successful! App '#{app}' available at http://#{subdomain}.cfapps.io", 30
           end
         end
 

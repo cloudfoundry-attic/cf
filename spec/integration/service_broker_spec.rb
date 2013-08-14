@@ -1,5 +1,7 @@
 require "spec_helper"
 
+
+#TODO: unpend when service broker stuff is pused to prod
 describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
   let(:username) { 'admin' }
   let(:password) { 'the_admin_pw' }
@@ -23,7 +25,7 @@ describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
     logout
   end
 
-  it "allows an admin user to add a service broker" do
+  xit "allows an admin user to add a service broker" do
     BlueShell::Runner.run("#{cf_bin} add-service-broker --name cf-mysql --url http://cf-mysql.cfapp.io --token cfmysqlsecret") do |runner|
       expect(runner).to say "Adding service broker cf-mysql... OK"
     end
@@ -36,13 +38,13 @@ describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
       end
     end
 
-    it "allows an admin user to list service brokers" do
+    xit "allows an admin user to list service brokers" do
       BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
         expect(runner).to say /cf-mysql.*cf-mysql.cfapp.io/
       end
     end
 
-    it "allows an admin user to remove a service broker" do
+    xit "allows an admin user to remove a service broker" do
       BlueShell::Runner.run("#{cf_bin} remove-service-broker cf-mysql") do |runner|
         expect(runner).to say "Really remove cf-mysql?> n"
         runner.send_keys("y")
