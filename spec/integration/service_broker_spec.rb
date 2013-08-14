@@ -1,11 +1,12 @@
 require "spec_helper"
 
-
-#TODO: unpend when service broker stuff is pused to prod
-describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
+describe "Service Broker Management", components: [:nats, :uaa, :ccng, :fake_service_broker] do
   let(:username) { 'admin' }
   let(:password) { 'the_admin_pw' }
   let(:target) { 'http://127.0.0.1:8181' }
+
+  let(:broker_url) { 'http://127.0.0.1:54329' }
+  let(:broker_token) { 'opensesame' }
 
   before do
     create_user_in_ccng
@@ -25,34 +26,34 @@ describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
     logout
   end
 
-  xit "allows an admin user to add a service broker" do
-    BlueShell::Runner.run("#{cf_bin} add-service-broker --name cf-mysql --url http://cf-mysql.cfapp.io --token cfmysqlsecret") do |runner|
-      expect(runner).to say "Adding service broker cf-mysql... OK"
+  it "allows an admin user to add a service broker" do
+    BlueShell::Runner.run("#{cf_bin} add-service-broker --name my-custom-service --url #{broker_url} --token #{broker_token}") do |runner|
+      expect(runner).to say "Adding service broker my-custom-service... OK"
     end
   end
 
   context "with a service broker already registered" do
     before do
-      BlueShell::Runner.run("#{cf_bin} add-service-broker --name cf-mysql --url http://cf-mysql.cfapp.io --token cfmysqlsecret") do |runner|
-        expect(runner).to say "Adding service broker cf-mysql... OK"
+      BlueShell::Runner.run("#{cf_bin} add-service-broker --name my-custom-service --url #{broker_url} --token #{broker_token}") do |runner|
+        expect(runner).to say "Adding service broker my-custom-service... OK"
       end
     end
 
-    xit "allows an admin user to list service brokers" do
+    it "allows an admin user to list service brokers" do
       BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
-        expect(runner).to say /cf-mysql.*cf-mysql.cfapp.io/
+        expect(runner).to say /my-custom-service.*#{broker_url}/
       end
     end
 
-    xit "allows an admin user to remove a service broker" do
-      BlueShell::Runner.run("#{cf_bin} remove-service-broker cf-mysql") do |runner|
-        expect(runner).to say "Really remove cf-mysql?> n"
+    it "allows an admin user to remove a service broker" do
+      BlueShell::Runner.run("#{cf_bin} remove-service-broker my-custom-service") do |runner|
+        expect(runner).to say "Really remove my-custom-service?> n"
         runner.send_keys("y")
-        expect(runner).to say "Removing service broker cf-mysql... OK"
+        expect(runner).to say "Removing service broker my-custom-service... OK"
       end
 
       BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
-        expect(runner).to_not say /cf-mysql/
+        expect(runner).to_not say /my-custom-service/
       end
     end
   end
