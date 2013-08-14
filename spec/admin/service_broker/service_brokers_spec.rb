@@ -15,8 +15,9 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
     let(:brokers_data) { [] }
     it "says there are no brokers" do
       client.should_receive(:service_brokers).and_return(brokers_data)
+      mock_with_progress("Getting service brokers")
       cf %W[service-brokers]
-      expect(stdout.string).to eq("Getting service brokers... OK\nName   URL\n")
+      expect(stdout.string).to eq("Name   URL\n")
     end
   end
 
