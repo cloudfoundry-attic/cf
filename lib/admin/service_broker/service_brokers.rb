@@ -10,9 +10,13 @@ module CFAdmin::ServiceBroker
     group :admin
 
     def service_brokers
-      brokers = client.service_brokers
+      brokers = nil
+      with_progress('Getting service brokers') do
+        brokers = client.service_brokers
+      end
+
       table(
-        %w(name url),
+        %w(Name URL),
         brokers.collect { |broker|
           [c(broker.name, :name), broker.broker_url]
         }

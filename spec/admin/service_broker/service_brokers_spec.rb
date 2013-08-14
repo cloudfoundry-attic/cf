@@ -16,7 +16,7 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
     it "says there are no brokers" do
       client.should_receive(:service_brokers).and_return(brokers_data)
       cf %W[service-brokers]
-      expect(stdout.string).to eq("name   url\n")
+      expect(stdout.string).to eq("Getting service brokers... OK\nName   URL\n")
     end
   end
 
@@ -26,6 +26,8 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
     it "lists the brokers" do
       client.should_receive(:service_brokers).and_return(brokers_data)
       cf %W[service-brokers]
+      expect(stdout.string).to match(/Getting service brokers... OK/)
+      expect(stdout.string).to match(/Name.*URL/)
       expect(stdout.string).to match(/mysql.*mysql.example.com/)
     end
   end
