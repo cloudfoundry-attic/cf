@@ -48,7 +48,7 @@ RSpec.configure do |c|
   c.include InteractHelper
   c.include ConfigHelper
   c.include FeaturesHelper
-  c.include IntegrationExampleGroup, type: :integration, :example_group => {:file_path => /\/integration\//}
+  c.include IntegrationExampleGroup, type: :integration
 
   c.before(:all) do
     WebMock.disable_net_connect!(:allow_localhost => true)

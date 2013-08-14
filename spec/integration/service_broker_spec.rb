@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
+describe "Service Broker Management", type: :integration, components: [:nats, :uaa, :ccng] do
   let(:username) { 'admin' }
   let(:password) { 'the_admin_pw' }
   let(:target) { 'http://127.0.0.1:8181' }
@@ -51,6 +51,12 @@ describe "Service Broker Management", components: [:nats, :uaa, :ccng] do
 
       BlueShell::Runner.run("#{cf_bin} service-brokers") do |runner|
         expect(runner).to_not say /cf-mysql/
+      end
+    end
+
+    it "allows an admin user to update a service broker" do
+      BlueShell::Runner.run("#{cf_bin} update-service-broker cf-mysql --name cf-othersql --url http://other.example.com/ --token othertoken") do |runner|
+        expect(runner).to say "Updating service broker cf-mysql... OK"
       end
     end
   end
