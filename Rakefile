@@ -6,6 +6,12 @@ specfile, _ = Dir["*.gemspec"]
 SPEC = Gem::Specification.load(specfile)
 CURRENT_VERSION = SPEC.version.to_s.freeze
 
+namespace :spec do
+  RSpec::Core::RakeTask.new(:ci) do |t|
+    t.rspec_opts = '-t ~type:integration'
+  end
+end
+
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
