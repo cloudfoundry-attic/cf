@@ -99,6 +99,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
       after do
         delete_app(app_name)
+        delete_service(service_name)
       end
     end
 
