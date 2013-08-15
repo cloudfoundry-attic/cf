@@ -26,8 +26,8 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
 
     it "lists the brokers" do
       client.should_receive(:service_brokers).and_return(brokers_data)
+      mock_with_progress("Getting service brokers")
       cf %W[service-brokers]
-      expect(stdout.string).to match(/Getting service brokers... OK/)
       expect(stdout.string).to match(/Name.*URL/)
       expect(stdout.string).to match(/mysql.*mysql.example.com/)
     end
