@@ -15,6 +15,8 @@ module CFAdmin::ServiceBroker
         brokers = client.service_brokers
       end
 
+      line unless quiet?
+
       table(
         %w(Name URL),
         brokers.collect { |broker|

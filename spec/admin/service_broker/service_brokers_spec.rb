@@ -17,7 +17,7 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
       client.should_receive(:service_brokers).and_return(brokers_data)
       mock_with_progress("Getting service brokers")
       cf %W[service-brokers]
-      expect(stdout.string).to eq("Name   URL\n")
+      expect(stdout.string).to eq("\nName   URL\n")
     end
   end
 
@@ -28,8 +28,7 @@ describe CFAdmin::ServiceBroker::ServiceBrokers do
       client.should_receive(:service_brokers).and_return(brokers_data)
       mock_with_progress("Getting service brokers")
       cf %W[service-brokers]
-      expect(stdout.string).to match(/Name.*URL/)
-      expect(stdout.string).to match(/mysql.*mysql.example.com/)
+      expect(stdout.string).to match(/\nName.*URL.*\nmysql.*mysql.example.com/)
     end
   end
 end
