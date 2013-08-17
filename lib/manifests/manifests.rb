@@ -236,7 +236,6 @@ module CFManifests
 
   def warn_reset_changes
     line c("Not applying manifest changes without --reset", :warning)
-    line "See `cf diff` for more details."
     line
   end
 
