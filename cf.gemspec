@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake", "~> 0.9"
   s.add_development_dependency "rspec", "~> 2.14"
   s.add_development_dependency "rspec-instafail", "~> 0.2.4"
+  s.add_development_dependency "sinatra"
   s.add_development_dependency "webmock", "~> 1.9"
   s.add_development_dependency "httpclient", "~> 2.3"
   s.add_development_dependency "yajl-ruby"
