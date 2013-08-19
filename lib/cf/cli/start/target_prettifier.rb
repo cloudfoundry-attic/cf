@@ -1,4 +1,4 @@
-require "active_support/core_ext"
+require 'active_support/core_ext/object/try'
 
 class TargetPrettifier
   def self.prettify(client, outputter)
