@@ -10,7 +10,6 @@ require "webmock/rspec"
 require "ostruct"
 require "fakefs/safe"
 require "blue-shell"
-require_relative '../vendor/integration-test-support/support/integration_example_group.rb'
 
 TRAVIS_BUILD_ID = ENV["TRAVIS_BUILD_ID"]
 
@@ -30,10 +29,6 @@ Dir[File.expand_path('../support/**/*.rb', __FILE__)].each do |file|
   require file
 end
 
-tmp_dir = File.expand_path('../tmp', File.dirname(__FILE__))
-FileUtils.mkdir_p(tmp_dir)
-IntegrationExampleGroup.tmp_dir = tmp_dir
-
 RSpec.configure do |c|
   c.include BlueShell::Matchers
 
@@ -46,7 +41,6 @@ RSpec.configure do |c|
   c.include InteractHelper
   c.include ConfigHelper
   c.include FeaturesHelper
-  c.include IntegrationExampleGroup, type: :integration, :example_group => {:file_path => /\/integration\//}
 
   c.before(:all) do
     WebMock.disable_net_connect!(:allow_localhost => true)
