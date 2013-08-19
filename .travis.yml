@@ -23,4 +23,3 @@ env:
   - secure: f4AS3OxbDrlQSXGX74+GY1qZsOHsOacSWplJSnreInNuSbGofPBwpzN5AwMA1HEZDjV0Q7yoYtWHDwtjIm9/Y8tlhzZ7eGOJYpzhYnadBbjqdCwP1m6LbYo4YwtIQqBbkRnAaafhhoQ0HvO/jo5XUiJUO74WwDRUb6i3iOIGgFM=
 before_script: mysql -e 'create database ccng;'
 after_failure: bin/after_failure.sh
-script: bundle exec rake spec:ci
