@@ -163,7 +163,6 @@ EOS
 
     def formatted_exception_output(e, msg)
       log_error(e)
-      msg << "\ncat #{CF::CRASH_FILE} # for more details"
       err msg
 
       raise if debug?

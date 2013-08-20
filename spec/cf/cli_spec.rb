@@ -58,9 +58,9 @@ module CF
           subject
         end
 
-        it "does mention ~/.cf/crash" do
+        it "does not mention ~/.cf/crash" do
           subject
-          expect(stderr.string).to include CF::CRASH_FILE
+          expect(stderr.string).not_to include CF::CRASH_FILE
         end
 
         it "logs the error" do
@@ -162,9 +162,9 @@ module CF
           subject
         end
 
-        it "tells the user to check ~/.cf/crash" do
+        it "does not tell the user to check ~/.cf/crash" do
           subject
-          expect(stderr.string).to include CF::CRASH_FILE
+          expect(stderr.string).not_to include CF::CRASH_FILE
         end
 
         context "when we are debugging" do
