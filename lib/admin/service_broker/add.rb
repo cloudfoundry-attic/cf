@@ -25,7 +25,7 @@ module CFAdmin::ServiceBroker
       broker.token = input[:token]
       finalize
 
-      with_progress("Adding service broker #{broker.name}") do
+      with_progress("Adding service broker #{c(broker.name, :name)}") do
         broker.create!
       end
     end
