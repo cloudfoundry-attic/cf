@@ -66,7 +66,7 @@ module CF
             before do
               app.stub(:instances) do
                 [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")
+                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN")
                 ]
               end
 
@@ -75,10 +75,10 @@ module CF
               end
             end
 
-            context "when all instances become running" do
+            context "when one instance becomes running" do
               let(:final_instances) do
                 [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")
+                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN")
                 ]
               end
 
@@ -86,7 +86,7 @@ module CF
                 execute_start_app
                 expect(output).to say("Checking status of app '#{app.name}'...")
                 expect(output).to say("1 running, 1 down")
-                expect(output).to say("2 running")
+                expect(output).to say("Push successful!")
               end
             end
 
@@ -122,17 +122,19 @@ module CF
             end
 
             context "when any instance becomes flapping" do
-              let(:final_instances) do
-                [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "FLAPPING"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "STARTING")
-                ]
+              before do
+                app.stub(:instances) do
+                  [
+                    CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "FLAPPING"),
+                    CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN"),
+                  ]
+                end
               end
 
               it "says app failed to start" do
                 execute_start_app
                 expect(output).to say("Checking status of app '#{app.name}'...")
-                expect(output).to say("1 running, 1 down")
-                expect(output).to say("1 starting, 1 flapping")
+                expect(output).to say("1 crashing, 1 down")
                 expect(error_output).to say("Push unsuccessful.")
               end
             end

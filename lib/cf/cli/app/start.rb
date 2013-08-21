@@ -108,7 +108,7 @@ module CF::App
 
             indented { print_instances_summary(instances) }
 
-            if all_instances_running?(instances)
+            if one_instance_running?(instances)
               line "#{c("Push successful! App '#{app.name}' available at http://#{app.host}.#{app.domain}", :good)}"
               return
             end
@@ -124,8 +124,8 @@ module CF::App
       end
     end
 
-    def all_instances_running?(instances)
-      instances.all? { |i| i.state == "RUNNING" }
+    def one_instance_running?(instances)
+      instances.any? { |i| i.state == "RUNNING" }
     end
 
     def any_instance_flapping?(instances)
@@ -145,9 +145,9 @@ module CF::App
       end
 
       states = []
-      %w{RUNNING STARTING DOWN FLAPPING}.each do |state|
+      %w{RUNNING STARTING FLAPPING DOWN}.each do |state|
         if (num = counts[state]) > 0
-          states << "#{b(num)} #{c(state.downcase, state_color(state))}"
+          states << "#{b(num)} #{c(for_output(state), state_color(state))}"
         end
       end
 
@@ -156,6 +156,12 @@ module CF::App
 
       ratio = "#{running}#{d(" of ")}#{total} instances running"
       line "#{ratio} (#{states.join(", ")})"
+    end
+
+    private
+    def for_output(state)
+      state = "CRASHING" if state == "FLAPPING"
+      state.downcase
     end
   end
 end
