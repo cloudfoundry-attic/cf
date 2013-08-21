@@ -6,7 +6,7 @@ module CF
       let(:global) { {:color => false, :quiet => true} }
       let(:inputs) { {} }
       let(:given) { {} }
-      let(:path) { "somepath" }
+      let(:path) { "/somepath" }
       let(:client) { build(:client) }
       let(:push) { CF::App::Push.new(Mothership.commands[:push]) }
 
@@ -18,37 +18,28 @@ module CF
       describe "metadata" do
         let(:command) { Mothership.commands[:push] }
 
-        describe "command" do
+        describe "has the correct information" do
           subject { command }
           its(:description) { should eq "Push an application, syncing changes if it exists" }
           it { expect(Mothership::Help.group(:apps, :manage)).to include(subject) }
         end
 
-        include_examples "inputs must have descriptions"
-
-        describe "arguments" do
-          subject { command.arguments }
-          it "has the correct argument order" do
-            should eq([{:type => :optional, :value => nil, :name => :name}])
-          end
-        end
+        it_behaves_like "inputs must have descriptions"
       end
 
-      describe "#sync_app" do
+      describe "#push" do
         let(:app) { build(:app, :client => client, :name => "app-name-1") }
 
         before do
           app.stub(:upload)
           app.changes = {}
           push.stub(:warn)
+          client.stub(:app_by_name).and_return(app)
         end
 
-        subject do
-          push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
-          push.sync_app(app, path)
-        end
+        let(:inputs) { {} }
 
-        shared_examples "common tests for inputs" do |*args|
+        shared_examples_for "an input" do |*args|
           context "when the new input is the same as the old" do
             type, input = args
             input ||= type
@@ -58,19 +49,36 @@ module CF
             it "does not update the app's #{type}" do
               push.should_not_receive(:line)
               app.should_not_receive(:update!)
-              expect { subject }.not_to change { app.send(type) }
+              expect do
+                push.input = Mothership::Inputs.new(Mothership.commands[:push], push, inputs, {}, global)
+                push.push
+              end.not_to change { app.send(type) }
             end
           end
         end
 
         it "triggers the :push_app filter" do
           push.should_receive(:filter).with(:push_app, app) { app }
-          subject
+          push.input = Mothership::Inputs.new(Mothership.commands[:push], push, inputs, {}, global)
+          push.push
         end
 
-        it "uploads the app" do
-          app.should_receive(:upload).with(path)
-          subject
+        describe 'uploading the app from the correct path' do
+          context 'when the user does not specify a path' do
+            it 'uploads the app' do
+              app.should_receive(:upload).with(File.expand_path('.'))
+              push.input = Mothership::Inputs.new(Mothership.commands[:push], push, {}, {}, global)
+              push.push
+            end
+          end
+
+          context 'when the user specifies a path' do
+            it 'uploads the app' do
+              app.should_receive(:upload).with(path)
+              push.input = Mothership::Inputs.new(Mothership.commands[:push], push, {:path => path}, {}, global)
+              push.push
+            end
+          end
         end
 
         context "when the app is stopped" do
@@ -80,21 +88,24 @@ module CF
 
           it "warns the user" do
             push.should_receive(:warn).with("\n#{app.name} is currently stopped, start it with 'cf start'")
-            subject
+            push.input = Mothership::Inputs.new(nil, push, {:path => path}, {}, global)
+            push.push
           end
         end
 
-        context "when no inputs are given" do
-          let(:inputs) { {} }
+        context "when no inputs other than path are given" do
+          let(:inputs) { {:path => ""} }
 
           it "should not update the app" do
             app.should_not_receive(:update!)
-            subject
+            push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push
           end
 
           it "should not set memory on the app" do
             app.should_not_receive(:memory=)
-            subject
+            push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push
           end
         end
 
@@ -102,70 +113,80 @@ module CF
           let(:old) { 1024 }
           let(:new) { "2G" }
           let(:app) { build(:app, :memory => old) }
-          let(:inputs) { {:memory => new} }
+          let(:inputs) { {:path => path, :memory => new} }
 
           it "updates the app memory, converting to megabytes" do
             push.stub(:line)
             app.should_receive(:update!)
-            expect { subject }.to change { app.memory }.from(old).to(2048)
+            expect { push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push }.to change { app.memory }.from(old).to(2048)
           end
 
           it "outputs the changed memory in human readable sizes" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("memory: 1G -> 2G")
             app.stub(:update!)
-            subject
+            push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push
           end
 
-          include_examples "common tests for inputs", :memory
+          it_behaves_like "an input", :memory
         end
 
         context "when instances is given" do
           let(:old) { 1 }
           let(:new) { 2 }
           let(:app) { build(:app, :total_instances => old) }
-          let(:inputs) { {:instances => new} }
+          let(:inputs) { {:path => path, :instances => new} }
 
           it "updates the app instances" do
             push.stub(:line)
             app.stub(:update!)
-            expect { subject }.to change { app.total_instances }.from(old).to(new)
+            expect do
+              push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+              push.push
+            end.to change { app.total_instances }.from(old).to(new)
           end
 
           it "outputs the changed instances" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("total_instances: 1 -> 2")
             app.stub(:update!)
-            subject
+            push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push
           end
 
-          include_examples "common tests for inputs", :total_instances, :instances
+          it_behaves_like "an input", :total_instances, :instances
         end
 
         context "when command is given" do
           let(:old) { "./start" }
           let(:new) { "./start foo " }
           let(:app) { build(:app, :command => old) }
-          let(:inputs) { {:command => new} }
+          let(:inputs) { {:path => path, :command => new} }
 
           it "updates the app command" do
             push.stub(:line)
             app.should_receive(:update!)
-            expect { subject }.to change { app.command }.from("./start").to("./start foo ")
+            expect do
+              push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+              push.push
+            end.to change { app.command }.from("./start").to("./start foo ")
           end
 
           it "outputs the changed command in single quotes" do
             push.should_receive(:line).with("Changes:")
             push.should_receive(:line).with("command: './start' -> './start foo '")
             app.stub(:update!)
-            subject
+            push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+            push.push
           end
 
-          include_examples "common tests for inputs", :command
+          it_behaves_like "an input", :command
         end
 
         context "when restart is given" do
-          let(:inputs) { {:restart => true, :memory => 4096} }
+          let(:inputs) { {:path => path, :restart => true, :memory => 4096} }
 
           before do
             CF::App::Base.any_instance.stub(:human_mb).and_return(0)
@@ -178,17 +199,19 @@ module CF
               push.stub(:line)
               app.should_receive(:update!)
               push.should_receive(:invoke).with(:restart, :app => app)
-              subject
+              push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+              push.push
             end
 
             context "but there are no changes" do
-              let(:inputs) { {:restart => true} }
+              let(:inputs) { {:path => path, :restart => true} }
 
               it "invokes the restart command" do
                 push.stub(:line)
                 app.should_not_receive(:update!)
                 push.should_receive(:invoke).with(:restart, :app => app)
-                subject
+                push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+                push.push
               end
             end
           end
@@ -200,7 +223,8 @@ module CF
               push.stub(:line)
               app.should_receive(:update!)
               push.should_not_receive(:invoke).with(:restart, :app => app)
-              subject
+              push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+              push.push
             end
           end
         end
@@ -208,7 +232,7 @@ module CF
         context "when buildpack is given" do
           let(:old) { nil }
           let(:app) { build(:app, :buildpack => old) }
-          let(:inputs) { {:buildpack => new} }
+          let(:inputs) { {:path => path, :buildpack => new} }
 
           context "and it's an invalid URL" do
             let(:new) { "git@github.com:foo/bar.git" }
@@ -216,15 +240,18 @@ module CF
             before do
               app.stub(:update!) do
                 raise CFoundry::MessageParseError.new(
-                  "Request invalid due to parse error: Field: buildpack, Error: Value git@github.com:cloudfoundry/heroku-buildpack-ruby.git doesn't match regexp String /GIT_URL_REGEX/",
-                  1001)
+                          "Request invalid due to parse error: Field: buildpack, Error: Value git@github.com:cloudfoundry/heroku-buildpack-ruby.git doesn't match regexp String /GIT_URL_REGEX/",
+                          1001)
               end
             end
 
             it "fails and prints a pretty message" do
               push.stub(:line)
-              expect { subject }.to raise_error(
-                CF::UserError, "Buildpack must be a public git repository URI.")
+              expect do
+                push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+                push.push
+              end.to raise_error(
+                                 CF::UserError, "Buildpack must be a public git repository URI.")
             end
           end
 
@@ -234,17 +261,21 @@ module CF
             it "updates the app's buildpack" do
               push.stub(:line)
               app.should_receive(:update!)
-              expect { subject }.to change { app.buildpack }.from(old).to(new)
+              expect do
+                push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+                push.push
+              end.to change { app.buildpack }.from(old).to(new)
             end
 
             it "outputs the changed buildpack with single quotes" do
               push.should_receive(:line).with("Changes:")
               push.should_receive(:line).with("buildpack: '' -> '#{new}'")
               app.stub(:update!)
-              subject
+              push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
+              push.push
             end
 
-            include_examples "common tests for inputs", :buildpack
+            it_behaves_like "an input", :buildpack
           end
         end
       end
@@ -254,11 +285,11 @@ module CF
         let(:host) { "" }
         let(:domain) { build(:domain) }
         let(:inputs) do
-          { :name => "some-app",
-            :instances => 2,
-            :memory => 1024,
-            :host => host,
-            :domain => domain
+          {:name => "some-app",
+           :instances => 2,
+           :memory => 1024,
+           :host => host,
+           :domain => domain
           }
         end
         let(:global) { {:quiet => true, :color => false, :force => true} }

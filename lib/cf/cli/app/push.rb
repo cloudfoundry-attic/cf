@@ -49,15 +49,6 @@ module CF::App
       end
     end
 
-    def sync_app(app, path)
-      upload_app(app, path)
-      apply_changes(app)
-      display_changes(app)
-      commit_changes(app)
-
-      warn "\n#{c(app.name, :name)} is currently stopped, start it with 'cf start'" unless app.started?
-    end
-
     def setup_new_app(path)
       self.path = path
       app = create_app(get_inputs)
@@ -69,6 +60,16 @@ module CF::App
     end
 
     private
+
+    def sync_app(app, path)
+      upload_app(app, path)
+      apply_changes(app)
+      input[:path]
+      display_changes(app)
+      commit_changes(app)
+
+      warn "\n#{c(app.name, :name)} is currently stopped, start it with 'cf start'" unless app.started?
+    end
 
     def url_choices(name)
       client.current_space.domains.sort_by(&:name).collect do |d|
