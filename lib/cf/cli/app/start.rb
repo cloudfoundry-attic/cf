@@ -100,6 +100,7 @@ module CF::App
         while true
           if any_instance_flapping?(instances) || seconds == APP_CHECK_LIMIT
             err "Push unsuccessful."
+            line "#{c("TIP: The system will continue to attempt restarting all requested app instances that have crashed. Try 'cf app' to monitor app status. To troubleshoot crashes, try 'cf events' and 'cf crashlogs'.", :warning)}"
             return
           end
 
@@ -110,6 +111,7 @@ module CF::App
 
             if one_instance_running?(instances)
               line "#{c("Push successful! App '#{app.name}' available at http://#{app.host}.#{app.domain}", :good)}"
+              line "#{c("TIP: The system will continue to start all requested app instances. Try 'cf app' to monitor app status.", :warning)}"
               return
             end
           rescue CFoundry::NotStaged
