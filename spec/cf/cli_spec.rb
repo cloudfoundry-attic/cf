@@ -58,11 +58,6 @@ module CF
           subject
         end
 
-        it "does not mention ~/.cf/crash" do
-          subject
-          expect(stderr.string).not_to include CF::CRASH_FILE
-        end
-
         it "logs the error" do
           context.should_receive(:log_error).with(anything)
           subject
@@ -145,26 +140,18 @@ module CF
       end
 
       context "with an arbitrary exception" do
-        let(:action) { proc { raise "foo bar" } }
-
-        it "logs the error" do
-          context.should_receive(:log_error).with(anything)
-          subject
-        end
+        let(:error) { RuntimeError.new("ahhhh it's all broken!!!!") }
+        let(:action) { proc { raise error } }
 
         it "prints the message" do
           subject
-          expect(stderr.string).to include "RuntimeError: foo bar"
+          expect(stderr.string).to include "RuntimeError: ahhhh it's all broken!!!!"
+          expect(stderr.string).to include "spec/cf/cli_spec.rb" #to check that we're printing the backtrace
         end
 
         it "sets the exit code to 1" do
           context.should_receive(:exit_status).with(1)
           subject
-        end
-
-        it "does not tell the user to check ~/.cf/crash" do
-          subject
-          expect(stderr.string).not_to include CF::CRASH_FILE
         end
 
         context "when we are debugging" do

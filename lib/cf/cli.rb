@@ -158,7 +158,14 @@ EOS
       formatted_exception_output(e, message)
 
     rescue Exception => e
-      formatted_exception_output(e, add_exception_name_to_msg(e))
+      log_error_and_dump_crashlog(e)
+    end
+
+    def log_error_and_dump_crashlog(e)
+      log_error(e)
+      err File.open(File.expand_path(CF::CRASH_FILE)).readlines.join("")
+
+      raise if debug?
     end
 
     def formatted_exception_output(e, msg)

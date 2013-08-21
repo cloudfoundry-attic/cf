@@ -8,7 +8,6 @@ module CF::App
           :argument => true, :from_given => by_name(:app)
     def stats
       app = input[:app]
-
       stats =
         with_progress("Getting stats for #{c(app.name, :name)}") do |s|
           begin
