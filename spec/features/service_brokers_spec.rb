@@ -58,6 +58,11 @@ class FakeCloudController < Sinatra::Base
     204
   end
 
+  put '/v2/service_brokers/:guid' do
+    self.class.requests << request
+    201
+  end
+
   get '/responsive' do
     200
   end
@@ -146,6 +151,15 @@ http://127.0.0.1:8181:
     end
 
     expect(last_request).to be_delete
+    expect(last_request.path).to eq('/v2/service_brokers/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
+  end
+
+  it "allows an admin user to update a service broker" do
+    BlueShell::Runner.run("env HOME=#{@homedir} #{cf_bin} update-service-broker my-custom-service --name cf-othersql --url http://other.example.com/ --token othertoken") do |runner|
+      expect(runner).to say "Updating service broker my-custom-service... OK"
+    end
+
+    expect(last_request).to be_put
     expect(last_request.path).to eq('/v2/service_brokers/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
   end
 end
