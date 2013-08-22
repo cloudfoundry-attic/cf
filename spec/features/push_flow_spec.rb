@@ -149,6 +149,14 @@ if ENV["CF_V2_RUN_INTEGRATION"]
         expect(runner).to say "DEVELOP_ON_CLOUD_FOUNDRY: all_day_erry_day"
       end
 
+      BlueShell::Runner.run("#{cf_bin} unset-env #{app} DEVELOP_ON_CLOUD_FOUNDRY") do |runner|
+        expect(runner).to say "OK"
+      end
+
+      BlueShell::Runner.run("#{cf_bin} env #{app}") do |runner|
+        expect(runner).not_to say "DEVELOP_ON_CLOUD_FOUNDRY"
+      end
+
       BlueShell::Runner.run("#{cf_bin} delete #{app}") do |runner|
         expect(runner).to say "Really delete #{app}?>"
         runner.send_keys "y"

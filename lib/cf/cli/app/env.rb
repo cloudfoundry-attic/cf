@@ -40,6 +40,30 @@ module CF::App
         app.update!
       end
 
+      restart_if_necessary(app)
+    end
+
+    desc "Remove an environment variable"
+    group :apps, :info
+    input :app, :desc => "Application to set the variable for",
+          :argument => true, :from_given => by_name(:app)
+    input :name, :desc => "Variable name", :argument => true
+    input :restart, :desc => "Restart app after updating?", :default => false
+    def unset_env
+      app = input[:app]
+      name = input[:name]
+
+      with_progress("Unsetting #{c(name, :name)} for app #{c(app.name, :name)}") do
+        app.env.delete(name)
+        app.update!
+      end
+
+      restart_if_necessary(app)
+    end
+
+    private
+
+    def restart_if_necessary(app)
       unless input[:restart]
         line c("TIP: Use 'cf push' to ensure your env variable changes take effect.", :warning)
         return
@@ -48,32 +72,10 @@ module CF::App
       if app.started?
         invoke :restart, :app => app
       else
-        line c("Your app was unstarted. Starting now.", :warning)
+        line "Your app was unstarted. Starting now."
         invoke :start, :app => app
       end
     end
-
-    desc "Remove an environment variable"
-    group :apps, :info
-    input :app, :desc => "Application to set the variable for",
-          :argument => true, :from_given => by_name(:app)
-    input :name, :desc => "Variable name", :argument => true
-    input :restart, :desc => "Restart app after updating?", :default => true
-    def unset_env
-      app = input[:app]
-      name = input[:name]
-
-      with_progress("Updating #{c(app.name, :name)}") do
-        app.env.delete(name)
-        app.update!
-      end
-
-      if app.started? && input[:restart]
-        invoke :restart, :app => app
-      end
-    end
-
-    private
 
     def parse_name_and_value!
       name = input[:name]
@@ -90,6 +92,7 @@ module CF::App
         fail "Invalid format: environment variable names cannot start with a number" if name[0] =~ /\d/
         fail "Invalid format: environment variable names can only contain alphanumeric characters and underscores"
       end
+
       return name, value
     end
   end
