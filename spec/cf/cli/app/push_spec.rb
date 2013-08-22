@@ -188,30 +188,58 @@ module CF
         context "when restart is given" do
           let(:inputs) { {:path => path, :restart => true, :memory => 4096} }
 
+          class MockRestartCommand
+            attr_reader :restarted_apps
+            attr_accessor :input
+
+            def initialize
+              @restarted_apps = []
+            end
+
+            def restart
+              @restarted_apps = input[:apps]
+            end
+
+            def run(_)
+              restart
+            end
+          end
+
+          let(:mock_restart_command) do
+            MockRestartCommand.new
+          end
+
           before do
             CF::App::Base.any_instance.stub(:human_mb).and_return(0)
+            Restart.stub(:new).and_return(mock_restart_command)
           end
 
           context "when the app is already started" do
             let(:app) { build(:app, :state => "STARTED") }
 
-            it "invokes the restart command" do
+            it "restarts the app after updating" do
               push.stub(:line)
-              app.should_receive(:update!)
-              push.should_receive(:invoke).with(:restart, :app => app)
+              app.should_receive(:update!) do
+                expect(mock_restart_command.restarted_apps).to be_empty
+              end
+
               push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
               push.push
+
+              expect(mock_restart_command.restarted_apps).to eq [app]
             end
 
             context "but there are no changes" do
               let(:inputs) { {:path => path, :restart => true} }
 
-              it "invokes the restart command" do
+              it "restarts the app without updating" do
                 push.stub(:line)
                 app.should_not_receive(:update!)
-                push.should_receive(:invoke).with(:restart, :app => app)
+
                 push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
                 push.push
+
+                mock_restart_command.restarted_apps.should == [app]
               end
             end
           end
@@ -219,12 +247,14 @@ module CF
           context "when the app is not already started" do
             let(:app) { build(:app, :state => "STOPPED") }
 
-            it "does not invoke the restart command" do
+            it "updates the app without restarting" do
               push.stub(:line)
               app.should_receive(:update!)
-              push.should_not_receive(:invoke).with(:restart, :app => app)
+
               push.input = Mothership::Inputs.new(nil, push, inputs, {}, global)
               push.push
+
+              expect(mock_restart_command.restarted_apps).to be_empty
             end
           end
         end
