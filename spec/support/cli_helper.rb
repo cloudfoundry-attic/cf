@@ -47,6 +47,28 @@ module CliHelper
     $stdin = $real_stdin
   end
 
+  def capture_exceptional_output
+    $real_stdout = $stdout
+    $real_stderr = $stderr
+    $real_stdin = $stdin
+    $stdout = @stdout = StringIO.new
+    $stderr = @stderr = StringIO.new
+    $stdin = @stdin = StringIO.new
+    begin
+      @status = yield
+    rescue => e
+      @stderr.write(e.message)
+    end
+    @stdout.rewind
+    @stderr.rewind
+    @status
+  ensure
+    $stdout = $real_stdout
+    $stderr = $real_stderr
+    $stdin = $real_stdin
+  end
+
+
   def output
     @output ||= BlueShell::BufferedReaderExpector.new(stdout)
   end

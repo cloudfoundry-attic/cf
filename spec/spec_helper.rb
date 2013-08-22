@@ -11,6 +11,8 @@ require "ostruct"
 require "fakefs/safe"
 require "blue-shell"
 
+Dir.glob("support/mock_commands/*").each { |f| require f }
+
 TRAVIS_BUILD_ID = ENV["TRAVIS_BUILD_ID"]
 
 OriginalFile = File

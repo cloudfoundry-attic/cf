@@ -188,23 +188,6 @@ module CF
         context "when restart is given" do
           let(:inputs) { {:path => path, :restart => true, :memory => 4096} }
 
-          class MockRestartCommand
-            attr_reader :restarted_apps
-            attr_accessor :input
-
-            def initialize
-              @restarted_apps = []
-            end
-
-            def restart
-              @restarted_apps = input[:apps]
-            end
-
-            def run(_)
-              restart
-            end
-          end
-
           let(:mock_restart_command) do
             MockRestartCommand.new
           end

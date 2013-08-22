@@ -29,31 +29,29 @@ module CF::App
           :argument => true, :from_given => by_name(:app)
     input :name, :desc => "Variable name", :argument => true
     input :value, :desc => "Variable value", :argument => :optional
-    input :restart, :desc => "Restart app after updating?", :default => true
+    input :restart, :desc => "Restart app after updating?", :default => false
+
     def set_env
       app = input[:app]
-      name = input[:name]
+      name, value = parse_name_and_value!
 
-      if value = input[:value]
-        name = input[:name]
-      elsif name["="]
-        name, value = name.split("=")
-      end
-
-      unless name =~ VALID_ENV_VAR
-        fail "Invalid variable name; must match #{VALID_ENV_VAR.inspect}"
-      end
-
-      with_progress("Updating #{c(app.name, :name)}") do
+      with_progress("Updating env variable #{c(name, :name)} for app #{c(app.name, :name)}") do
         app.env[name] = value
         app.update!
       end
 
-      if app.started? && input[:restart]
+      unless input[:restart]
+        line c("TIP: Use 'cf push' to ensure your env variable changes take effect.", :warning)
+        return
+      end
+
+      if app.started?
         invoke :restart, :app => app
+      else
+        line c("Your app was unstarted. Starting now.", :warning)
+        invoke :start, :app => app
       end
     end
-
 
     desc "Remove an environment variable"
     group :apps, :info
@@ -73,6 +71,26 @@ module CF::App
       if app.started? && input[:restart]
         invoke :restart, :app => app
       end
+    end
+
+    private
+
+    def parse_name_and_value!
+      name = input[:name]
+      value = input[:value]
+
+      if name["="]
+        name, new_value, extra_values = name.split("=")
+        fail "You attempted to specify the value of #{name} twice." if value
+        fail "Invalid format: environment variable definition contains too many occurences of '='" if extra_values
+        value = new_value
+      end
+
+      unless name =~ VALID_ENV_VAR
+        fail "Invalid format: environment variable names cannot start with a number" if name[0] =~ /\d/
+        fail "Invalid format: environment variable names can only contain alphanumeric characters and underscores"
+      end
+      return name, value
     end
   end
 end
