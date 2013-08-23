@@ -1,4 +1,5 @@
 require 'active_support/core_ext'
+require 'anchorman'
 
 namespace :gem do
   desc "Bump gem version, push to RubyGems, push to Github, add release notes"
@@ -10,19 +11,20 @@ namespace :gem do
     sh! "git add lib/cf/version.rb"
 
     print_with_purpose "Bumping to version #{gem_version}"
-    #generate_release_notes(old_version)
+    generate_release_notes(old_version)
     sh!("git commit -m 'Bumping to version #{gem_version}.'")
     sh!("git push")
     sh!("gem release --tag")
   end
 
   private
-  #def generate_release_notes(old_version)
-  #  print_with_purpose "Generating release notes..."
-  #  file_name = "release_#{gem_version}"
-  #  sh!("anchorman notes --name=#{file_name} --from=v#{old_version}")
-  #  sh!("git add release_notes")
-  #end
+
+  def generate_release_notes(old_version)
+    print_with_purpose "Generating release notes..."
+    file_name = "release_#{gem_version}"
+    sh!("anchorman notes --name=#{file_name} --from=v#{old_version}")
+    sh!("git add release_notes")
+  end
 
   def sh!(cmd)
     `#{cmd}`
