@@ -139,14 +139,33 @@ module CF
         end
       end
 
+      context "with a CFoundry API error" do
+        let(:error) { CFoundry::APIError.new("CC had a problem", 123) }
+        let(:action) { proc { raise error } }
+
+        it "prints the error message" do
+          subject
+          expect(stderr.string).to include "APIError: 123: CC had a problem"
+        end
+
+        it "does not include the crash log" do
+          subject
+          expect(stderr.string).to_not include "spec/cf/cli_spec.rb"
+        end
+      end
+
       context "with an arbitrary exception" do
         let(:error) { RuntimeError.new("ahhhh it's all broken!!!!") }
         let(:action) { proc { raise error } }
 
-        it "prints the message" do
+        it "prints the error message" do
           subject
           expect(stderr.string).to include "RuntimeError: ahhhh it's all broken!!!!"
-          expect(stderr.string).to include "spec/cf/cli_spec.rb" #to check that we're printing the backtrace
+        end
+
+        it "prints the crash log" do
+          subject
+          expect(stderr.string).to include "spec/cf/cli_spec.rb"
         end
 
         it "sets the exit code to 1" do

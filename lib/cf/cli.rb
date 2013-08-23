@@ -156,7 +156,8 @@ EOS
     rescue CFoundry::StagingError => e
       message = "Application failed to stage"
       formatted_exception_output(e, message)
-
+    rescue CFoundry::APIError => e
+      formatted_exception_output(e, add_exception_name_to_msg(e))
     rescue Exception => e
       log_error_and_dump_crashlog(e)
     end
