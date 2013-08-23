@@ -22,7 +22,11 @@ module CF
       end
 
       def choices
-        organization.spaces(:depth => 0)
+        if organization
+          organization.spaces(:depth => 0)
+        else
+          []
+        end
       end
 
       def finder_argument
