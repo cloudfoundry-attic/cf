@@ -25,12 +25,12 @@ Gem::Specification.new do |s|
   s.test_files    = Dir["spec/**/*"]
   s.require_paths = %w(lib)
 
-  s.add_runtime_dependency "addressable", "~> 2.2"
+  s.add_runtime_dependency "addressable"
   s.add_runtime_dependency "caldecott-client", "~> 0.0.2"
   s.add_runtime_dependency "cfoundry", "~> 4.3.5.rc1"
-  s.add_runtime_dependency "interact", "~> 0.5"
-  s.add_runtime_dependency "json_pure", "~> 1.6"
-  s.add_runtime_dependency "mothership", ">= 0.5.1", "< 1.0"
+  s.add_runtime_dependency "interact", ">= 0.5"
+  s.add_runtime_dependency "json_pure"
+  s.add_runtime_dependency "mothership", ">= 0.5.1"
   s.add_runtime_dependency "multi_json", "~> 1.3"
   s.add_runtime_dependency "rest-client", "~> 1.6"
   s.add_runtime_dependency "uuidtools", "~> 2.1"
@@ -44,5 +44,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", "~> 2.14"
   s.add_development_dependency "rspec-instafail", "~> 0.2.4"
   s.add_development_dependency "sinatra"
-  s.add_development_dependency "webmock", "~> 1.9"
+  s.add_development_dependency "webmock"
 end
