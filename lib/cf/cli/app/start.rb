@@ -111,7 +111,9 @@ module CF::App
 
             if one_instance_running?(instances)
               line "#{c("Push successful! App '#{app.name}' available at http://#{app.host}.#{app.domain}", :good)}"
-              line "#{c("TIP: The system will continue to start all requested app instances. Try 'cf app' to monitor app status.", :warning)}"
+              unless all_instances_running?(instances)
+                line "#{c("TIP: The system will continue to start all requested app instances. Try 'cf app' to monitor app status.", :warning)}"
+              end
               return
             end
           rescue CFoundry::NotStaged
@@ -128,6 +130,10 @@ module CF::App
 
     def one_instance_running?(instances)
       instances.any? { |i| i.state == "RUNNING" }
+    end
+
+    def all_instances_running?(instances)
+      instances.all? { |i| i.state == "RUNNING" }
     end
 
     def any_instance_flapping?(instances)
