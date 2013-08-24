@@ -19,34 +19,34 @@ module CFAdmin::ServiceBroker
       :desc => "New token"
 
     def update_service_broker
-      broker = input[:broker]
+      @broker = input[:broker]
 
-      old_name = broker.name
+      old_name = @broker.name
 
-      broker.name = input[:name]
+      @broker.name = input[:name]
       finalize
-      broker.broker_url = input[:url]
+      @broker.broker_url = input[:url]
       finalize
-      broker.token = input[:token]
+      @broker.token = input[:token]
       finalize
 
       with_progress("Updating service broker #{old_name}") do
-        broker.update!
+        @broker.update!
       end
     end
 
     private
 
     def ask_name
-      ask("Name")
+      ask("Name", :default => @broker.name)
     end
 
     def ask_url
-      ask("URL")
+      ask("URL", :default => @broker.broker_url)
     end
 
     def ask_token
-      ask("Token")
+      ask("Token", :default => @broker.token)
     end
   end
 end
