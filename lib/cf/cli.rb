@@ -351,7 +351,7 @@ EOS
       ensure_config_dir
 
       File.open(File.expand_path(CF::TARGET_FILE), "w") do |f|
-        f.write(sane_target_url(url))
+        f.write(url)
       end
 
       invalidate_client
