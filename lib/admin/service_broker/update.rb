@@ -10,7 +10,7 @@ module CFAdmin::ServiceBroker
     group :admin
     input :broker, :argument => :required,
       :desc => "Service broker to update",
-      :from_given => by_name(:service_broker)
+      :from_given => by_name(:service_broker, 'service broker')
     input :name, :argument => :optional,
       :desc => "New name"
     input :url,
