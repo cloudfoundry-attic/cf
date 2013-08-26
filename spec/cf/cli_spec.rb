@@ -500,25 +500,32 @@ module CF
             end
           end
 
-          context "due to a timeout error" do
-            let(:current_time) { Time.now }
-
-            before do
-              TCPSocket.stub(:new).with(input_url, Net::HTTP.https_default_port) {
-                sleep 10
-              }
-            end
-
+          context "due to ETIMEDOUT" do
+            let(:error) { Errno::ETIMEDOUT }
             it "prepends 'http' to the url" do
               expect(sane_target_url).to eq "http://example.com"
             end
+          end
+        end
 
-            it "times out after one second" do
-              start_time = Time.now
-              sane_target_url
-              end_time = Time.now
-              expect(end_time).to be_within(0.5).of(start_time + 1)
-            end
+        context "when the TCP connection times out" do
+          let(:current_time) { Time.now }
+
+          before do
+            TCPSocket.stub(:new).with(input_url, Net::HTTP.https_default_port) {
+              sleep 10
+            }
+          end
+
+          it "prepends 'http' to the url" do
+            expect(sane_target_url).to eq "http://example.com"
+          end
+
+          it "times out after one second" do
+            start_time = Time.now
+            sane_target_url
+            end_time = Time.now
+            expect(end_time).to be_within(0.5).of(start_time + 1)
           end
         end
       end

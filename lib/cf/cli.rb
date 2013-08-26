@@ -327,7 +327,7 @@ EOS
             TCPSocket.new(url, Net::HTTP.https_default_port)
           end
           url = "https://#{url}"
-        rescue Errno::ECONNREFUSED, SocketError, Timeout::Error
+        rescue Errno::ECONNREFUSED, SocketError, Timeout::Error, Errno::ETIMEDOUT
           url = "http://#{url}"
         end
       end
