@@ -459,5 +459,69 @@ module CF
         end
       end
     end
+
+    describe "#sane_target_url" do
+      subject(:sane_target_url) { context.sane_target_url(input_url)}
+      context "when the given url has an http(s) scheme as a prefix" do
+        let(:input_url) { "http://example.com" }
+        it "removes any trailing slashes" do
+          expect(sane_target_url).to eq "http://example.com"
+        end
+      end
+
+      context "when the given url has no http(s) scheme" do
+        let(:input_url) { "example.com" }
+        context "when the url can be reached via https" do
+          before do
+            TCPSocket.stub(:new).with(input_url, Net::HTTP.https_default_port)
+          end
+
+          it "prepends 'https' to the url" do
+            expect(sane_target_url).to eq "https://example.com"
+          end
+        end
+
+        context "when the url cannot be reached via https" do
+          before do
+            TCPSocket.stub(:new).with(input_url, Net::HTTP.https_default_port).and_raise error
+          end
+
+          context "due to ECONNREFUSED" do
+            let(:error) { Errno::ECONNREFUSED }
+            it "prepends 'http' to the url" do
+              expect(sane_target_url).to eq "http://example.com"
+            end
+          end
+
+          context "due to a SocketError" do
+            let(:error) { SocketError }
+            it "prepends 'http' to the url" do
+              expect(sane_target_url).to eq "http://example.com"
+            end
+          end
+
+          context "due to a timeout error" do
+            let(:current_time) { Time.now }
+
+            before do
+              TCPSocket.stub(:new).with(input_url, Net::HTTP.https_default_port) {
+                sleep 10
+              }
+            end
+
+            it "prepends 'http' to the url" do
+              expect(sane_target_url).to eq "http://example.com"
+            end
+
+            it "times out after one second" do
+              start_time = Time.now
+              sane_target_url
+              end_time = Time.now
+              expect(end_time).to be_within(0.5).of(start_time + 1)
+            end
+          end
+        end
+      end
+    end
   end
 end

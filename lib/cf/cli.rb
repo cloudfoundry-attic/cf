@@ -323,7 +323,9 @@ EOS
     def sane_target_url(url)
       unless url =~ /^https?:\/\//
         begin
-          TCPSocket.new(url, Net::HTTP.https_default_port)
+          Timeout.timeout(1) do
+            TCPSocket.new(url, Net::HTTP.https_default_port)
+          end
           url = "https://#{url}"
         rescue Errno::ECONNREFUSED, SocketError, Timeout::Error
           url = "http://#{url}"
