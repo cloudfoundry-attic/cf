@@ -344,7 +344,6 @@ EOS
 
     def client_target
       return File.read(target_file).chomp if File.exists?(target_file)
-      sane_target_url(CF::DEFAULT_API_URL)
     end
 
     def ensure_config_dir

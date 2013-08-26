@@ -37,6 +37,24 @@ Target Information (where will apps be pushed):
         end
       end
 
+      context "when there is no target" do
+        let(:target) { nil }
+        it "displays 'N/A' as the value of the target" do
+          desired_result = <<-STR
+Target Information (where will apps be pushed):
+  CF instance: N/A (API version: 2)
+  user: #{user.email}
+  target app space: #{space.name} (org: #{organization.name})
+          STR
+
+          desired_result.each_line do |line|
+            outputter.should_receive(:line).with(line.chomp)
+          end
+
+          TargetPrettifier.prettify(client, outputter)
+        end
+      end
+
       context "when nothing is specified" do
         let(:user) { nil }
         let(:space) { nil }

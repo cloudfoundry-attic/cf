@@ -21,6 +21,10 @@ if ENV['CF_V2_RUN_INTEGRATION']
     end
 
     it "can switch targets, even if a target is invalid" do
+      BlueShell::Runner.run("#{cf_bin} target") do |runner|
+        expect(runner).to say "  CF instance: N/A"
+      end
+
       BlueShell::Runner.run("#{cf_bin} target invalid-target") do |runner|
         expect(runner).to say "Target refused"
         runner.wait_for_exit

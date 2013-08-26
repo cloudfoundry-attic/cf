@@ -316,8 +316,8 @@ module CF
       context "when no target file exists" do
         let(:fake_home_dir) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/no_config" }
 
-        it "returns the default production API url" do
-          expect(subject).to eq "https://api.run.pivotal.io"
+        it "returns nil" do
+          expect(subject).to eq nil
         end
       end
     end

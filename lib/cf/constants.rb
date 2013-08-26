@@ -7,5 +7,4 @@ module CF
   TOKENS_FILE     = "#{CONFIG_DIR}/tokens.yml".freeze
   COLORS_FILE     = "#{CONFIG_DIR}/colors.yml".freeze
   CRASH_FILE      = "#{CONFIG_DIR}/crash".freeze
-  DEFAULT_API_URL = "api.run.pivotal.io".freeze
 end
