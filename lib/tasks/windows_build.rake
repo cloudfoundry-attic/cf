@@ -8,7 +8,7 @@
 #  rake windows:build
 namespace :windows do
   desc "Create a Windows .exe file"
-  task :build, [:version] do |_, args|
+  task :build do
     system("ocra --console --no-autoload bin/cf")
   end
 end
