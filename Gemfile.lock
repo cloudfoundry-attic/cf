@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cf (5.2.1.rc7)
+    cf (5.2.1.rc8)
       addressable
       caldecott-client (~> 0.0.2)
       cfoundry (~> 4.3.5.rc1)
@@ -13,7 +13,7 @@ PATH
       uuidtools (~> 2.1)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     activemodel (4.0.0)
       activesupport (= 4.0.0)
