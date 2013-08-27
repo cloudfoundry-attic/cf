@@ -35,11 +35,13 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "rest-client", "~> 1.6"
   s.add_runtime_dependency "uuidtools", "~> 2.1"
 
+  s.add_development_dependency "anchorman"
   s.add_development_dependency "blue-shell", ">= 0.2.2"
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "fakefs", "~> 0.4.2"
   s.add_development_dependency "ffaker", "= 1.15"
   s.add_development_dependency "gem-release"
+  s.add_development_dependency "ocra"
   s.add_development_dependency "rake", "~> 0.9"
   s.add_development_dependency "rspec", "~> 2.14"
   s.add_development_dependency "rspec-instafail", "~> 0.2.4"

@@ -1,9 +1,10 @@
 require "yaml"
 require "socket"
 require "net/http"
+require "json/ext"
 require "multi_json"
+require "multi_json/adapters/json_gem"
 require "fileutils"
-
 require "mothership"
 
 require "cfoundry"

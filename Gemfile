@@ -6,8 +6,5 @@ source "http://rubygems.org"
 
 gemspec
 
-#gem "cfoundry", :path => "../cfoundry"
-
-group :development do
-  gem 'anchorman', github: 'infews/anchorman'
-end
+#run this to use a path to cfoundry locally, and everywhere else it'll use the gem
+#bundle config local.cfoundry ../cfoundry
