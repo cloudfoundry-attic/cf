@@ -4,6 +4,10 @@ FactoryGirl.define do
     sequence(:name) { |n| "service-plan-name-#{n}" }
     extra { "{}" }
 
+    after(:build) do |service_plan|
+      service_plan.service ||= FactoryGirl.build(:service, service_plans: [service_plan])
+    end
+
     ignore do
       client { FactoryGirl.build(:client) }
     end

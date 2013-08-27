@@ -46,18 +46,19 @@ end
 class ManagedServiceInstanceHelper
   def initialize(service_instance)
     @instance = service_instance
+    @service_helper = ServiceHelper.new(service_instance.service_plan.service)
   end
 
   def service_label
-    @instance.service_plan.service.label
+    @service_helper.label
   end
 
   def service_provider
-    @instance.service_plan.service.provider
+    @service_helper.provider
   end
 
   def version
-    @instance.service_plan.service.version
+    @service_helper.version
   end
 
   def plan_name

@@ -53,11 +53,12 @@ module CF::Service
       table(
         ["service", "version", "provider", "plans", "description"],
         services.sort_by(&:label).collect { |s|
-          [c(s.label, :name),
-            s.version,
-            s.provider,
-            s.service_plans.collect(&:name).join(", "),
-            s.description
+          presenter = ServiceHelper.new(s)
+          [c(presenter.label, :name),
+             presenter.version,
+             presenter.provider,
+             presenter.service_plans,
+             presenter.description
           ]
         })
     end

@@ -5,7 +5,7 @@ describe ServiceInstanceHelper do
     let(:provided_instance) { build(:user_provided_service_instance) }
     let(:managed_instance) { build(:managed_service_instance) }
 
-    it "returns a ManagedSerivceInstanceHelper when the argument is a ManagedServiceInstance" do
+    it "returns a ManagedServiceInstanceHelper when the argument is a ManagedServiceInstance" do
       expect(ServiceInstanceHelper.new(managed_instance)).to be_a ManagedServiceInstanceHelper
     end
 

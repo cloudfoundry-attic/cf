@@ -117,6 +117,14 @@ module CF
               expect(output).to say("Getting services... OK")
               expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
             end
+
+            context "when one of the services does not have a version or provider" do
+              it 'replaces those fields with n/a' do
+                client.stub(:services => [build(:service, :version => nil, :provider => nil)])
+                cf %W[services --marketplace]
+                expect(output).to say(/n\/a\s+n\/a/)
+              end
+            end
           end
         end
 
