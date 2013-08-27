@@ -27,10 +27,10 @@ module CF
     option :help, :desc => "Show command usage", :alias => "-h",
       :default => false
 
-    option :http_proxy, :desc => "Connect though an http proxy server", :alias => "--http-proxy",
+    option :http_proxy, :desc => "Connect with an http proxy server", :alias => "--http-proxy",
       :value => :http_proxy
 
-    option :https_proxy, :desc => "Connect though an https proxy server", :alias => "--https-proxy",
+    option :https_proxy, :desc => "Connect with an https proxy server", :alias => "--https-proxy",
       :value => :https_proxy
 
     option :version, :desc => "Print version number", :alias => "-v",
