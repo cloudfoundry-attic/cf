@@ -12,6 +12,8 @@ if ENV['CF_V2_RUN_INTEGRATION']
     let(:created_space_2) { "space-#{rand(10000)}"}
 
     before do
+      target_file = File.expand_path("~/.cf/target")
+      FileUtils.rm(target_file) if File.exists? target_file
       Interact::Progress::Dots.start!
     end
 
