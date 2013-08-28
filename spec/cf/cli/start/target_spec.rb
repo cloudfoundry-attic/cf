@@ -59,7 +59,7 @@ module CF
             subject { cf ["target", target] }
 
             context "when the target is not valid" do
-              before { WebMock.stub_request(:get, "http://#{target}/info").to_return(:body => "{}") }
+              before { WebMock.stub_request(:get, "https://#{target}/info").to_return(:body => "{}") }
 
               it "should still be able to switch to a valid target after that" do
                 subject

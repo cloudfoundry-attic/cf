@@ -322,11 +322,7 @@ EOS
     end
 
     def sane_target_url(url)
-      unless url =~ /^https?:\/\//
-        prefix = can_connect_on_https?(url) ? "https://" : "http://"
-        url = prefix + url
-      end
-
+      url = "https://#{url}" if url !~ /^http/
       url.gsub(/\/$/, "")
     end
 
@@ -487,17 +483,6 @@ EOS
     end
 
     private
-
-    def can_connect_on_https?(unqualified_url)
-      begin
-        Timeout.timeout(1) do
-          TCPSocket.new(unqualified_url, Net::HTTP.https_default_port)
-        end
-        true
-      rescue Errno::ECONNREFUSED, SocketError, Timeout::Error, Errno::ETIMEDOUT
-        false
-      end
-    end
 
     def target_file
       File.expand_path(CF::TARGET_FILE)
