@@ -54,6 +54,9 @@ namespace :gem do
   end
 
   def trigger_windows_executable_build
-    sh!("url -X POST https://frontend-jenkins.cf-app.com/job/CLI-Windows-Build/build -u ci:clone7adhere --insecure")
+    print_with_purpose "Triggering build of Windows executable on Jenkins..."
+    print "Please enter Jenkins password: "
+    password = STDIN.gets.strip
+    sh!("curl -X POST https://frontend-jenkins.cf-app.com/job/CLI-Windows-Build/build -u ci:#{password} --insecure --silent")
   end
 end
