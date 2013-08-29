@@ -25,6 +25,7 @@ namespace :gem do
     sh!("git commit -m 'Bumping to version #{gem_version}.'")
     sh!("git push")
     sh!("gem release --tag")
+    trigger_windows_executable_build
   end
 
   private
@@ -50,5 +51,9 @@ namespace :gem do
       load "lib/cf/version.rb"
     end
     Gem::Specification.load("cf.gemspec").version.to_s
+  end
+
+  def trigger_windows_executable_build
+    sh!("url -X POST https://frontend-jenkins.cf-app.com/job/CLI-Windows-Build/build -u ci:clone7adhere --insecure")
   end
 end
