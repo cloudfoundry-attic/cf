@@ -57,6 +57,6 @@ namespace :gem do
     print_with_purpose "Triggering build of Windows executable on Jenkins..."
     print "Please enter Jenkins password: "
     password = STDIN.gets.strip
-    sh!("curl -X POST https://frontend-jenkins.cf-app.com/job/CLI-Windows-Build/build -u ci:#{password} --insecure --silent")
+    sh!("curl -X POST http://174.129.252.37:8080/job/CLI-Windows-Build/build -u ci:#{password} --insecure --silent")
   end
 end
