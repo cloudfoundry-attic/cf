@@ -4,7 +4,7 @@ describe CFTunnelPlugin::Tunnel do
   describe "#tunnel_clients" do
     context "when the user has a custom clients.yml in their cf directory" do
       it "overrides the default client config with the user's customizations" do
-        subject.stub(:config_file_path) { "#{SPEC_ROOT}/fixtures/fake_home_dirs/with_custom_clients/.cf/#{CFTunnelPlugin::Tunnel::CLIENTS_FILE}" }
+        CF::CONFIG_DIR = "#{SPEC_ROOT}/fixtures/fake_home_dirs/with_custom_clients/.cf"
 
         expect(subject.tunnel_clients["postgresql"]).to eq({
           "psql" => {
