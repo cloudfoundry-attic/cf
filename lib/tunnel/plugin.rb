@@ -80,7 +80,7 @@ module CFTunnelPlugin
     private
 
     def config_file_path
-      File.expand_path("#{CF::CONFIG_DIR}/.cf/#{CLIENTS_FILE}")
+      File.expand_path("#{CF::CONFIG_DIR}/#{CLIENTS_FILE}")
     end
 
     def display_tunnel_connection_info(info)
