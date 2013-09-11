@@ -1,7 +1,7 @@
 require 'sinatra'
 
 class FakeCloudController < Sinatra::Base
-  SERVICE = {
+  PUBLIC_SERVICE = {
       'metadata' => {
           'guid' => '7376eb18-f465-4103-8ee5-c17444911d1f',
           'url' => '/v2/services/7376eb18-f465-4103-8ee5-c17444911d1f',
@@ -11,6 +11,19 @@ class FakeCloudController < Sinatra::Base
       'entity' => {
           'label' => 'GonzoDB',
           'name' => 'GonzoBeans'
+      }
+  }
+
+  PRIVATE_SERVICE = {
+      'metadata' => {
+          'guid' => '7376eb18-f465-4103-8ee5-beefbeefdead',
+          'url' => '/v2/services/7376eb18-f465-4103-8ee5-beefbeefdead',
+          'created_at' => Time.now,
+          'updated_at' => Time.now
+      },
+      'entity' => {
+          'label' => 'private-service',
+          'name' => 'PrivateGonzo'
       }
   }
 
@@ -163,13 +176,18 @@ class FakeCloudController < Sinatra::Base
     204
   end
 
-  get '/v2/services' do
+  get '/v2/spaces/:guid/services' do
+    services = [PUBLIC_SERVICE]
+    if params[:guid]=='671847d5-9754-49b2-bc9f-deadbeefdead'
+      services << PRIVATE_SERVICE
+    end
+
     body = {
-        'total_results' => 1,
+        'total_results' => services.count,
         'total_pages' => 1,
         'prev_url' => nil,
         'next_url' => nil,
-        'resources' => [SERVICE]
+        'resources' => services
     }.to_json
 
     [200, {}, body]

@@ -3,7 +3,8 @@ require "spec_helper"
 module CF
   module Service
     describe Create do
-      let(:client) { build(:client) }
+      let(:space) { build(:space) }
+      let(:client) { build(:client, current_space: space) }
 
       before do
         stub_client_and_precondition
@@ -35,7 +36,7 @@ module CF
         let(:params) { {} }
 
         before do
-          client.stub(:services).and_return(services)
+          space.stub(:services).and_return(services)
         end
 
         describe "when there is at least one service" do
@@ -100,7 +101,7 @@ module CF
           let(:user_provided_service) { build(:service, label: "user-provided")}
 
           before do
-            client.stub(:services).and_return(services)
+            space.stub(:services).and_return(services)
           end
 
           it "asks for an instance name and credentials" do

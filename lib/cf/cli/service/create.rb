@@ -32,7 +32,7 @@ module CF::Service
       :alias => "--bind", :from_given => by_name(:app)
 
     def create_service
-      offerings = client.services
+      offerings = client.current_space.services
 
       if input[:provider]
         offerings.reject! { |s| s.provider != input[:provider] }
