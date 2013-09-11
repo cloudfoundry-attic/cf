@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "caldecott-client", "~> 0.0.2"
   s.add_runtime_dependency "cfoundry", "~> 4.3.5.rc1"
   s.add_runtime_dependency "interact", ">= 0.5"
-  s.add_runtime_dependency "json_pure"
+  s.add_runtime_dependency "json_pure", '~> 1.7.7'
   s.add_runtime_dependency "mothership", ">= 0.5.1"
   s.add_runtime_dependency "multi_json", "~> 1.3"
   s.add_runtime_dependency "rest-client", "~> 1.6"
