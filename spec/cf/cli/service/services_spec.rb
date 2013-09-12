@@ -111,8 +111,8 @@ module CF
           end
 
           context 'when given --marketplace argument' do
-            it 'lists services on the target' do
-              client.stub(:services => Array.new(3) { build(:service) })
+            it 'lists services on the target for the current space' do
+              current_space.stub(:services => Array.new(3) { build(:service) })
               cf %W[services --marketplace]
               expect(output).to say("Getting services... OK")
               expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
@@ -120,10 +120,19 @@ module CF
 
             context "when one of the services does not have a version or provider" do
               it 'replaces those fields with n/a' do
-                client.stub(:services => [build(:service, :version => nil, :provider => nil)])
+                current_space.stub(:services => [build(:service, :version => nil, :provider => nil)])
                 cf %W[services --marketplace]
                 expect(output).to say(/n\/a\s+n\/a/)
               end
+            end
+
+            it 'lists services on the target for the given space' do
+              private_space = build(:space, :name => "private space")
+              client.stub(:space_by_name).with('private').and_return(private_space)
+              private_space.stub(:services => Array.new(3) { build(:service) })
+              cf %W[services --marketplace --space private]
+              expect(output).to say("Getting services... OK")
+              expect(output).to say(/service\s+version\s+provider\s+plans\s+description/)
             end
           end
         end

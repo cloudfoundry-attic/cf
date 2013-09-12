@@ -46,7 +46,7 @@ module CF::Service
     end
 
     def show_marketplace
-      services = with_progress("Getting services") { client.services }
+      services = with_progress("Getting services") { input[:space].services }
 
       line unless quiet?
 
