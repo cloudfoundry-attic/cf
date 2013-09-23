@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cf (5.3.0)
+    cf (5.3.1)
       addressable
       caldecott-client (~> 0.0.2)
       cfoundry (~> 4.3.9)
