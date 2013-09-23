@@ -25,7 +25,8 @@ namespace :gem do
     sh!("git commit -m 'Bumping to version #{gem_version}.'")
     sh!("git push")
     sh!("gem release --tag")
-    trigger_windows_executable_build
+    sh!("git tag -a -f latest-release -m 'Latest Release'")
+    sh!("git push -f origin latest-release:refs/tags/latest-release")
   end
 
   private
@@ -51,12 +52,5 @@ namespace :gem do
       load "lib/cf/version.rb"
     end
     Gem::Specification.load("cf.gemspec").version.to_s
-  end
-
-  def trigger_windows_executable_build
-    print_with_purpose "Triggering build of Windows executable on Jenkins..."
-    print "Please enter Jenkins password: "
-    password = STDIN.gets.strip
-    sh!("curl -X POST https://174.129.252.37/job/CLI-Windows-Build/build -u ci:#{password} --insecure --silent")
   end
 end
