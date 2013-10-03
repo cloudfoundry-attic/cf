@@ -70,7 +70,8 @@ end
 
 describe "Service Brokers" do
   let(:broker_url) { 'http://broker.example.com/' }
-  let(:broker_token) { 'opensesame' }
+  let(:auth_username) { 'me' }
+  let(:auth_password) { 'opensesame' }
   let(:last_request) { FakeCloudController.last_request }
 
   before do
@@ -121,7 +122,7 @@ http://127.0.0.1:8181:
   end
 
   it "allows an admin user to add a service broker" do
-    BlueShell::Runner.run("env HOME=#{@homedir} #{cf_bin} add-service-broker --name my-custom-service --url #{broker_url} --token #{broker_token}") do |runner|
+    BlueShell::Runner.run("env HOME=#{@homedir} #{cf_bin} add-service-broker --name my-custom-service --url #{broker_url} --username #{auth_username} --password #{auth_password}") do |runner|
       expect(runner).to say "Adding service broker my-custom-service... OK"
     end
 
@@ -130,7 +131,8 @@ http://127.0.0.1:8181:
     expect(JSON.load(last_request.body)).to eq(
       'name' => 'my-custom-service',
       'broker_url' => broker_url,
-      'token' => broker_token
+      'auth_username' => auth_username,
+      'auth_password' => auth_password,
     )
   end
 
@@ -155,11 +157,17 @@ http://127.0.0.1:8181:
   end
 
   it "allows an admin user to update a service broker" do
-    BlueShell::Runner.run("env HOME=#{@homedir} #{cf_bin} update-service-broker my-custom-service --name cf-othersql --url http://other.example.com/ --token othertoken") do |runner|
+    BlueShell::Runner.run("env HOME=#{@homedir} #{cf_bin} update-service-broker my-custom-service --name cf-othersql --url http://other.example.com/  --username newusername --password newpassword") do |runner|
       expect(runner).to say "Updating service broker my-custom-service... OK"
     end
 
     expect(last_request).to be_put
     expect(last_request.path).to eq('/v2/service_brokers/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
+    expect(JSON.load(last_request.body)).to eq(
+      'name' => 'cf-othersql',
+      'broker_url' => 'http://other.example.com/',
+      'auth_username' => 'newusername',
+      'auth_password' => 'newpassword',
+    )
   end
 end

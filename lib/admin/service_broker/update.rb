@@ -15,8 +15,10 @@ module CFAdmin::ServiceBroker
       :desc => "New name"
     input :url,
       :desc => "New URL"
-    input :token,
-      :desc => "New token"
+    input :username,
+      :desc => "New basic authentication username"
+    input :password,
+      :desc => "New basic authentication password"
 
     def update_service_broker
       @broker = input[:broker]
@@ -27,7 +29,9 @@ module CFAdmin::ServiceBroker
       finalize
       @broker.broker_url = input[:url]
       finalize
-      @broker.token = input[:token]
+      @broker.auth_username = input[:username]
+      finalize
+      @broker.auth_password = input[:password]
       finalize
 
       with_progress("Updating service broker #{old_name}") do
@@ -45,8 +49,12 @@ module CFAdmin::ServiceBroker
       ask("URL", :default => @broker.broker_url)
     end
 
-    def ask_token
-      ask("Token", :default => @broker.token)
+    def ask_username
+      ask("Username", :default => @broker.auth_username)
+    end
+
+    def ask_password
+      ask("Password", :default => @broker.auth_password)
     end
   end
 end
