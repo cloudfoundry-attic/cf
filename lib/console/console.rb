@@ -181,7 +181,7 @@ class CFConsole < CFTunnel
     Net::Telnet.new(
       "Port" => @port,
       "Prompt" => /[$%#>] \z|Login failed/n,
-      "Timeout" => 30,
+      "Timeout" => 90,
       "FailEOF" => true)
   end
 end
