@@ -9,20 +9,20 @@ namespace :gem do
 
     sh! "gem bump --version #{version} --no-commit"
 
-    print "About to bump version to #{gem_version}, continue? (Y): "
+    print "About to bump version to #{version}, continue? (Y): "
     answer = STDIN.gets.strip
     exit unless answer.length == 0 || answer.upcase.start_with?("Y")
 
     sh! "git add lib/cf/version.rb"
 
-    print_with_purpose "Bumping to version #{gem_version}"
+    print_with_purpose "Bumping to version #{version}"
 
     sh!("bundle")
     sh!("git add Gemfile.lock")
 
-    generate_release_notes(old_version)
+    generate_release_notes(old_version, version)
 
-    sh!("git commit -m 'Bumping to version #{gem_version}.'")
+    sh!("git commit -m 'Bumping to version #{version}.'")
     sh!("git push")
     sh!("gem release --tag")
     sh!("git tag -a -f latest-release -m 'Latest Release'")
@@ -31,9 +31,9 @@ namespace :gem do
 
   private
 
-  def generate_release_notes(old_version)
+  def generate_release_notes(old_version, new_version)
     print_with_purpose "Generating release notes..."
-    file_name = "release_#{gem_version}"
+    file_name = "release_#{new_version}"
     sh!("anchorman notes --name=#{file_name} --from=v#{old_version}")
     sh!("git add release_notes")
   end
