@@ -65,8 +65,8 @@ module CF
 
             before do
               app.stub(:instances) do
-                [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN")
+                [CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "DOWN"),
+                  CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "DOWN")
                 ]
               end
 
@@ -77,8 +77,8 @@ module CF
 
             context "when one instance becomes running" do
               let(:final_instances) do
-                [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN")
+                [CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "RUNNING"),
+                  CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "DOWN")
                 ]
               end
 
@@ -105,8 +105,8 @@ module CF
 
             context "staging has not completed" do
               let(:final_instances) do
-                [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING"),
-                  CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")
+                [CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "RUNNING"),
+                  CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "RUNNING")
                 ]
               end
 
@@ -125,8 +125,8 @@ module CF
               before do
                 app.stub(:instances) do
                   [
-                    CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "FLAPPING"),
-                    CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "DOWN"),
+                    CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "FLAPPING"),
+                    CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "DOWN"),
                   ]
                 end
               end
@@ -146,7 +146,7 @@ module CF
         before do
           app.stub(:invalidate!)
           app.stub(:instances) do
-            [CFoundry::V2::App::Instance.new(nil, nil, nil, :state => "RUNNING")]
+            [CFoundry::V2::AppInstance.new(nil, nil, nil, nil, :state => "RUNNING")]
           end
 
           app.should_receive(:start!) do |_, &blk|
