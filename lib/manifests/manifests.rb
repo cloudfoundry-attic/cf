@@ -309,7 +309,7 @@ module CFManifests
           offering = offerings.find { |o|
             o.label == (svc[:label] || svc[:type] || svc[:vendor]) &&
               (!svc[:version] || o.version == svc[:version]) &&
-              (o.provider == (svc[:provider] || "core"))
+              (o.provider == svc[:provider] || (svc[:provider].nil? && o.provider == "core"))
           }
 
           fail "Unknown service offering: #{svc.inspect}." unless offering
