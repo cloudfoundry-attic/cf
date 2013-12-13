@@ -178,6 +178,62 @@ describe CFManifests do
         build(:client).tap { |client| client.stub(:services => [mysql], :service_instances => service_instances) }
       end
 
+      context "when the service providers do not match" do
+        let(:info) do
+          {:services => {"service-1" => {:label => "mysql", :plan => "100", :provider => "not core"}}}
+        end
+
+        it 'fails' do
+          cmd.should_not_receive(:invoke).with(:create_service, anything)
+          cmd.should_not_receive(:invoke).with(:bind_service, anything)
+          expect {cmd.send(:setup_services, app, info)}.to raise_error(CF::UserError, /Unknown service offering/)
+        end
+      end
+
+      context "when the service versions do not match" do
+        let(:info) do
+          {:services => {"service-1" => {:label => "mysql", :plan => "100", :version => "something"}}}
+        end
+
+        it 'fails' do
+          cmd.should_not_receive(:invoke).with(:create_service, anything)
+          cmd.should_not_receive(:invoke).with(:bind_service, anything)
+          expect {cmd.send(:setup_services, app, info)}.to raise_error(CF::UserError, /Unknown service offering/)
+        end
+      end
+
+      context "when the service providers and versions are nil" do
+        let(:info) do
+          {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}
+        end
+
+        it 'provisions a service instance' do
+          cmd.should_receive(:invoke).with(:create_service, :app => app,
+            :name => service_1.name, :offering => mysql, :plan => plan_100)
+          cmd.send(:setup_services, app, info)
+        end
+      end
+
+      context "when the service provider is nil in the manifest but the CC's service provider is defined" do
+        let(:mysql) do
+          build(
+            :service,
+            :label => "mysql",
+            :provider => "MySQLmaker",
+            :service_plans => [plan_100])
+        end
+
+        let(:info) do
+          {:services => {"service-1" => {:label => "mysql", :plan => "100"}}}
+        end
+
+        it 'fails' do
+          cmd.should_not_receive(:invoke).with(:create_service, anything)
+          cmd.should_not_receive(:invoke).with(:bind_service, anything)
+          expect {cmd.send(:setup_services, app, info)}.to raise_error(CF::UserError, /Unknown service offering/)
+        end
+      end
+
       context "and the services exist" do
         let(:service_instances) { [service_1] }
 
