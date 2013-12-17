@@ -50,17 +50,17 @@ if ENV['CF_V2_RUN_INTEGRATION']
 
           expect(runner).to say(/Switching to space #{space_2}/)
 
-          runner.wait_for_exit 15
+          runner.wait_for_exit
         end
 
         BlueShell::Runner.run("#{cf_bin} target -s #{space}") do |runner|
           expect(runner).to say("Switching to space #{space}")
-          runner.wait_for_exit 15
+          runner.wait_for_exit
         end
 
         BlueShell::Runner.run("#{cf_bin} target -s #{space_2}") do |runner|
           expect(runner).to say("Switching to space #{space_2}")
-          runner.wait_for_exit 15
+          runner.wait_for_exit
         end
       end
     end

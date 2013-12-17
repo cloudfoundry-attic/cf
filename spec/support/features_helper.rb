@@ -11,20 +11,20 @@ module FeaturesHelper
     cmd = "#{cf_bin} login #{username} --password #{password} -o #{organization}"
     cmd += " -s #{space}"
     BlueShell::Runner.run(cmd) do |runner|
-      runner.wait_for_exit 60
+      runner.wait_for_exit
     end
   end
 
   def logout
     BlueShell::Runner.run("#{cf_bin} logout") do |runner|
-      runner.wait_for_exit 60
+      runner.wait_for_exit
     end
   end
 
   def set_target
     target = ENV['CF_V2_TEST_TARGET']
     BlueShell::Runner.run("#{cf_bin} target #{target}") do |runner|
-      runner.wait_for_exit 20
+      runner.wait_for_exit
     end
   end
 

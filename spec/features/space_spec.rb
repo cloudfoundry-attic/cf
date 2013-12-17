@@ -71,14 +71,14 @@ if ENV['CF_V2_RUN_INTEGRATION']
       end
 
       it "can create an app in a space, then delete it recursively" do
-        BlueShell::Runner.run("#{cf_bin} create-space #{new_space}") { |runner| runner.wait_for_exit(30) }
-        BlueShell::Runner.run("#{cf_bin} switch-space #{new_space}") { |runner| runner.wait_for_exit(30) }
+        BlueShell::Runner.run("#{cf_bin} create-space #{new_space}") { |runner| runner.wait_for_exit }
+        BlueShell::Runner.run("#{cf_bin} switch-space #{new_space}") { |runner| runner.wait_for_exit }
 
         push_app("hello-sinatra", app)
 
         BlueShell::Runner.run("#{cf_bin} delete-space #{new_space} --force") do |runner|
           expect(runner).to say("If you want to delete the space along with all dependent objects, rerun the command with the '--recursive' flag.")
-          runner.wait_for_exit(30)
+          runner.wait_for_exit
         end.should_not be_successful
 
         BlueShell::Runner.run("#{cf_bin} spaces") do |runner|

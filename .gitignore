@@ -7,3 +7,4 @@ coverage/*
 spec/tmp
 .pairs
 tmp
+env.sh

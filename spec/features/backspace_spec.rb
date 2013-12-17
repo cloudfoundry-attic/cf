@@ -35,7 +35,7 @@ if ENV['CF_V2_RUN_INTEGRATION']
           expect(runner).to say "Domain>"
           runner.send_return
 
-          expect(runner).to say /Binding #{app[0..-2]}\..* to #{app}.*OK/, 1
+          expect(runner).to say /Binding #{app[0..-2]}\..* to #{app}.*OK/
         end
       end
     end
