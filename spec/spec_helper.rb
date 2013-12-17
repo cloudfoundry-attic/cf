@@ -46,6 +46,7 @@ RSpec.configure do |c|
 
   c.before(:all) do
     WebMock.disable_net_connect!(:allow_localhost => true)
+    BlueShell.timeout = 60
   end
 
   c.before do
