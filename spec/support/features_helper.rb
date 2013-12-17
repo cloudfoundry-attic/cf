@@ -61,38 +61,40 @@ module FeaturesHelper
     push_cmd += " --command #{opts[:start_command]}" if opts[:start_command]
 
     Dir.chdir("#{SPEC_ROOT}/assets/#{app_folder}") do
-      BlueShell::Runner.run(push_cmd) do |runner|
-        expect(runner).to say "Name>"
-        runner.send_keys deployed_app_name
+      BlueShell.with_timeout 180 do
+        BlueShell::Runner.run(push_cmd) do |runner|
+          expect(runner).to say "Name>"
+          runner.send_keys deployed_app_name
 
-        expect(runner).to say "Instances> 1"
-        runner.send_return
-
-        expect(runner).to say "Memory Limit>"
-        runner.send_keys "128M"
-
-        expect(runner).to say "Creating #{deployed_app_name}... OK"
-
-        expect(runner).to say "Subdomain> #{deployed_app_name}"
-        runner.send_return
-
-        expect(runner).to say "1:"
-        expect(runner).to say "Domain>"
-        runner.send_keys "1"
-
-        expect(runner).to say /Creating route #{deployed_app_name}\..*\.\.\. OK/
-        expect(runner).to say /Binding #{deployed_app_name}\..* to #{deployed_app_name}\.\.\. OK/
-
-        expect(runner).to say "Create services for application?> n"
-        runner.send_return
-
-        if runner.expect "Bind other services to application?> n"
+          expect(runner).to say "Instances> 1"
           runner.send_return
+
+          expect(runner).to say "Memory Limit>"
+          runner.send_keys "128M"
+
+          expect(runner).to say "Creating #{deployed_app_name}... OK"
+
+          expect(runner).to say "Subdomain> #{deployed_app_name}"
+          runner.send_return
+
+          expect(runner).to say "1:"
+          expect(runner).to say "Domain>"
+          runner.send_keys "1"
+
+          expect(runner).to say(/Creating route #{deployed_app_name}\..*\.\.\. OK/)
+          expect(runner).to say(/Binding #{deployed_app_name}\..* to #{deployed_app_name}\.\.\. OK/)
+
+          expect(runner).to say "Create services for application?> n"
+          runner.send_return
+
+          if runner.expect "Bind other services to application?> n"
+            runner.send_return
+          end
+
+          expect(runner).to say "Push successful!"
+
+          runner.wait_for_exit
         end
-
-        expect(runner).to say "Push successful!"
-
-        runner.wait_for_exit opts[:timeout] || 30
       end
     end
   end
