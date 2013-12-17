@@ -37,7 +37,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
       # end
 
       BlueShell::Runner.run("#{cf_bin} delete-org #{new_org_name} --force --recursive") do |runner|
-        expect(runner).to say "Deleting organization #{new_org_name}... OK", 15
+        expect(runner).to say "Deleting organization #{new_org_name}... OK"
       end
 
       BlueShell::Runner.run("#{cf_bin} target -o #{new_org_name}") do |runner|

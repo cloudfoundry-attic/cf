@@ -59,11 +59,11 @@ applications:
             expect(runner).to say /Creating service #{user_provided_name}.*OK/
             expect(runner).to say /Binding #{user_provided_name} to #{app}... OK/
 
-            expect(runner).to say "Uploading #{app}... OK", 180
-            expect(runner).to say "Preparing to start #{app}... OK", 180
-            expect(runner).to say "Checking status of app '#{app}'...", 180
+            expect(runner).to say "Uploading #{app}... OK"
+            expect(runner).to say "Preparing to start #{app}... OK"
+            expect(runner).to say "Checking status of app '#{app}'..."
             expect(runner).to say "1 of 1 instances running"
-            expect(runner).to say "Push successful! App '#{app}' available at #{subdomain}.cfapps.io", 30
+            expect(runner).to say "Push successful! App '#{app}' available at #{subdomain}.cfapps.io"
           end
         end
 

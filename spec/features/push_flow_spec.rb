@@ -111,18 +111,18 @@ if ENV["CF_V2_RUN_INTEGRATION"]
           expect(runner).to say "Create another service?> n"
           runner.send_keys "n"
 
-          if runner.expect "Bind other services to application?> n", 15
+          if runner.expect "Bind other services to application?> n"
             runner.send_return
           end
 
-          expect(runner).to say "Save configuration?> n", 20
+          expect(runner).to say "Save configuration?> n"
           runner.send_return
 
-          expect(runner).to say "Uploading #{app}... OK", 180
-          expect(runner).to say "Preparing to start #{app}... OK", 180
-          expect(runner).to say "Checking status of app '#{app}'...", 180
+          expect(runner).to say "Uploading #{app}... OK"
+          expect(runner).to say "Preparing to start #{app}... OK"
+          expect(runner).to say "Checking status of app '#{app}'..."
           expect(runner).to say "1 of 1 instances running"
-          expect(runner).to say "Push successful! App '#{app}' available at #{subdomain}.cfapps.io", 30
+          expect(runner).to say "Push successful! App '#{app}' available at #{subdomain}.cfapps.io"
         end
       end
 
@@ -138,7 +138,7 @@ if ENV["CF_V2_RUN_INTEGRATION"]
       end
 
       BlueShell::Runner.run("#{cf_bin} unbind-service #{service_name} #{app}") do |runner|
-        expect(runner).to say "OK", 20
+        expect(runner).to say "OK"
       end
 
       BlueShell::Runner.run("#{cf_bin} set-env #{app} DEVELOP_ON_CLOUD_FOUNDRY all_day_erry_day") do |runner|

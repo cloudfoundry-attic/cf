@@ -65,7 +65,7 @@ module FeaturesHelper
         expect(runner).to say "Name>"
         runner.send_keys deployed_app_name
 
-        expect(runner).to say "Instances> 1", 15
+        expect(runner).to say "Instances> 1"
         runner.send_return
 
         expect(runner).to say "Memory Limit>"
@@ -86,7 +86,7 @@ module FeaturesHelper
         expect(runner).to say "Create services for application?> n"
         runner.send_return
 
-        if runner.expect "Bind other services to application?> n", 15
+        if runner.expect "Bind other services to application?> n"
           runner.send_return
         end
 
