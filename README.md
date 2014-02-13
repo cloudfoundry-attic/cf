@@ -1,3 +1,8 @@
+## Deprecated
+This gem has been deprecated. You can find the latest cli source at http://github.com/cloudfoundry/cli. The latest cli builds are available at https://console.run.pivotal.io/tools or https://github.com/cloudfoundry/cli/releases. 
+
+
+
 # cf - Cloud Foundry Command Line Interface
 
 [![Build Status](https://travis-ci.org/cloudfoundry/cf.png)](https://travis-ci.org/cloudfoundry/cf)
