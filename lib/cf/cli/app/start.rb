@@ -2,7 +2,7 @@ require "cf/cli/app/base"
 
 module CF::App
   class Start < Base
-    APP_CHECK_LIMIT = 60
+    APP_CHECK_LIMIT = 900
 
     desc "Start an application"
     group :apps, :manage
