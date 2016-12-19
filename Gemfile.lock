@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cf (5.4.7)
+    cf (5.4.8)
       addressable
       caldecott-client (~> 0.0.2)
       cfoundry (~> 4.7.2.rc1)
@@ -146,3 +146,6 @@ DEPENDENCIES
   rspec-instafail (~> 0.2.4)
   sinatra
   webmock
+
+BUNDLED WITH
+   1.13.6

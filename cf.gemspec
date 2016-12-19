@@ -48,4 +48,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-instafail", "~> 0.2.4"
   s.add_development_dependency "sinatra"
   s.add_development_dependency "webmock"
+
+  s.post_install_message = <<-NOTICE.strip
+    ** This gem has been deprecated. Please read README of this project -- https://github.com/cloudfoundry-attic/cf. **
+  NOTICE
 end
